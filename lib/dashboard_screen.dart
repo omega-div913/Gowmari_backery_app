@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'masters_page.dart'; // Added import for the Masters page
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -157,18 +158,23 @@ class AppSidebar extends StatelessWidget {
                 const SizedBox(height: 20),
                 _menuItem(Icons.shopping_cart_outlined, "Purchase Section"),
                 const SizedBox(height: 10),
-                _subItem(Icons.inventory_2_outlined, "Raw Material", badge: "192"),
-                _subItem(Icons.assignment_turned_in_outlined, "RM Request Management"),
-                _subItem(Icons.event_available_outlined, "Daily Usage Management"),
-                _subItem(Icons.inventory_2_outlined, "Packaging Material"),
-                _subItem(Icons.storage_outlined, "Masters"),
-                _subItem(Icons.account_balance_wallet_outlined, "Stock Cost"),
-                _subItem(Icons.assignment_outlined, "Inventory Audit Entry"),
-                _subItem(Icons.delete_outline, "Wastage Management"),
-                _subItem(Icons.history, "Reversal History"),
-                _subItem(Icons.shopping_cart_checkout, "Bakery Products"),
-                _subItem(Icons.update, "Purchase Transfer History"),
-                _subItem(Icons.shopping_cart_checkout, "Purchase Report"),
+                
+                // Passed 'context' to all subItems and added 'destination' to Masters
+                _subItem(context, Icons.inventory_2_outlined, "Raw Material", badge: "192"),
+                _subItem(context, Icons.assignment_turned_in_outlined, "RM Request Management"),
+                _subItem(context, Icons.event_available_outlined, "Daily Usage Management"),
+                _subItem(context, Icons.inventory_2_outlined, "Packaging Material"),
+                
+                // MASTERS LINK ADDED HERE
+                _subItem(context, Icons.storage_outlined, "Masters", destination: const MastersPage()),
+                
+                _subItem(context, Icons.account_balance_wallet_outlined, "Stock Cost"),
+                _subItem(context, Icons.assignment_outlined, "Inventory Audit Entry"),
+                _subItem(context, Icons.delete_outline, "Wastage Management"),
+                _subItem(context, Icons.history, "Reversal History"),
+                _subItem(context, Icons.shopping_cart_checkout, "Bakery Products"),
+                _subItem(context, Icons.update, "Purchase Transfer History"),
+                _subItem(context, Icons.shopping_cart_checkout, "Purchase Report"),
               ],
             ),
           ),
@@ -198,7 +204,8 @@ class AppSidebar extends StatelessWidget {
     );
   }
 
-  Widget _subItem(IconData icon, String text, {String? badge}) {
+  // Updated _subItem to handle clicks and navigation
+  Widget _subItem(BuildContext context, IconData icon, String text, {String? badge, Widget? destination}) {
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: ListTile(
@@ -210,6 +217,15 @@ class AppSidebar extends StatelessWidget {
           decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(12)),
           child: Text(badge, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
         ) : null,
+        onTap: () {
+          // If a destination page is provided, navigate to it!
+          if (destination != null) {
+            Navigator.pushReplacement(
+              context, 
+              MaterialPageRoute(builder: (context) => destination)
+            );
+          }
+        },
       ),
     );
   }
