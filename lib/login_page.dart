@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dashboard_screen.dart'; // Import for navigation
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -174,7 +175,13 @@ class _LoginPageState extends State<LoginPage> {
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                                 elevation: 0,
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                // Updated logic to navigate to Dashboard
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                                );
+                              },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: const [
