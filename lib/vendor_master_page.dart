@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 import 'masters_page.dart'; 
-import 'material_type_master_page.dart'; // <--- NEW: Added missing import
+import 'material_type_master_page.dart';
+import 'section_master_page.dart';
 
 class VendorMasterPage extends StatefulWidget {
   const VendorMasterPage({super.key});
@@ -25,7 +26,7 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
   ];
 
   // ==========================================
-  // CREATE VENDOR DIALOG
+  // DIALOGS
   // ==========================================
   void _showCreateVendorDialog(BuildContext context) {
     showDialog(
@@ -82,9 +83,6 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
     );
   }
 
-  // ==========================================
-  // EDIT VENDOR DIALOG
-  // ==========================================
   void _showEditVendorDialog(BuildContext context, Map<String, String> vendor) {
     showDialog(
       context: context,
@@ -140,9 +138,6 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
     );
   }
 
-  // ==========================================
-  // DELETE DIALOG
-  // ==========================================
   void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -436,7 +431,7 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
 }
 
 // ==========================================
-// 2. SECONDARY SIDEBAR ("ALL MASTERS")
+// 2. SECONDARY SIDEBAR
 // ==========================================
 class SecondaryMastersSidebar extends StatelessWidget {
   const SecondaryMastersSidebar({super.key});
@@ -454,10 +449,9 @@ class SecondaryMastersSidebar extends StatelessWidget {
           
           const Padding(padding: EdgeInsets.only(left: 10, bottom: 10), child: Text("RAW MATERIAL", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue))),
           _secMenuItem(context, Icons.inventory_2_outlined, "RM Master"),
-          // <--- NEW: Added destination to Material Type Master
-          _secMenuItem(context, Icons.sell_outlined, "Material Type Master", destination: const MaterialTypeMasterPage()),
+          _secMenuItem(context, Icons.sell_outlined, "Material Type Master", destination: MaterialTypeMasterPage()),
           _secMenuItem(context, Icons.group_outlined, "Vendor Master", isActive: true),
-          _secMenuItem(context, Icons.domain_outlined, "Section Master"),
+          _secMenuItem(context, Icons.domain_outlined, "Section Master", destination: SectionMasterPage()),
           _secMenuItem(context, Icons.straighten, "UOM", destination: const MastersPage()), 
           
           const SizedBox(height: 20),
@@ -627,10 +621,9 @@ class MobileSecondaryMenu extends StatelessWidget {
       child: Row(
         children: [
           _mobChip(context, "RM Master"), 
-          // <--- NEW: Added destination to Material Type Master
-          _mobChip(context, "Material Type Master", destination: const MaterialTypeMasterPage()), 
+          _mobChip(context, "Material Type Master", destination: MaterialTypeMasterPage()), 
           _mobChip(context, "Vendor Master", isActive: true), 
-          _mobChip(context, "Section Master"),
+          _mobChip(context, "Section Master", destination: SectionMasterPage()),
           _mobChip(context, "UOM", destination: const MastersPage()), 
           _mobChip(context, "PM Master"), 
           _mobChip(context, "PM Vendor Master"), 

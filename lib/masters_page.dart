@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
 import 'vendor_master_page.dart';
 import 'material_type_master_page.dart'; 
+import 'section_master_page.dart'; 
+import 'pm_master_page.dart'; 
 
 class MastersPage extends StatefulWidget {
   const MastersPage({super.key});
@@ -423,8 +425,10 @@ class _MastersPageState extends State<MastersPage> {
 // ==========================================
 // 2. SECONDARY SIDEBAR ("ALL MASTERS")
 // ==========================================
+
 class SecondaryMastersSidebar extends StatelessWidget {
-  const SecondaryMastersSidebar({super.key});
+  final String activePage;
+  const SecondaryMastersSidebar({super.key, this.activePage = 'UOM'});
 
   @override
   Widget build(BuildContext context) {
@@ -441,25 +445,25 @@ class SecondaryMastersSidebar extends StatelessWidget {
           const SizedBox(height: 20),
           const Divider(),
           const SizedBox(height: 10),
-          
           const Padding(
             padding: EdgeInsets.only(left: 10, bottom: 10),
             child: Text("RAW MATERIAL", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue)),
           ),
-          _secMenuItem(context, Icons.inventory_2_outlined, "RM Master"),
-          _secMenuItem(context, Icons.sell_outlined, "Material Type Master", destination: const MaterialTypeMasterPage()),
-          _secMenuItem(context, Icons.group_outlined, "Vendor Master", destination: const VendorMasterPage()), 
-          _secMenuItem(context, Icons.domain_outlined, "Section Master"),
-          _secMenuItem(context, Icons.straighten, "UOM", isActive: true), 
+          _secMenuItem(context, Icons.inventory_2_outlined, "RM Master", isActive: activePage == 'RM Master'),
+          _secMenuItem(context, Icons.sell_outlined, "Material Type Master", destination: const MaterialTypeMasterPage(), isActive: activePage == 'Material Type Master'),
+          _secMenuItem(context, Icons.group_outlined, "Vendor Master", destination: const VendorMasterPage(), isActive: activePage == 'Vendor Master'), 
+          _secMenuItem(context, Icons.domain_outlined, "Section Master", destination: const SectionMasterPage(), isActive: activePage == 'Section Master'),
+          _secMenuItem(context, Icons.straighten, "UOM", destination: const MastersPage(), isActive: activePage == 'UOM'), 
           
           const SizedBox(height: 20),
           const Padding(
             padding: EdgeInsets.only(left: 10, bottom: 10),
             child: Text("PACKAGING MATERIAL", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue)),
           ),
-          _secMenuItem(context, Icons.inventory_2_outlined, "PM Master"),
-          _secMenuItem(context, Icons.group_outlined, "PM Vendor Master"),
-          _secMenuItem(context, Icons.straighten, "PM UOM"),
+        
+          _secMenuItem(context, Icons.inventory_2_outlined, "PM Master", destination: const PMMasterPage(), isActive: activePage == 'PM Master'),
+          _secMenuItem(context, Icons.group_outlined, "PM Vendor Master", isActive: activePage == 'PM Vendor Master'),
+          _secMenuItem(context, Icons.straighten, "PM UOM", isActive: activePage == 'PM UOM'),
         ],
       ),
     );
@@ -481,7 +485,7 @@ class SecondaryMastersSidebar extends StatelessWidget {
           fontWeight: isActive ? FontWeight.bold : FontWeight.w600
         )),
         onTap: () {
-          if (destination != null) {
+          if (destination != null && !isActive) {
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => destination));
           }
         },
@@ -588,25 +592,22 @@ class MasterPrimarySidebar extends StatelessWidget {
 // 4. TOPBAR
 // ==========================================
 class MasterTopbar extends StatelessWidget {
-  const MasterTopbar({super.key});
+  final String breadcrumb; // Dynamic breadcrumb path
+  const MasterTopbar({super.key, this.breadcrumb = "Home / Purchase Section / Masters / Units"});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70, 
-      padding: const EdgeInsets.symmetric(horizontal: 25),
-      decoration: BoxDecoration(
-        color: Colors.white, 
-        border: Border(bottom: BorderSide(color: Colors.grey.shade200))
-      ),
+      height: 70, padding: const EdgeInsets.symmetric(horizontal: 25),
+      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: Colors.grey.shade200))),
       child: Row(
         children: [
           const Icon(Icons.menu, color: Colors.grey),
           const SizedBox(width: 15),
-          const Text("Home / Purchase Section / Masters / Units", style: TextStyle(color: Colors.grey, fontSize: 13)),
+          Text(breadcrumb, style: const TextStyle(color: Colors.grey, fontSize: 13)),
           const Spacer(),
           Container(
-            width: 300, height: 40, 
-            decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)),
+            width: 300, height: 40, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)),
             child: const TextField(decoration: InputDecoration(hintText: "Search menus...", prefixIcon: Icon(Icons.search, size: 20), border: InputBorder.none)),
           ),
           const SizedBox(width: 25),
@@ -620,8 +621,13 @@ class MasterTopbar extends StatelessWidget {
 // ==========================================
 // 5. MOBILE SECONDARY MENU
 // ==========================================
+// masters_page.dart-la intha class-ah replace pannunga
 class MobileSecondaryMenu extends StatelessWidget {
-  const MobileSecondaryMenu({super.key});
+  final String activePage;
+  
+  // constructor
+  const MobileSecondaryMenu({super.key, this.activePage = 'UOM'});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -629,14 +635,14 @@ class MobileSecondaryMenu extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       child: Row(
         children: [
-          _mobChip(context, "RM Master"), 
-          _mobChip(context, "Material Type Master", destination: const MaterialTypeMasterPage()), 
-          _mobChip(context, "Vendor Master", destination: const VendorMasterPage()), 
-          _mobChip(context, "Section Master"),
-          _mobChip(context, "UOM", isActive: true), 
-          _mobChip(context, "PM Master"), 
-          _mobChip(context, "PM Vendor Master"), 
-          _mobChip(context, "PM UOM"),
+          _mobChip(context, "RM Master", isActive: activePage == 'RM Master'), 
+          _mobChip(context, "Material Type Master", destination: const MaterialTypeMasterPage(), isActive: activePage == 'Material Type Master'), 
+          _mobChip(context, "Vendor Master", destination: const VendorMasterPage(), isActive: activePage == 'Vendor Master'), 
+          _mobChip(context, "Section Master", destination: const SectionMasterPage(), isActive: activePage == 'Section Master'),
+          _mobChip(context, "UOM", destination: const MastersPage(), isActive: activePage == 'UOM'), 
+          _mobChip(context, "PM Master", destination: const PMMasterPage(), isActive: activePage == 'PM Master'), 
+          _mobChip(context, "PM Vendor Master", isActive: activePage == 'PM Vendor Master'), 
+          _mobChip(context, "PM UOM", isActive: activePage == 'PM UOM'),
         ],
       ),
     );
@@ -645,7 +651,7 @@ class MobileSecondaryMenu extends StatelessWidget {
   Widget _mobChip(BuildContext context, String label, {bool isActive = false, Widget? destination}) {
     return GestureDetector(
       onTap: () {
-        if (destination != null) {
+        if (destination != null && !isActive) {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => destination));
         }
       },
