@@ -49,7 +49,7 @@ class _PMMasterPageState extends State<PMMasterPage> {
   }
 
   // ==========================================
-  // 1. CREATE / EDIT DIALOG (2nd & 3rd Image)
+  // DIALOGS (Keep your existing dialog logic)
   // ==========================================
   void _showMaterialDialog({PackagingMaterial? material}) {
     bool isEdit = material != null;
@@ -120,9 +120,6 @@ class _PMMasterPageState extends State<PMMasterPage> {
     );
   }
 
-  // ==========================================
-  // 2. DELETE DIALOG (4th Image)
-  // ==========================================
   void _showDeleteDialog() {
     showDialog(
       context: context,
@@ -167,9 +164,6 @@ class _PMMasterPageState extends State<PMMasterPage> {
     );
   }
 
-  // ==========================================
-  // 3. IMPORT DIALOG (5th Image)
-  // ==========================================
   void _showImportDialog() {
     showDialog(
       context: context,
@@ -266,6 +260,10 @@ class _PMMasterPageState extends State<PMMasterPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FE),
       drawer: isMobile ? const Drawer(child: MasterPrimarySidebar()) : null,
+      appBar: isMobile ? AppBar(
+          title: const Text("Packaging Materials", style: TextStyle(color: Colors.black, fontSize: 16)),
+          backgroundColor: Colors.white, elevation: 0.5, iconTheme: const IconThemeData(color: Colors.black)
+      ) : null,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -281,12 +279,14 @@ class _PMMasterPageState extends State<PMMasterPage> {
                       if (!isTablet) const SizedBox(width: 260, child: SecondaryMastersSidebar(activePage: 'PM Master')),
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(25),
+                          padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (isTablet) const MobileSecondaryMenu(activePage: 'PM Master'),
-                              const Text("Packaging Raw Material List", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
+                              const SizedBox(height: 10),
+                              // RESPONSIVE TITLE AND BUTTON
+                              _buildPageHeader(isTablet),
                               const SizedBox(height: 20),
                               _buildTopActionRow(isTablet),
                               const SizedBox(height: 20),
@@ -306,7 +306,53 @@ class _PMMasterPageState extends State<PMMasterPage> {
     );
   }
 
+  Widget _buildPageHeader(bool isTablet) {
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 15,
+      runSpacing: 15,
+      children: [
+        const Text("Packaging Raw Material List", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
+        if (isTablet)
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () => _showMaterialDialog(),
+              icon: const Icon(Icons.add, size: 16, color: Colors.white),
+              label: const Text("Create New Material", style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1), elevation: 0, padding: const EdgeInsets.symmetric(vertical: 12)),
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _buildTopActionRow(bool isTablet) {
+    if (isTablet) {
+      return Column(
+        children: [
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: "Search by name...",
+              prefixIcon: const Icon(Icons.search, size: 18),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
+              contentPadding: const EdgeInsets.symmetric(vertical: 0),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(child: _headerActionBtn("Import", Icons.file_upload_outlined, Colors.green, _showImportDialog)),
+              const SizedBox(width: 10),
+              Expanded(child: _headerActionBtn("Export", Icons.file_download_outlined, Colors.black54, () {})),
+            ],
+          )
+        ],
+      );
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -318,7 +364,7 @@ class _PMMasterPageState extends State<PMMasterPage> {
             decoration: const InputDecoration(hintText: "Search by name...", prefixIcon: Icon(Icons.search, size: 18), border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 10)),
           ),
         ),
-        if (!isTablet) Row(
+        Row(
           children: [
             _headerActionBtn("Import Excel", Icons.file_upload_outlined, Colors.green, _showImportDialog),
             const SizedBox(width: 10),
@@ -349,31 +395,35 @@ class _PMMasterPageState extends State<PMMasterPage> {
     final paginatedData = _getPaginatedData();
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
-      child: Column(
-        children: [
-          DataTable(
-            headingTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-            dataRowMinHeight: 50, dataRowMaxHeight: 50,
-            columns: const [
-              DataColumn(label: Text('Name')),
-              DataColumn(label: Text('Opening Stock')),
-              DataColumn(label: Text('Unit')),
-              DataColumn(label: Text('Actions')),
-            ],
-            rows: paginatedData.map((m) => DataRow(cells: [
-              DataCell(Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-              DataCell(Text(m.openingStock.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-              DataCell(Text(m.unit, style: const TextStyle(fontSize: 13))),
-              DataCell(Row(children: [
-                _actionIconBtn(Icons.edit_outlined, Colors.blue, () => _showMaterialDialog(material: m)),
-                const SizedBox(width: 8),
-                _actionIconBtn(Icons.delete_outline, Colors.red, _showDeleteDialog),
-              ])),
-            ])).toList(),
-          ),
-          _buildPaginationControls(),
-        ],
+      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
+      // HORIZONTAL SCROLL IS THE FIX FOR OVERFLOW
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Column(
+          children: [
+            DataTable(
+              headingTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+              dataRowMinHeight: 50, dataRowMaxHeight: 50,
+              columns: const [
+                DataColumn(label: Text('Name')),
+                DataColumn(label: Text('Opening Stock')),
+                DataColumn(label: Text('Unit')),
+                DataColumn(label: Text('Actions')),
+              ],
+              rows: paginatedData.map((m) => DataRow(cells: [
+                DataCell(Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                DataCell(Text(m.openingStock.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                DataCell(Text(m.unit, style: const TextStyle(fontSize: 13))),
+                DataCell(Row(children: [
+                  _actionIconBtn(Icons.edit_outlined, Colors.blue, () => _showMaterialDialog(material: m)),
+                  const SizedBox(width: 8),
+                  _actionIconBtn(Icons.delete_outline, Colors.red, _showDeleteDialog),
+                ])),
+              ])).toList(),
+            ),
+            _buildPaginationControls(),
+          ],
+        ),
       ),
     );
   }

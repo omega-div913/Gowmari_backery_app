@@ -3,7 +3,10 @@ import 'dashboard_screen.dart';
 import 'vendor_master_page.dart';
 import 'material_type_master_page.dart'; 
 import 'section_master_page.dart'; 
-import 'pm_master_page.dart'; 
+import 'pm_master_page.dart';
+import 'pm_vendor_master_page.dart'; 
+import 'pm_uom_page.dart';
+import 'rm_master_page.dart';
 
 class MastersPage extends StatefulWidget {
   const MastersPage({super.key});
@@ -449,7 +452,7 @@ class SecondaryMastersSidebar extends StatelessWidget {
             padding: EdgeInsets.only(left: 10, bottom: 10),
             child: Text("RAW MATERIAL", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue)),
           ),
-          _secMenuItem(context, Icons.inventory_2_outlined, "RM Master", isActive: activePage == 'RM Master'),
+          _secMenuItem(context, Icons.inventory_2_outlined, "RM Master", isActive: activePage == 'RM Master', destination: const RMMasterPage()),
           _secMenuItem(context, Icons.sell_outlined, "Material Type Master", destination: const MaterialTypeMasterPage(), isActive: activePage == 'Material Type Master'),
           _secMenuItem(context, Icons.group_outlined, "Vendor Master", destination: const VendorMasterPage(), isActive: activePage == 'Vendor Master'), 
           _secMenuItem(context, Icons.domain_outlined, "Section Master", destination: const SectionMasterPage(), isActive: activePage == 'Section Master'),
@@ -462,8 +465,8 @@ class SecondaryMastersSidebar extends StatelessWidget {
           ),
         
           _secMenuItem(context, Icons.inventory_2_outlined, "PM Master", destination: const PMMasterPage(), isActive: activePage == 'PM Master'),
-          _secMenuItem(context, Icons.group_outlined, "PM Vendor Master", isActive: activePage == 'PM Vendor Master'),
-          _secMenuItem(context, Icons.straighten, "PM UOM", isActive: activePage == 'PM UOM'),
+          _secMenuItem(context, Icons.group_outlined, "PM Vendor Master", isActive: activePage == 'PM Vendor Master', destination: const PMVendorMasterPage()), 
+          _secMenuItem(context, Icons.straighten, "PM UOM", isActive: activePage == 'PM UOM', destination: const PMUOMPage()),
         ],
       ),
     );
