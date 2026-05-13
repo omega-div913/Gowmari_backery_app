@@ -18,6 +18,20 @@ class MastersPage extends StatefulWidget {
 class _MastersPageState extends State<MastersPage> {
   final List<String> units = ['bag', 'box', 'gram', 'kg', 'ltr', 'ml', 'nos', 'pcs', 'per roll', 'pkt'];
 
+  // ==========================================
+  // PAGINATION STATE
+  // ==========================================
+  int _currentPage = 1;
+  int _itemsPerPage = 5; // Set to 5 to demonstrate pagination with 10 items
+
+  List<String> get paginatedUnits {
+    int startIndex = (_currentPage - 1) * _itemsPerPage;
+    int endIndex = startIndex + _itemsPerPage;
+    if (startIndex >= units.length) return [];
+    if (endIndex > units.length) endIndex = units.length;
+    return units.sublist(startIndex, endIndex);
+  }
+
   void _showCreateUnitDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -373,9 +387,9 @@ class _MastersPageState extends State<MastersPage> {
             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
             decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade300))),
             child: const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Unit Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                SizedBox(width: 60, child: Text("S.No", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
+                Expanded(child: Text("Unit Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
                 Text("Actions", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
               ],
             ),
@@ -383,18 +397,20 @@ class _MastersPageState extends State<MastersPage> {
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: units.length,
+            itemCount: paginatedUnits.length,
             separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade200),
             itemBuilder: (context, index) {
+              int sNo = index + 1 + (_currentPage - 1) * _itemsPerPage;
+              String currentUnit = paginatedUnits[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(units[index], style: const TextStyle(fontSize: 14, color: Colors.black87)),
+                    SizedBox(width: 60, child: Text("$sNo", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87))),
+                    Expanded(child: Text(currentUnit, style: const TextStyle(fontSize: 14, color: Colors.black87))),
                     Row(
                       children: [
-                        _actionBtn(Icons.edit_outlined, Colors.blue, () => _showEditUnitDialog(context, units[index])),
+                        _actionBtn(Icons.edit_outlined, Colors.blue, () => _showEditUnitDialog(context, currentUnit)),
                         const SizedBox(width: 8),
                         _actionBtn(Icons.delete_outline, Colors.red, () => _showDeleteDialog(context)),
                       ],
@@ -404,6 +420,7 @@ class _MastersPageState extends State<MastersPage> {
               );
             },
           ),
+          _buildPagination(),
         ],
       ),
     );
@@ -423,6 +440,54 @@ class _MastersPageState extends State<MastersPage> {
       ),
     );
   }
+
+  // --- Pagination Widgets ---
+  Widget _buildPagination() {
+    int totalPages = (units.length / _itemsPerPage).ceil();
+    if (totalPages <= 1) totalPages = 1;
+
+    List<Widget> pageButtons = [];
+    
+    pageButtons.add(_pageBox("Prev", false, () {
+      if (_currentPage > 1) setState(() => _currentPage--);
+    }));
+    pageButtons.add(const SizedBox(width: 5));
+
+    for (int i = 1; i <= totalPages; i++) {
+      pageButtons.add(_pageBox("$i", _currentPage == i, () {
+        setState(() => _currentPage = i);
+      }));
+      if (i < totalPages) pageButtons.add(const SizedBox(width: 5));
+    }
+
+    pageButtons.add(const SizedBox(width: 5));
+    pageButtons.add(_pageBox("Next", false, () {
+      if (_currentPage < totalPages) setState(() => _currentPage++);
+    }));
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0), 
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 2, 
+        runSpacing: 8,
+        children: pageButtons
+      )
+    );
+  }
+
+  Widget _pageBox(String t, bool active, VoidCallback onTap) => InkWell(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), 
+      decoration: BoxDecoration(
+        color: active ? Colors.blue : Colors.white, 
+        border: Border.all(color: active ? Colors.blue : Colors.grey.shade300), 
+        borderRadius: BorderRadius.circular(4)
+      ), 
+      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.blue, fontSize: 12, fontWeight: FontWeight.bold))
+    ),
+  );
 }
 
 // ==========================================
@@ -624,7 +689,6 @@ class MasterTopbar extends StatelessWidget {
 // ==========================================
 // 5. MOBILE SECONDARY MENU
 // ==========================================
-// masters_page.dart-la intha class-ah replace pannunga
 class MobileSecondaryMenu extends StatelessWidget {
   final String activePage;
   
@@ -638,7 +702,7 @@ class MobileSecondaryMenu extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       child: Row(
         children: [
-          _mobChip(context, "RM Master", isActive: activePage == 'RM Master'), 
+          _mobChip(context, "RM Master", destination: const RMMasterPage(), isActive: activePage == 'RM Master'), 
           _mobChip(context, "Material Type Master", destination: const MaterialTypeMasterPage(), isActive: activePage == 'Material Type Master'), 
           _mobChip(context, "Vendor Master", destination: const VendorMasterPage(), isActive: activePage == 'Vendor Master'), 
           _mobChip(context, "Section Master", destination: const SectionMasterPage(), isActive: activePage == 'Section Master'),

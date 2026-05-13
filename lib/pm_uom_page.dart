@@ -14,6 +14,20 @@ class _PMUOMPageState extends State<PMUOMPage> {
   final List<String> units = ['Grams', 'gram', 'pkt', 'pcs', 'ltr', 'per roll', 'box', 'kg'];
 
   // ==========================================
+  // PAGINATION STATE
+  // ==========================================
+  int _currentPage = 1;
+  final int _itemsPerPage = 5; // Set to 5 so you can see the pagination work with 8 items
+
+  List<String> get paginatedUnits {
+    int startIndex = (_currentPage - 1) * _itemsPerPage;
+    int endIndex = startIndex + _itemsPerPage;
+    if (startIndex >= units.length) return [];
+    if (endIndex > units.length) endIndex = units.length;
+    return units.sublist(startIndex, endIndex);
+  }
+
+  // ==========================================
   // 1. DELETE DIALOG (EXACT 2nd IMAGE DESIGN)
   // ==========================================
   void _showDeleteDialog() {
@@ -209,6 +223,7 @@ class _PMUOMPageState extends State<PMUOMPage> {
             decoration: BoxDecoration(color: Colors.grey.shade50, border: Border(bottom: BorderSide(color: Colors.grey.shade300))),
             child: const Row(
               children: [
+                SizedBox(width: 50, child: Text("S.No", style: TextStyle(fontWeight: FontWeight.bold))), // <-- Added S.No
                 Expanded(child: Text("Unit Name", style: TextStyle(fontWeight: FontWeight.bold))),
                 Text("Actions", style: TextStyle(fontWeight: FontWeight.bold)),
               ],
@@ -218,21 +233,23 @@ class _PMUOMPageState extends State<PMUOMPage> {
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: units.length,
+            itemCount: paginatedUnits.length, // <-- Changed to paginated list
             separatorBuilder: (c, i) => const Divider(height: 1),
             itemBuilder: (context, index) {
+              int sNo = (_currentPage - 1) * _itemsPerPage + index + 1; // <-- Calculated S.No
+              String currentUnit = paginatedUnits[index];
+
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Row(
                   children: [
-                    Expanded(child: Text(units[index])),
+                    SizedBox(width: 50, child: Text("$sNo", style: const TextStyle(fontWeight: FontWeight.bold))), // <-- Added S.No
+                    Expanded(child: Text(currentUnit)),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _actionIcon(Icons.edit_outlined, Colors.blue, () => _showUnitDialog(currentUnit: units[index])),
+                        _actionIcon(Icons.edit_outlined, Colors.blue, () => _showUnitDialog(currentUnit: currentUnit)),
                         const SizedBox(width: 8),
-                        
-                        // INTHA LINE UPDATE PANNI IRUKEN - Calling Dialog
                         _actionIcon(Icons.delete_outline, Colors.red, _showDeleteDialog),
                       ],
                     ),
@@ -241,6 +258,8 @@ class _PMUOMPageState extends State<PMUOMPage> {
               );
             },
           ),
+          const Divider(height: 1),
+          _buildPagination(), // <-- Added Pagination controls
         ],
       ),
     );
@@ -253,4 +272,64 @@ class _PMUOMPageState extends State<PMUOMPage> {
       child: IconButton(padding: EdgeInsets.zero, icon: Icon(icon, size: 16, color: color), onPressed: onTap),
     );
   }
+
+  // ==========================================
+  // PAGINATION CONTROLS
+  // ==========================================
+  Widget _buildPagination() {
+    int totalPages = (units.length / _itemsPerPage).ceil();
+    if (totalPages <= 1) totalPages = 1;
+
+    List<Widget> pageButtons = [];
+    
+    pageButtons.add(_pageBox("Prev", false, () {
+      if (_currentPage > 1) setState(() => _currentPage--);
+    }));
+    pageButtons.add(const SizedBox(width: 5));
+
+    for (int i = 1; i <= totalPages; i++) {
+      pageButtons.add(_pageBox("$i", _currentPage == i, () {
+        setState(() => _currentPage = i);
+      }));
+      if (i < totalPages) pageButtons.add(const SizedBox(width: 5));
+    }
+
+    pageButtons.add(const SizedBox(width: 5));
+    pageButtons.add(_pageBox("Next", false, () {
+      if (_currentPage < totalPages) setState(() => _currentPage++);
+    }));
+
+    int startRecord = units.isEmpty ? 0 : ((_currentPage - 1) * _itemsPerPage) + 1;
+    int endRecord = _currentPage * _itemsPerPage;
+    if (endRecord > units.length) endRecord = units.length;
+
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("Showing $startRecord to $endRecord of ${units.length} entries", style: const TextStyle(fontSize: 13, color: Colors.grey)),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 2, 
+            runSpacing: 8,
+            children: pageButtons
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _pageBox(String t, bool active, VoidCallback onTap) => InkWell(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), 
+      decoration: BoxDecoration(
+        color: active ? Colors.blue : Colors.white, 
+        border: Border.all(color: active ? Colors.blue : Colors.grey.shade300), 
+        borderRadius: BorderRadius.circular(4)
+      ), 
+      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.blue, fontSize: 12, fontWeight: FontWeight.bold))
+    ),
+  );
 }

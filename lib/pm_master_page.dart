@@ -396,34 +396,43 @@ class _PMMasterPageState extends State<PMMasterPage> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
-      // HORIZONTAL SCROLL IS THE FIX FOR OVERFLOW
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Column(
-          children: [
-            DataTable(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
               headingTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
               dataRowMinHeight: 50, dataRowMaxHeight: 50,
               columns: const [
+                DataColumn(label: Text('S.No')), // <-- Added S.No Column
                 DataColumn(label: Text('Name')),
                 DataColumn(label: Text('Opening Stock')),
                 DataColumn(label: Text('Unit')),
                 DataColumn(label: Text('Actions')),
               ],
-              rows: paginatedData.map((m) => DataRow(cells: [
-                DataCell(Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-                DataCell(Text(m.openingStock.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-                DataCell(Text(m.unit, style: const TextStyle(fontSize: 13))),
-                DataCell(Row(children: [
-                  _actionIconBtn(Icons.edit_outlined, Colors.blue, () => _showMaterialDialog(material: m)),
-                  const SizedBox(width: 8),
-                  _actionIconBtn(Icons.delete_outline, Colors.red, _showDeleteDialog),
-                ])),
-              ])).toList(),
+              rows: paginatedData.asMap().entries.map((entry) {
+                int index = entry.key;
+                PackagingMaterial m = entry.value;
+                int sNo = (_currentPage * _itemsPerPage) + index + 1; // <-- Calculated S.No
+                
+                return DataRow(cells: [
+                  DataCell(Text('$sNo', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), // <-- Added S.No Cell
+                  DataCell(Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                  DataCell(Text(m.openingStock.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                  DataCell(Text(m.unit, style: const TextStyle(fontSize: 13))),
+                  DataCell(Row(children: [
+                    _actionIconBtn(Icons.edit_outlined, Colors.blue, () => _showMaterialDialog(material: m)),
+                    const SizedBox(width: 8),
+                    _actionIconBtn(Icons.delete_outline, Colors.red, _showDeleteDialog),
+                  ])),
+                ]);
+              }).toList(),
             ),
-            _buildPaginationControls(),
-          ],
-        ),
+          ),
+          Divider(height: 1, color: Colors.grey.shade300),
+          _buildPaginationControls(), // <-- Updated Pagination logic below
+        ],
       ),
     );
   }
@@ -438,28 +447,64 @@ class _PMMasterPageState extends State<PMMasterPage> {
 
   Widget _buildPaginationControls() {
     int total = _filteredMaterials.length;
-    int pages = (total / _itemsPerPage).ceil();
+    int totalPages = (total / _itemsPerPage).ceil();
+    if (totalPages <= 1) totalPages = 1;
+
+    List<Widget> pageButtons = [];
+    
+    // Prev Button
+    pageButtons.add(_pageBox("Prev", false, () {
+      if (_currentPage > 0) setState(() => _currentPage--);
+    }));
+    pageButtons.add(const SizedBox(width: 5));
+
+    // Page Numbers
+    for (int i = 0; i < totalPages; i++) {
+      pageButtons.add(_pageBox("${i + 1}", _currentPage == i, () {
+        setState(() => _currentPage = i);
+      }));
+      if (i < totalPages - 1) pageButtons.add(const SizedBox(width: 5));
+    }
+
+    // Next Button
+    pageButtons.add(const SizedBox(width: 5));
+    pageButtons.add(_pageBox("Next", false, () {
+      if (_currentPage < totalPages - 1) setState(() => _currentPage++);
+    }));
+
+    int startItem = total == 0 ? 0 : (_currentPage * _itemsPerPage) + 1;
+    int endItem = (_currentPage + 1) * _itemsPerPage;
+    if (endItem > total) endItem = total;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Showing ${(_currentPage * _itemsPerPage) + 1} to ${(_currentPage + 1) * _itemsPerPage > total ? total : (_currentPage + 1) * _itemsPerPage} of $total records", style: const TextStyle(fontSize: 12, color: Colors.grey)),
-          Row(
-            children: List.generate(pages, (index) => GestureDetector(
-              onTap: () => setState(() => _currentPage = index),
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(color: _currentPage == index ? Colors.blue : Colors.grey.shade200, borderRadius: BorderRadius.circular(4)),
-                child: Text("${index + 1}", style: TextStyle(color: _currentPage == index ? Colors.white : Colors.black)),
-              ),
-            )),
+          Text("Showing $startItem to $endItem of $total entries", style: const TextStyle(fontSize: 13, color: Colors.grey)),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 2, 
+            runSpacing: 8,
+            children: pageButtons
           ),
         ],
       ),
     );
   }
+
+  Widget _pageBox(String t, bool active, VoidCallback onTap) => InkWell(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), 
+      decoration: BoxDecoration(
+        color: active ? Colors.blue : Colors.white, 
+        border: Border.all(color: active ? Colors.blue : Colors.grey.shade300), 
+        borderRadius: BorderRadius.circular(4)
+      ), 
+      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.blue, fontSize: 12, fontWeight: FontWeight.bold))
+    ),
+  );
 
   List<PackagingMaterial> _getPaginatedData() {
     final start = _currentPage * _itemsPerPage;

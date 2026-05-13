@@ -3,20 +3,28 @@ import 'masters_page.dart';
 
 class RawMaterial {
   final String name;
+  final String tamilName;
   final String type;
   final String category;
   final double price;
   final int stock;
+  final int alertQty;
   final String unit;
+  final String secondaryUnit;
+  final String purchaseType;
   final List<String> tags;
 
   RawMaterial({
     required this.name,
+    this.tamilName = "",
     required this.type,
     required this.category,
     required this.price,
     required this.stock,
+    this.alertQty = 0,
     required this.unit,
+    this.secondaryUnit = "None",
+    this.purchaseType = "Regular",
     required this.tags,
   });
 }
@@ -30,217 +38,98 @@ class RMMasterPage extends StatefulWidget {
 
 class _RMMasterPageState extends State<RMMasterPage> {
   final List<RawMaterial> materials = [
-    RawMaterial(name: "1 kg P.P Cover", type: "PACKING MATERIAL", category: "Both", price: 377.60, stock: 499, unit: "kg", tags: ["KITCHEN", "PACKING", "DONATION"]),
-    RawMaterial(name: "1 kg Birthday Cake Box", type: "PACKING MATERIAL", category: "Both", price: 18.48, stock: 465, unit: "pcs", tags: ["PACKING", "DONATION"]),
-    RawMaterial(name: "1 kg Cake Bag", type: "PACKING MATERIAL", category: "Both", price: 8.62, stock: 344, unit: "pcs", tags: ["PACKING", "DONATION"]),
-    RawMaterial(name: "1 kg Square Cake Bottom", type: "PACKING MATERIAL", category: "Factory", price: 8.79, stock: 274, unit: "pcs", tags: ["BAKERY", "DONATION"]),
-    RawMaterial(name: "1 kg Sweet Box", type: "PACKING MATERIAL", category: "Both", price: 16.80, stock: 360, unit: "pcs", tags: ["PACKING", "DONATION"]),
-    RawMaterial(name: "1 kg Sweet Container", type: "PACKING MATERIAL", category: "Both", price: 17.50, stock: 465, unit: "pcs", tags: ["PACKING", "DONATION"]),
-    RawMaterial(name: "1.5 kg Square Cake Bottom", type: "PACKING MATERIAL", category: "Factory", price: 9.79, stock: 449, unit: "pcs", tags: ["BAKERY"]),
+    RawMaterial(name: "1 kg P.P Cover", tamilName: "", type: "PACKING MATERIAL", category: "Both", price: 377.60, stock: 499, unit: "kg", tags: ["KITCHEN", "PACKING", "DONATION"]),
+    RawMaterial(name: "1 kg Birthday Cake Box", tamilName: "", type: "PACKING MATERIAL", category: "Both", price: 18.48, stock: 465, unit: "pcs", tags: ["PACKING", "DONATION"]),
+    RawMaterial(name: "1 kg Cake Bag", tamilName: "", type: "PACKING MATERIAL", category: "Both", price: 8.62, stock: 344, unit: "pcs", tags: ["PACKING", "DONATION"]),
+    RawMaterial(name: "1 kg Square Cake Bottom", tamilName: "", type: "PACKING MATERIAL", category: "Factory", price: 8.79, stock: 274, unit: "pcs", tags: ["BAKERY", "DONATION"]),
+    RawMaterial(name: "1 kg Sweet Box", tamilName: "", type: "PACKING MATERIAL", category: "Both", price: 16.80, stock: 360, unit: "pcs", tags: ["PACKING", "DONATION"]),
+    RawMaterial(name: "1 kg Sweet Container", tamilName: "", type: "PACKING MATERIAL", category: "Both", price: 17.50, stock: 465, unit: "pcs", tags: ["PACKING", "DONATION"]),
   ];
 
   // ==========================================
-  // CREATE MATERIAL DIALOG (EXACT 2nd IMAGE)
+  // PAGINATION STATE
   // ==========================================
-  void _showCreateMaterialDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Container(
-          width: 850, // wide dialog as per image
-          padding: const EdgeInsets.all(24),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Create Material", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
-                    IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, size: 20)),
-                  ],
-                ),
-                const Divider(),
-                const SizedBox(height: 20),
-                
-                // Material Name and Tamil Name
-                Row(
-                  children: [
-                    Expanded(child: _buildInput("MATERIAL NAME", "Enter material name")),
-                    const SizedBox(width: 20),
-                    Expanded(child: _buildInput("TAMIL NAME", "தமிழ் பெயர்")),
-                  ],
-                ),
-                const SizedBox(height: 20),
+  int _currentPage = 1;
+  int _itemsPerPage = 100;
 
-                // Opening Stock, Alert Qty, Price
-                Row(
-                  children: [
-                    Expanded(child: _buildInput("OPENING STOCK", "0")),
-                    const SizedBox(width: 15),
-                    Expanded(child: _buildInput("ALERT QTY", "0")),
-                    const SizedBox(width: 15),
-                    Expanded(child: _buildInput("PRICE / UNIT (₹)", "0")),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Category and Material Type
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: _buildDropdown("CATEGORY", "Factory", ["Factory", "Bakery", "Both"])),
-                    const SizedBox(width: 20),
-                    Expanded(child: _buildScrollableCheckboxes("MATERIAL TYPE", ["BAKERY", "CHAT MATERIAL", "CLEANING MATERIAL"])),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Purchase Type
-                _buildDropdown("PURCHASE TYPE", "Regular", ["Regular", "Urgent"]),
-                const SizedBox(height: 20),
-
-                // Sections and Sub-sections
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: _buildScrollableCheckboxes("ASSIGN SECTIONS", ["BAKERY", "SWEET", "MURUKKU"])),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("ASSIGN SUB-SECTIONS", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black54)),
-                          const SizedBox(height: 8),
-                          Container(
-                            height: 130, width: double.infinity,
-                            decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6), color: Colors.white),
-                            child: const Center(child: Text("Select a section first", style: TextStyle(color: Colors.grey, fontSize: 13))),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Units
-                Row(
-                  children: [
-                    Expanded(child: _buildDropdown("PRIMARY UNIT", "Select", ["Select", "kg", "pcs", "ltr"])),
-                    const SizedBox(width: 20),
-                    Expanded(child: _buildDropdown("SECONDARY UNIT (OPT)", "None", ["None", "gram", "ml"])),
-                  ],
-                ),
-
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () => Navigator.pop(context), 
-                      style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18)),
-                      child: const Text("Close", style: TextStyle(color: Colors.black87)),
-                    ),
-                    const SizedBox(width: 12),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1), padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18), elevation: 0),
-                      child: const Text("Save Record", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+  List<RawMaterial> get paginatedMaterials {
+    int startIndex = (_currentPage - 1) * _itemsPerPage;
+    int endIndex = startIndex + _itemsPerPage;
+    if (startIndex >= materials.length) return [];
+    if (endIndex > materials.length) endIndex = materials.length;
+    return materials.sublist(startIndex, endIndex);
   }
 
-  // --- Helper Methods ---
-
-  Widget _buildInput(String label, String hint) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black54)),
-        const SizedBox(height: 8),
-        TextField(
-          decoration: InputDecoration(
-            hintText: hint, 
-            hintStyle: const TextStyle(fontSize: 14, color: Colors.grey),
-            border: const OutlineInputBorder(), 
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdown(String label, String val, List<String> items) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black54)),
-        const SizedBox(height: 8),
-        DropdownButtonFormField(
-          value: val,
-          decoration: const InputDecoration(border: OutlineInputBorder(), contentPadding: EdgeInsets.symmetric(horizontal: 12)),
-          items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 14)))).toList(),
-          onChanged: (v) {},
-        ),
-      ],
-    );
-  }
-
-  Widget _buildScrollableCheckboxes(String label, List<String> opts) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black54)),
-        const SizedBox(height: 8),
-        Container(
-          height: 130,
-          decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: opts.map((e) => CheckboxListTile(
-              title: Text(e, style: const TextStyle(fontSize: 13)), 
-              value: false, onChanged: (v) {}, 
-              controlAffinity: ListTileControlAffinity.leading, 
-              dense: true, 
-              visualDensity: const VisualDensity(vertical: -4),
-            )).toList(),
-          ),
-        )
-      ],
-    );
-  }
-
-  // --- No changes to the rest of your original code ---
-
+  // ==========================================
+  // 1. IMPORT EXCEL DIALOG (EXACT IMAGE 2)
+  // ==========================================
   void _showImportDialog() {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Container(
-          width: 400, padding: const EdgeInsets.all(24),
+          width: 420,
+          padding: const EdgeInsets.all(24),
           child: Column(
-            mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text("Bulk Import (.xlsx)", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
-              const SizedBox(height: 15),
-              SizedBox(width: double.infinity, child: OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300), padding: const EdgeInsets.symmetric(vertical: 12)), child: const Text("Download Template", style: TextStyle(color: Colors.black87)))),
-              const SizedBox(height: 15),
-              const Text("SELECT EXCEL FILE", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black54)),
-              const SizedBox(height: 5),
-              Container(height: 40, decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)), child: Row(children: [Container(padding: const EdgeInsets.symmetric(horizontal: 12), decoration: BoxDecoration(color: Colors.grey.shade100, border: Border(right: BorderSide(color: Colors.grey.shade300))), alignment: Alignment.center, child: const Text("Choose File", style: TextStyle(fontSize: 12))), const SizedBox(width: 10), const Text("No file chosen", style: TextStyle(fontSize: 12, color: Colors.grey))])),
+              const SizedBox(height: 16),
+              
+              // Download Template Button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () {}, 
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    side: BorderSide(color: Colors.grey.shade300),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  ),
+                  child: const Text("Download Template", style: TextStyle(color: Colors.black87, fontSize: 13)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Select File Section
+              const Text("SELECT EXCEL FILE", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))),
+              const SizedBox(height: 6),
+              Container(
+                height: 40,
+                decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(color: const Color(0xFFF8F9FA), border: Border(right: BorderSide(color: Colors.grey.shade300))),
+                      alignment: Alignment.center,
+                      child: const Text("Choose File", style: TextStyle(fontSize: 12, color: Colors.black87)),
+                    ),
+                    const SizedBox(width: 10),
+                    const Text("No file chosen", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  ],
+                ),
+              ),
               const SizedBox(height: 20),
-              SizedBox(width: double.infinity, child: ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF007BFF), elevation: 0, padding: const EdgeInsets.symmetric(vertical: 12)), child: const Text("Upload Data", style: TextStyle(color: Colors.white)))),
+              
+              // Upload Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context), 
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0D6EFD), // Bootstrap blue
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    elevation: 0,
+                  ),
+                  child: const Text("Upload Data", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                ),
+              ),
             ],
           ),
         ),
@@ -248,28 +137,49 @@ class _RMMasterPageState extends State<RMMasterPage> {
     );
   }
 
+  // ==========================================
+  // 2. DELETE DIALOG (EXACT IMAGE 3)
+  // ==========================================
   void _showDeleteDialog() {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Container(
-          width: 400, padding: const EdgeInsets.all(30),
+          width: 400,
+          padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(height: 80, width: 80, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFF8BB86), width: 3)), child: const Center(child: Text("!", style: TextStyle(fontSize: 45, color: Color(0xFFF8BB86), fontWeight: FontWeight.bold)))),
+              // Orange Exclamation Icon
+              Container(
+                height: 75, width: 75,
+                decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFF8BB86), width: 3)),
+                child: const Center(child: Text("!", style: TextStyle(fontSize: 45, color: Color(0xFFF8BB86), fontWeight: FontWeight.w300))),
+              ),
               const SizedBox(height: 20),
               const Text("Are you sure?", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)),
               const SizedBox(height: 8),
-              const Text("This will also delete associated stock records!", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey, fontSize: 14)),
-              const SizedBox(height: 25),
+              const Text("This will also delete associated stock records!", textAlign: TextAlign.center, style: TextStyle(color: Color(0xFF6C757D), fontSize: 13)),
+              const SizedBox(height: 24),
+              
+              // Action Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC3545), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12)), child: const Text("Yes, delete it!", style: TextStyle(color: Colors.white))),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context), 
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC3545), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
+                    child: const Text("Yes, delete it!", style: TextStyle(color: Colors.white, fontSize: 13)),
+                  ),
                   const SizedBox(width: 10),
-                  ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6C757D), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12)), child: const Text("Cancel", style: TextStyle(color: Colors.white))),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context), 
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6C757D), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
+                    child: const Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 13)),
+                  ),
                 ],
               )
             ],
@@ -279,11 +189,148 @@ class _RMMasterPageState extends State<RMMasterPage> {
     );
   }
 
+  // ==========================================
+  // 3. CREATE / EDIT DIALOG (EXACT IMAGES 4 & 5)
+  // ==========================================
+  void _showMaterialDialog({RawMaterial? material}) {
+    bool isEdit = material != null;
+    showDialog(
+      context: context,
+      builder: (context) {
+        double screenWidth = MediaQuery.of(context).size.width;
+        bool isDialogMobile = screenWidth < 750;
+
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: Container(
+            width: isDialogMobile ? screenWidth * 0.95 : 780,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(isEdit ? "Edit Material" : "Create Material", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
+                      IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.grey, size: 20)),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        _responsiveRow(isDialogMobile, [
+                          _buildInput("MATERIAL NAME", material?.name ?? ""),
+                          _buildInput("TAMIL NAME", material?.tamilName ?? "தமிழ் பெயர்"),
+                        ]),
+                        const SizedBox(height: 20),
+                        _responsiveRow(isDialogMobile, [
+                          _buildInput("OPENING STOCK", material?.stock.toString() ?? "0"),
+                          _buildInput("ALERT QTY", material?.alertQty.toString() ?? "0"),
+                          _buildInput("PRICE / UNIT (₹)", material?.price.toString() ?? "0"),
+                        ]),
+                        const SizedBox(height: 20),
+                        _responsiveRow(isDialogMobile, [
+                          _buildDropdown("CATEGORY", material?.category ?? "Factory", ["Factory", "Bakery", "Both"]),
+                          _buildCheckList("MATERIAL TYPE", ["BAKERY", "CHAT MATERIAL", "CLEANING MATERIAL", "PACKING MATERIAL"], material?.type),
+                        ]),
+                        const SizedBox(height: 20),
+                        _buildDropdown("PURCHASE TYPE", material?.purchaseType ?? "Regular", ["Regular", "Urgent"]),
+                        const SizedBox(height: 20),
+                        _responsiveRow(isDialogMobile, [
+                          _buildCheckList("ASSIGN SECTIONS", ["BAKERY", "SWEET", "MURUKKU", "KOLUKATTAI"], null),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("ASSIGN SUB-SECTIONS", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))),
+                              const SizedBox(height: 8),
+                              Container(
+                                height: 130, width: double.infinity,
+                                decoration: BoxDecoration(border: Border.all(color: const Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4)),
+                                child: Center(child: Text(isEdit ? "No sub-sections available for selected sections" : "Select a section first", style: const TextStyle(color: Colors.grey, fontSize: 12))),
+                              )
+                            ],
+                          ),
+                        ]),
+                        const SizedBox(height: 20),
+                        _responsiveRow(isDialogMobile, [
+                          _buildDropdown("PRIMARY UNIT", material?.unit ?? "Select", ["Select", "kg", "pcs", "ltr", "pkt"]),
+                          _buildDropdown("SECONDARY UNIT (OPT)", material?.secondaryUnit ?? "None", ["None", "gram", "ml"]),
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
+                const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context), 
+                        style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20), shape: RoundedRectangleBorder(side: const BorderSide(color: Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4))),
+                        child: const Text("Close", style: TextStyle(color: Colors.black87, fontSize: 13)),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D6EFD), padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), elevation: 0),
+                        child: const Text("Save Record", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // --- Form Input Helpers ---
+  Widget _responsiveRow(bool isMobile, List<Widget> children) {
+    if (isMobile) return Column(children: children.map((w) => Padding(padding: const EdgeInsets.only(bottom: 15), child: w)).toList());
+    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: children.map((w) => Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 10), child: w))).toList());
+  }
+
+  Widget _buildInput(String label, String hint) {
+    bool isTamilHint = hint == "தமிழ் பெயர்";
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))),
+      const SizedBox(height: 8),
+      SizedBox(height: 42, child: TextFormField(initialValue: isTamilHint ? "" : hint, decoration: InputDecoration(hintText: isTamilHint ? hint : null, filled: true, fillColor: const Color(0xFFF8F9FA), contentPadding: const EdgeInsets.symmetric(horizontal: 12), border: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4)), enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4))))),
+    ]);
+  }
+
+  Widget _buildDropdown(String label, String val, List<String> items) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))),
+      const SizedBox(height: 8),
+      SizedBox(height: 42, child: DropdownButtonFormField<String>(value: val, decoration: InputDecoration(filled: true, fillColor: const Color(0xFFF8F9FA), contentPadding: const EdgeInsets.symmetric(horizontal: 12), border: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4))), items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 14)))).toList(), onChanged: (v) {})),
+    ]);
+  }
+
+  Widget _buildCheckList(String label, List<String> opts, String? active) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))),
+      const SizedBox(height: 8),
+      Container(height: 130, decoration: BoxDecoration(border: Border.all(color: const Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4), color: const Color(0xFFF8F9FA)), child: ListView(padding: EdgeInsets.zero, children: opts.map((e) => CheckboxListTile(title: Text(e, style: const TextStyle(fontSize: 12)), value: active == e, onChanged: (v) {}, controlAffinity: ListTileControlAffinity.leading, dense: true, visualDensity: const VisualDensity(vertical: -4))).toList())),
+    ]);
+  }
+
+  // --- Main Page Build ---
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    bool isMobile = screenWidth < 1100;
-    bool isTablet = screenWidth < 850;
+    bool isMobile = screenWidth < 950;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FE),
@@ -298,9 +345,8 @@ class _RMMasterPageState extends State<RMMasterPage> {
                 if (!isMobile) const MasterTopbar(breadcrumb: "Home / Purchase Section / Masters / Raw Materials"),
                 Expanded(
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (!isTablet) const SizedBox(width: 260, child: SecondaryMastersSidebar(activePage: 'RM Master')),
+                      if (!isMobile) const SizedBox(width: 260, child: SecondaryMastersSidebar(activePage: 'RM Master')),
                       Expanded(
                         child: SingleChildScrollView(
                           padding: const EdgeInsets.all(20),
@@ -309,9 +355,9 @@ class _RMMasterPageState extends State<RMMasterPage> {
                             children: [
                               const Text("Raw Material List", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
                               const SizedBox(height: 20),
-                              _buildTopControls(isTablet),
+                              _buildTopControls(isMobile),
                               const SizedBox(height: 20),
-                              _buildTableContainer(),
+                              isMobile ? _buildMobileList() : _buildTableContainer(),
                             ],
                           ),
                         ),
@@ -327,75 +373,102 @@ class _RMMasterPageState extends State<RMMasterPage> {
     );
   }
 
-  Widget _buildTopControls(bool isTablet) {
+  Widget _buildTopControls(bool isMobile) {
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(width: isTablet ? 200 : 350, height: 40, decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)), child: const TextField(decoration: InputDecoration(hintText: "Search by name...", prefixIcon: Icon(Icons.search, size: 18), border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 10)))),
-            if (!isTablet) Row(
-              children: [
-                _headerBtn("Import Excel", Icons.file_upload_outlined, Colors.green, _showImportDialog),
-                const SizedBox(width: 10),
-                _headerBtn("Export Excel", Icons.file_download_outlined, Colors.black54, () {}),
-                const SizedBox(width: 10),
-                ElevatedButton.icon(
-                  onPressed: _showCreateMaterialDialog, 
-                  icon: const Icon(Icons.add, size: 16, color: Colors.white),
-                  label: const Text("Create New Material", style: TextStyle(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1)),
-                ),
-              ],
-            )
+            Expanded(child: Container(height: 40, decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)), child: const TextField(decoration: InputDecoration(hintText: "Search by name...", prefixIcon: Icon(Icons.search, size: 18), border: InputBorder.none, contentPadding: EdgeInsets.only(top: 8))))),
+            if (!isMobile) ...[
+              const SizedBox(width: 10),
+              _headerBtn("Import Excel", Icons.file_upload_outlined, Colors.green, _showImportDialog),
+              const SizedBox(width: 10),
+              _headerBtn("Export Excel", Icons.file_download_outlined, Colors.black54, () {}),
+              const SizedBox(width: 10),
+              ElevatedButton.icon(onPressed: () => _showMaterialDialog(), icon: const Icon(Icons.add, size: 16, color: Colors.white), label: const Text("Create New Material", style: TextStyle(color: Colors.white)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)))),
+            ]
           ],
         ),
+        if (isMobile) Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: () => _showMaterialDialog(), icon: const Icon(Icons.add, size: 16, color: Colors.white), label: const Text("Create New", style: TextStyle(color: Colors.white)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1)))),
+        ),
         const SizedBox(height: 15),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Row(children: [
             const Text("Show: ", style: TextStyle(fontSize: 12, color: Colors.grey)),
-            Container(height: 30, padding: const EdgeInsets.symmetric(horizontal: 8), decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), child: const Center(child: Text("100", style: TextStyle(fontSize: 12)))),
-            const SizedBox(width: 15),
-            Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(4)), child: const Text("Showing 100 of 665", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
-          ],
-        )
+            Container(
+              height: 28, padding: const EdgeInsets.symmetric(horizontal: 8), 
+              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), 
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<int>(
+                  value: _itemsPerPage,
+                  icon: const Icon(Icons.arrow_drop_down, size: 16),
+                  style: const TextStyle(fontSize: 12, color: Colors.black87),
+                  onChanged: (int? newValue) {
+                    setState(() {
+                      _itemsPerPage = newValue!;
+                      _currentPage = 1; // Reset to page 1 on limit change
+                    });
+                  },
+                  items: <int>[5, 10, 50, 100].map<DropdownMenuItem<int>>((int value) {
+                    return DropdownMenuItem<int>(
+                      value: value,
+                      child: Text(value.toString()),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ]),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), 
+            decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(4)), 
+            child: Text("Showing ${paginatedMaterials.length} of ${materials.length}", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))
+          ),
+        ])
       ],
     );
   }
 
-  Widget _headerBtn(String label, IconData icon, Color color, VoidCallback onTap) {
-    return OutlinedButton.icon(onPressed: onTap, icon: Icon(icon, size: 16, color: color), label: Text(label, style: TextStyle(color: color, fontSize: 12)), style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300)));
-  }
-
   Widget _buildTableContainer() {
     return Container(
-      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: const Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(8)),
       child: Column(
         children: [
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              headingTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-              dataRowMinHeight: 65, dataRowMaxHeight: 75,
+              headingRowHeight: 50,
+              dataRowMaxHeight: 70,
               columns: const [
-                DataColumn(label: Text('Name & Tamil Name')),
-                DataColumn(label: Text('Type')),
-                DataColumn(label: Text('Category')),
-                DataColumn(label: Text('Price (₹)')),
-                DataColumn(label: Text('Stock')),
-                DataColumn(label: Text('Units')),
-                DataColumn(label: Text('Actions')),
+                DataColumn(label: Text('S.No', style: TextStyle(fontWeight: FontWeight.bold))), // <-- Added S.No Column
+                DataColumn(label: Text('Name & Tamil Name', style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(label: Text('Type', style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(label: Text('Category', style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(label: Text('Price (₹)', style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(label: Text('Stock', style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(label: Text('Units', style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(label: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold))),
               ],
-              rows: materials.map((m) => DataRow(cells: [
-                DataCell(Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), const SizedBox(height: 4), Wrap(children: m.tags.map((t) => Container(margin: const EdgeInsets.only(right: 5), padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: Colors.grey.shade100, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), child: Text(t, style: const TextStyle(fontSize: 9, color: Colors.grey)))).toList())])),
-                DataCell(Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(12)), child: Text(m.type, style: const TextStyle(color: Colors.blue, fontSize: 9, fontWeight: FontWeight.bold)))),
-                DataCell(Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: m.category == "Factory" ? Colors.cyan.shade50 : Colors.blue.shade50, borderRadius: BorderRadius.circular(12)), child: Text(m.category, style: TextStyle(color: m.category == "Factory" ? Colors.cyan : Colors.blue, fontSize: 9, fontWeight: FontWeight.bold)))),
-                DataCell(Text("₹${m.price.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold))),
-                DataCell(Text("${m.stock}", style: const TextStyle(fontWeight: FontWeight.bold))),
-                DataCell(Text(m.unit)),
-                DataCell(Row(children: [_actionIcon(Icons.edit_outlined, Colors.blue, () {}), const SizedBox(width: 8), _actionIcon(Icons.delete_outline, Colors.red, _showDeleteDialog)])),
-              ])).toList(),
+              rows: paginatedMaterials.asMap().entries.map((entry) {
+                int index = entry.key + (_currentPage - 1) * _itemsPerPage;
+                RawMaterial m = entry.value;
+                return DataRow(cells: [
+                  DataCell(Text('${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold))), // <-- Added S.No Cell
+                  DataCell(Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 4),
+                    Wrap(spacing: 5, children: m.tags.map((t) => Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: Colors.grey.shade100, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), child: Text(t, style: const TextStyle(fontSize: 9, color: Colors.grey)))).toList()),
+                  ])),
+                  DataCell(Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: const Color(0xFFE3F2FD), borderRadius: BorderRadius.circular(12)), child: Text(m.type, style: const TextStyle(color: Color(0xFF1E88E5), fontSize: 9, fontWeight: FontWeight.bold)))),
+                  DataCell(Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: const Color(0xFFE0F7FA), borderRadius: BorderRadius.circular(12)), child: Text(m.category, style: const TextStyle(color: Color(0xFF00ACC1), fontSize: 9, fontWeight: FontWeight.bold)))),
+                  DataCell(Text("₹${m.price}", style: const TextStyle(fontWeight: FontWeight.bold))),
+                  DataCell(Text("${m.stock}", style: const TextStyle(fontWeight: FontWeight.bold))),
+                  DataCell(Text(m.unit)),
+                  DataCell(Row(children: [_actionIcon(Icons.edit_outlined, Colors.blue, () => _showMaterialDialog(material: m)), const SizedBox(width: 8), _actionIcon(Icons.delete_outline, Colors.red, _showDeleteDialog)])),
+                ]);
+              }).toList(),
             ),
           ),
           _buildPagination(),
@@ -404,15 +477,80 @@ class _RMMasterPageState extends State<RMMasterPage> {
     );
   }
 
+  Widget _buildMobileList() {
+    return Column(
+      children: paginatedMaterials.asMap().entries.map((entry) {
+        int index = entry.key + (_currentPage - 1) * _itemsPerPage;
+        RawMaterial m = entry.value;
+        return Card(
+          color: Colors.white, elevation: 0, margin: const EdgeInsets.only(bottom: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: Colors.grey.shade200)),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Expanded(child: Text("${index + 1}. ${m.name}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))), // <-- Added S.No
+                  Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(4)), child: Text(m.type, style: const TextStyle(color: Colors.blue, fontSize: 8, fontWeight: FontWeight.bold))),
+                ]),
+                const SizedBox(height: 10),
+                Wrap(spacing: 5, children: m.tags.map((t) => Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: Colors.grey.shade100, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), child: Text(t, style: const TextStyle(fontSize: 9, color: Colors.grey)))).toList()),
+                const Divider(height: 25),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Text("Price: ₹${m.price}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  Row(children: [_actionIcon(Icons.edit_outlined, Colors.blue, () => _showMaterialDialog(material: m)), const SizedBox(width: 10), _actionIcon(Icons.delete_outline, Colors.red, _showDeleteDialog)])
+                ])
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _headerBtn(String l, IconData i, Color c, VoidCallback t) => OutlinedButton.icon(onPressed: t, icon: Icon(i, size: 16, color: c), label: Text(l, style: TextStyle(color: c, fontSize: 12)), style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))));
+  Widget _actionIcon(IconData i, Color c, VoidCallback t) => Container(width: 30, height: 30, decoration: BoxDecoration(border: Border.all(color: c.withOpacity(0.3)), borderRadius: BorderRadius.circular(4)), child: IconButton(padding: EdgeInsets.zero, icon: Icon(i, size: 16, color: c), onPressed: t));
+  
+  // Functional Pagination
   Widget _buildPagination() {
-    return Padding(padding: const EdgeInsets.all(16.0), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [_pageBtn("Prev", false), const SizedBox(width: 5), _pageBtn("1", true), _pageBtn("2", false), _pageBtn("3", false), _pageBtn("4", false), _pageBtn("5", false), _pageBtn("6", false), _pageBtn("7", false), const SizedBox(width: 5), _pageBtn("Next", false)]));
+    int totalPages = (materials.length / _itemsPerPage).ceil();
+    if (totalPages <= 1) totalPages = 1; // Show at least 1 page
+
+    List<Widget> pageButtons = [];
+    
+    // Prev Button
+    pageButtons.add(_pageBox("Prev", false, () {
+      if (_currentPage > 1) setState(() => _currentPage--);
+    }));
+    pageButtons.add(const SizedBox(width: 5));
+
+    // Page Numbers
+    for (int i = 1; i <= totalPages; i++) {
+      pageButtons.add(_pageBox("$i", _currentPage == i, () {
+        setState(() => _currentPage = i);
+      }));
+      if (i < totalPages) pageButtons.add(const SizedBox(width: 5));
+    }
+
+    // Next Button
+    pageButtons.add(const SizedBox(width: 5));
+    pageButtons.add(_pageBox("Next", false, () {
+      if (_currentPage < totalPages) setState(() => _currentPage++);
+    }));
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0), 
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: pageButtons)
+    );
   }
 
-  Widget _pageBtn(String text, bool isActive) {
-    return Container(margin: const EdgeInsets.symmetric(horizontal: 2), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), decoration: BoxDecoration(color: isActive ? Colors.blue : Colors.white, border: Border.all(color: isActive ? Colors.blue : Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), child: Text(text, style: TextStyle(color: isActive ? Colors.white : Colors.blue, fontSize: 12, fontWeight: FontWeight.bold)));
-  }
-
-  Widget _actionIcon(IconData icon, Color color, VoidCallback onTap) {
-    return Container(width: 30, height: 30, decoration: BoxDecoration(border: Border.all(color: color.withOpacity(0.5)), borderRadius: BorderRadius.circular(4)), child: IconButton(padding: EdgeInsets.zero, icon: Icon(icon, size: 16, color: color), onPressed: onTap));
-  }
+  Widget _pageBox(String t, bool active, VoidCallback onTap) => InkWell(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), 
+      decoration: BoxDecoration(color: active ? Colors.blue : Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), 
+      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.blue, fontSize: 11, fontWeight: FontWeight.bold))
+    ),
+  );
 }

@@ -29,6 +29,20 @@ class _PMVendorMasterPageState extends State<PMVendorMasterPage> {
   ];
 
   // ==========================================
+  // PAGINATION STATE
+  // ==========================================
+  int _currentPage = 1;
+  final int _itemsPerPage = 10;
+
+  List<Vendor> get paginatedVendors {
+    int startIndex = (_currentPage - 1) * _itemsPerPage;
+    int endIndex = startIndex + _itemsPerPage;
+    if (startIndex >= vendors.length) return [];
+    if (endIndex > vendors.length) endIndex = vendors.length;
+    return vendors.sublist(startIndex, endIndex);
+  }
+
+  // ==========================================
   // 1. CREATE / EDIT DIALOG (2nd & 3rd Image)
   // ==========================================
   void _showVendorDialog({Vendor? vendor}) {
@@ -225,7 +239,6 @@ class _PMVendorMasterPageState extends State<PMVendorMasterPage> {
                 decoration: InputDecoration(hintText: "Search by name...", prefixIcon: Icon(Icons.search, size: 18), border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 10)),
               ),
             ),
-            const Text("Showing 5 of 5 records", style: TextStyle(fontSize: 13, color: Colors.grey)),
           ],
         )
       ],
@@ -236,26 +249,52 @@ class _PMVendorMasterPageState extends State<PMVendorMasterPage> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
-      child: DataTable(
-        headingTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-        columns: const [
-          DataColumn(label: Text('Name')),
-          DataColumn(label: Text('Address')),
-          DataColumn(label: Text('Phone')),
-          DataColumn(label: Text('GST Number')),
-          DataColumn(label: Text('Actions')),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // ADDED LayoutBuilder & ConstrainedBox to make DataTable stretch fully
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                  child: DataTable(
+                    headingTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                    columns: const [
+                      DataColumn(label: Text('S.No')), 
+                      DataColumn(label: Text('Name')),
+                      DataColumn(label: Text('Address')),
+                      DataColumn(label: Text('Phone')),
+                      DataColumn(label: Text('GST Number')),
+                      DataColumn(label: Text('Actions')),
+                    ],
+                    rows: paginatedVendors.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      Vendor v = entry.value;
+                      int sNo = (_currentPage - 1) * _itemsPerPage + index + 1; 
+                      
+                      return DataRow(cells: [
+                        DataCell(Text('$sNo', style: const TextStyle(fontWeight: FontWeight.bold))), 
+                        DataCell(Text(v.name)),
+                        DataCell(Text(v.address)),
+                        DataCell(Text(v.phone)),
+                        DataCell(Text(v.gst)),
+                        DataCell(Row(children: [
+                          _actionIcon(Icons.edit_outlined, Colors.blue, () => _showVendorDialog(vendor: v)),
+                          const SizedBox(width: 8),
+                          _actionIcon(Icons.delete_outline, Colors.red, _showDeleteDialog),
+                        ])),
+                      ]);
+                    }).toList(),
+                  ),
+                ),
+              );
+            }
+          ),
+          const Divider(height: 1),
+          _buildPagination(), 
         ],
-        rows: vendors.map((v) => DataRow(cells: [
-          DataCell(Text(v.name)),
-          DataCell(Text(v.address)),
-          DataCell(Text(v.phone)),
-          DataCell(Text(v.gst)),
-          DataCell(Row(children: [
-            _actionIcon(Icons.edit_outlined, Colors.blue, () => _showVendorDialog(vendor: v)),
-            const SizedBox(width: 8),
-            _actionIcon(Icons.delete_outline, Colors.red, _showDeleteDialog),
-          ])),
-        ])).toList(),
       ),
     );
   }
@@ -267,4 +306,62 @@ class _PMVendorMasterPageState extends State<PMVendorMasterPage> {
       child: IconButton(padding: EdgeInsets.zero, icon: Icon(icon, size: 16, color: color), onPressed: onTap),
     );
   }
+
+  // --- NEW PAGINATION CONTROLS ---
+  Widget _buildPagination() {
+    int totalPages = (vendors.length / _itemsPerPage).ceil();
+    if (totalPages <= 1) totalPages = 1;
+
+    List<Widget> pageButtons = [];
+    
+    pageButtons.add(_pageBox("Prev", false, () {
+      if (_currentPage > 1) setState(() => _currentPage--);
+    }));
+    pageButtons.add(const SizedBox(width: 5));
+
+    for (int i = 1; i <= totalPages; i++) {
+      pageButtons.add(_pageBox("$i", _currentPage == i, () {
+        setState(() => _currentPage = i);
+      }));
+      if (i < totalPages) pageButtons.add(const SizedBox(width: 5));
+    }
+
+    pageButtons.add(const SizedBox(width: 5));
+    pageButtons.add(_pageBox("Next", false, () {
+      if (_currentPage < totalPages) setState(() => _currentPage++);
+    }));
+
+    int startRecord = vendors.isEmpty ? 0 : ((_currentPage - 1) * _itemsPerPage) + 1;
+    int endRecord = _currentPage * _itemsPerPage;
+    if (endRecord > vendors.length) endRecord = vendors.length;
+
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("Showing $startRecord to $endRecord of ${vendors.length} records", style: const TextStyle(fontSize: 13, color: Colors.grey)),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 2, 
+            runSpacing: 8,
+            children: pageButtons
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _pageBox(String t, bool active, VoidCallback onTap) => InkWell(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), 
+      decoration: BoxDecoration(
+        color: active ? Colors.blue : Colors.white, 
+        border: Border.all(color: active ? Colors.blue : Colors.grey.shade300), 
+        borderRadius: BorderRadius.circular(4)
+      ), 
+      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.blue, fontSize: 12, fontWeight: FontWeight.bold))
+    ),
+  );
 }

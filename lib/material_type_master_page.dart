@@ -18,6 +18,18 @@ class _MaterialTypeMasterPageState extends State<MaterialTypeMasterPage> {
     'VADA MATERIAL', 'VEGETABLES'
   ];
 
+  // --- PAGINATION STATE ---
+  int _currentPage = 1;
+  int _itemsPerPage = 5;
+
+  List<String> get paginatedTypes {
+    int startIndex = (_currentPage - 1) * _itemsPerPage;
+    int endIndex = startIndex + _itemsPerPage;
+    if (startIndex >= materialTypes.length) return [];
+    if (endIndex > materialTypes.length) endIndex = materialTypes.length;
+    return materialTypes.sublist(startIndex, endIndex);
+  }
+
   bool isEditing = false;
   String? currentlyEditingType;
   final TextEditingController _typeController = TextEditingController();
@@ -229,50 +241,113 @@ class _MaterialTypeMasterPageState extends State<MaterialTypeMasterPage> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade200))),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
-                Text("Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                Text("Actions", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                SizedBox(width: 50, child: Text("S.No", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), // Added S.No
+                Expanded(child: Text("Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                SizedBox(width: 80, child: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13), textAlign: TextAlign.center)),
               ],
             ),
           ),
           ListView.separated(
-            shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: materialTypes.length,
+            shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: paginatedTypes.length,
             separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade200),
             itemBuilder: (context, index) {
+              int sNo = index + 1 + (_currentPage - 1) * _itemsPerPage;
+              String currentType = paginatedTypes[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(materialTypes[index], style: const TextStyle(fontSize: 13, color: Colors.black87, fontWeight: FontWeight.w600)),
-                    Row(
-                      children: [
-                        _pillButton("Edit", Colors.blue, () => _startEdit(materialTypes[index])),
-                        const SizedBox(width: 10),
-                        _pillButton("Delete", Colors.red, () => _showDeleteDialog(context)),
-                      ],
+                    SizedBox(width: 50, child: Text("$sNo", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87))), // Added S.No Value
+                    Expanded(child: Text(currentType, style: const TextStyle(fontSize: 13, color: Colors.black87, fontWeight: FontWeight.w600))),
+                    SizedBox(
+                      width: 80,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _actionBtn(Icons.edit_outlined, Colors.blue, () => _startEdit(currentType)), // Changed to icon
+                          const SizedBox(width: 8),
+                          _actionBtn(Icons.delete_outline, Colors.red, () => _showDeleteDialog(context)), // Changed to icon
+                        ],
+                      ),
                     ),
                   ],
                 ),
               );
             },
           ),
+          Divider(height: 1, color: Colors.grey.shade200),
+          _buildPagination(), // Added Pagination
         ],
       ),
     );
   }
 
-  Widget _pillButton(String text, Color color, VoidCallback onTap) {
-    return SizedBox(
-      height: 28,
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12), side: BorderSide(color: color.withOpacity(0.4)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+  Widget _actionBtn(IconData icon, Color color, VoidCallback onTap) {
+    return Container(
+      width: 30, height: 30,
+      decoration: BoxDecoration(border: Border.all(color: color.withOpacity(0.5)), borderRadius: BorderRadius.circular(4)),
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        icon: Icon(icon, size: 16, color: color),
         onPressed: onTap,
-        child: Text(text, style: TextStyle(color: color, fontSize: 12)),
       ),
     );
   }
+
+  // --- PAGINATION WIDGET ---
+  Widget _buildPagination() {
+    int totalPages = (materialTypes.length / _itemsPerPage).ceil();
+    if (totalPages <= 1) totalPages = 1;
+
+    List<Widget> pageButtons = [];
+    
+    pageButtons.add(_pageBox("Prev", false, () {
+      if (_currentPage > 1) setState(() => _currentPage--);
+    }));
+    pageButtons.add(const SizedBox(width: 5));
+
+    for (int i = 1; i <= totalPages; i++) {
+      pageButtons.add(_pageBox("$i", _currentPage == i, () {
+        setState(() => _currentPage = i);
+      }));
+      if (i < totalPages) pageButtons.add(const SizedBox(width: 5));
+    }
+
+    pageButtons.add(const SizedBox(width: 5));
+    pageButtons.add(_pageBox("Next", false, () {
+      if (_currentPage < totalPages) setState(() => _currentPage++);
+    }));
+
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("Showing ${paginatedTypes.length} of ${materialTypes.length} entries", style: const TextStyle(fontSize: 13, color: Colors.grey)),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 2, 
+            runSpacing: 8,
+            children: pageButtons
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _pageBox(String t, bool active, VoidCallback onTap) => InkWell(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), 
+      decoration: BoxDecoration(
+        color: active ? Colors.blue : Colors.white, 
+        border: Border.all(color: active ? Colors.blue : Colors.grey.shade300), 
+        borderRadius: BorderRadius.circular(4)
+      ), 
+      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.blue, fontSize: 12, fontWeight: FontWeight.bold))
+    ),
+  );
 }
 
 class SecondaryMastersSidebar extends StatelessWidget {

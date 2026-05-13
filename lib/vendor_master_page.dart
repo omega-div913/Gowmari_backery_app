@@ -342,6 +342,7 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
             decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade300))),
             child: const Row(
               children: [
+                SizedBox(width: 50, child: Text("S.No", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), // Added S.No Column Header
                 Expanded(flex: 3, child: Text("Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
                 Expanded(flex: 4, child: Text("Address", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
                 Expanded(flex: 2, child: Text("Phone", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
@@ -362,6 +363,7 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Row(
                   children: [
+                    SizedBox(width: 50, child: Text("${index + 1}", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87))), // Added S.No Row value
                     Expanded(flex: 3, child: Text(v['name']!, style: const TextStyle(fontSize: 12, color: Colors.black87))),
                     Expanded(flex: 4, child: Text(v['address']!, style: const TextStyle(fontSize: 12, color: Colors.black87), maxLines: 2, overflow: TextOverflow.ellipsis)),
                     Expanded(flex: 2, child: Text(v['phone']!, style: const TextStyle(fontSize: 12, color: Colors.black87))),
