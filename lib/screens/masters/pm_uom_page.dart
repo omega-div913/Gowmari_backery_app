@@ -1,7 +1,7 @@
 // lib/pm_uom_page.dart
 
 import 'package:flutter/material.dart';
-import 'masters_page.dart';
+import 'package:gowmari_mobile/screens/masters/masters_page.dart';
 
 class PMUOMPage extends StatefulWidget {
   const PMUOMPage({super.key});

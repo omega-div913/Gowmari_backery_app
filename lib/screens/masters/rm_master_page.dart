@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'masters_page.dart';
+import 'package:gowmari_mobile/screens/masters/masters_page.dart';
 
 class RawMaterial {
   final String name;

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'dashboard_screen.dart';
-import 'vendor_master_page.dart';
-import 'material_type_master_page.dart'; 
-import 'section_master_page.dart'; 
-import 'pm_master_page.dart';
-import 'pm_vendor_master_page.dart'; 
-import 'pm_uom_page.dart';
-import 'rm_master_page.dart';
+import 'package:gowmari_mobile/screens/dashboard/dashboard_screen.dart';
+import 'package:gowmari_mobile/screens/masters/masters_page.dart';
+import 'package:gowmari_mobile/screens/masters/vendor_master_page.dart';
+import 'package:gowmari_mobile/screens/masters/material_type_master_page.dart'; 
+import 'package:gowmari_mobile/screens/masters/section_master_page.dart'; 
+import 'package:gowmari_mobile/screens/masters/pm_master_page.dart';
+import 'package:gowmari_mobile/screens/masters/pm_vendor_master_page.dart'; 
+import 'package:gowmari_mobile/screens/masters/pm_uom_page.dart';
+import 'package:gowmari_mobile/screens/masters/rm_master_page.dart';
 
 class MastersPage extends StatefulWidget {
   const MastersPage({super.key});
@@ -585,7 +586,7 @@ class MasterPrimarySidebar extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                _navItem(context, Icons.speed, "Overall Dashboard", const DashboardScreen()),
+                _navItem(context, Icons.speed, "Overall Dashboard", DashboardScreen()),
                 const SizedBox(height: 15),
                 _headerItem(Icons.shopping_cart_outlined, "Purchase Section"),
                 const SizedBox(height: 10),

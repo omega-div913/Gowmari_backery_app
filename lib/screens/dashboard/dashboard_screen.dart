@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'masters_page.dart'; // Added import for the Masters page
+import 'package:gowmari_mobile/screens/masters/masters_page.dart'; // Added import for the Masters page
+import 'package:gowmari_mobile/screens/inventory/bakery_products_page.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -172,7 +173,11 @@ class AppSidebar extends StatelessWidget {
                 _subItem(context, Icons.assignment_outlined, "Inventory Audit Entry"),
                 _subItem(context, Icons.delete_outline, "Wastage Management"),
                 _subItem(context, Icons.history, "Reversal History"),
-                _subItem(context, Icons.shopping_cart_checkout, "Bakery Products"),
+                
+                // --- THIS IS THE ONLY LINE THAT CHANGED ---
+                // Added destination: const BakeryProductsPage() 
+                _subItem(context, Icons.shopping_cart_checkout, "Bakery Products", destination: const BakeryProductsPage()),
+                
                 _subItem(context, Icons.update, "Purchase Transfer History"),
                 _subItem(context, Icons.shopping_cart_checkout, "Purchase Report"),
               ],

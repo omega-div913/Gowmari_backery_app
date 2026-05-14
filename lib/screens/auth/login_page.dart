@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dashboard_screen.dart'; // Import for navigation
+import 'package:gowmari_mobile/screens/dashboard/dashboard_screen.dart'; // Import for navigation
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

@@ -1,7 +1,7 @@
 // lib/pm_vendor_master_page.dart
 
 import 'package:flutter/material.dart';
-import 'masters_page.dart';
+import 'package:gowmari_mobile/screens/masters/masters_page.dart';
 
 class Vendor {
   final String name;

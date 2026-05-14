@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dashboard_screen.dart';
-import 'masters_page.dart';
-import 'vendor_master_page.dart';
-import 'section_master_page.dart';
+import 'package:gowmari_mobile/screens/dashboard/dashboard_screen.dart';
+import 'package:gowmari_mobile/screens/masters/masters_page.dart';
+import 'package:gowmari_mobile/screens/masters/vendor_master_page.dart';
+import 'package:gowmari_mobile/screens/masters/section_master_page.dart';
 
 class MaterialTypeMasterPage extends StatefulWidget {
   const MaterialTypeMasterPage({super.key});

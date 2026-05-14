@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; 
+import 'package:gowmari_mobile/screens/auth/login_page.dart'; 
 
 void main() {
   runApp(const MyApp());

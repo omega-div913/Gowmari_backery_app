@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dashboard_screen.dart';
-import 'masters_page.dart'; 
-import 'material_type_master_page.dart';
-import 'section_master_page.dart';
+import 'package:gowmari_mobile/screens/dashboard/dashboard_screen.dart';
+import 'package:gowmari_mobile/screens/masters/masters_page.dart'; 
+import 'package:gowmari_mobile/screens/masters/material_type_master_page.dart';
+import 'package:gowmari_mobile/screens/masters/section_master_page.dart';
 
 class VendorMasterPage extends StatefulWidget {
   const VendorMasterPage({super.key});
