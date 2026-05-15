@@ -15,6 +15,19 @@ class PurchaseRecord {
   PurchaseRecord(this.date, this.invoiceNo, this.vendor, this.items, this.batch, this.grandTotal, this.status);
 }
 
+// --- DUMMY MODEL FOR PRODUCT HISTORY ---
+class ProductHistoryRecord {
+  final String date;
+  final String activity;
+  final String partyLocation;
+  final String qty;
+  final String price;
+  final String reference;
+
+  ProductHistoryRecord(this.date, this.activity, this.partyLocation, this.qty, this.price, this.reference);
+}
+
+
 class BakeryProductsPage extends StatefulWidget {
   const BakeryProductsPage({Key? key}) : super(key: key);
 
@@ -123,7 +136,12 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text('Create Vendor Product', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
-                      IconButton(icon: const Icon(Icons.close, color: Colors.grey, size: 20), onPressed: () => Navigator.of(context).pop(), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.grey, size: 20), 
+                        onPressed: () => Navigator.of(context).pop(), 
+                        padding: EdgeInsets.zero, 
+                        constraints: const BoxConstraints()
+                      ),
                     ],
                   ),
                   const SizedBox(height: 25),
@@ -131,25 +149,199 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        Container(width: 100, height: 100, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade300, width: 1.5)), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.cloud_upload_outlined, color: Colors.grey.shade500, size: 30), const SizedBox(height: 5), Text('Upload', style: TextStyle(color: Colors.grey.shade600, fontSize: 12))])),
-                        Positioned(bottom: -5, right: -5, child: Container(padding: const EdgeInsets.all(4), decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle), child: const Icon(Icons.camera_alt, color: Colors.white, size: 12))),
+                        Container(
+                          width: 100, 
+                          height: 100, 
+                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade300, width: 1.5)), 
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center, 
+                            children: [
+                              Icon(Icons.cloud_upload_outlined, color: Colors.grey.shade500, size: 30), 
+                              const SizedBox(height: 5), 
+                              Text('Upload', style: TextStyle(color: Colors.grey.shade600, fontSize: 12))
+                            ]
+                          )
+                        ),
+                        Positioned(
+                          bottom: -5, 
+                          right: -5, 
+                          child: Container(
+                            padding: const EdgeInsets.all(4), 
+                            decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle), 
+                            child: const Icon(Icons.camera_alt, color: Colors.white, size: 12)
+                          )
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 30),
-                  _buildPopupLabel('PRODUCT NAME'), _buildPopupTextField(), const SizedBox(height: 16),
-                  Row(children: [Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildPopupLabel('BASE UNIT'), _buildPopupDropdown(['Pcs', 'Nos', 'Box'])])), const SizedBox(width: 16), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildPopupLabel('STATUS'), _buildPopupDropdown(['Active', 'Inactive'])]))]), const SizedBox(height: 16),
-                  Row(children: [Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildPopupLabel('DEFAULT PURCHASE PRICE'), _buildPopupTextField(initialValue: '0')])), const SizedBox(width: 16), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildPopupLabel('DEFAULT SELLING PRICE'), _buildPopupTextField(initialValue: '0')]))]), const SizedBox(height: 30),
+                  _buildPopupLabel('PRODUCT NAME'), 
+                  _buildPopupTextField(), 
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildPopupLabel('BASE UNIT'), _buildPopupDropdown(['Pcs', 'Nos', 'Box'])])), 
+                      const SizedBox(width: 16), 
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildPopupLabel('STATUS'), _buildPopupDropdown(['Active', 'Inactive'])]))
+                    ]
+                  ), 
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildPopupLabel('DEFAULT PURCHASE PRICE'), _buildPopupTextField(initialValue: '0')])), 
+                      const SizedBox(width: 16), 
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildPopupLabel('DEFAULT SELLING PRICE'), _buildPopupTextField(initialValue: '0')]))
+                    ]
+                  ), 
+                  const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextButton(onPressed: () => Navigator.of(context).pop(), style: TextButton.styleFrom(foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)), child: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.bold))),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(), 
+                        style: TextButton.styleFrom(foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)), 
+                        child: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.bold))
+                      ),
                       const SizedBox(width: 10),
-                      ElevatedButton(onPressed: () => Navigator.of(context).pop(), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), elevation: 0), child: const Text('Save Product', style: TextStyle(fontWeight: FontWeight.bold))),
+                      ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(), 
+                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), elevation: 0), 
+                        child: const Text('Save Product', style: TextStyle(fontWeight: FontWeight.bold))
+                      ),
                     ],
                   )
                 ],
               ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showHistoryDialog(BuildContext context, Product product) {
+    final List<ProductHistoryRecord> historyData = [
+      ProductHistoryRecord('13-05-2026', 'Purchase', 'MURUGAN AGENCIES', '+450.00 PCS', '11.60', 'bP260513-01'),
+      ProductHistoryRecord('10-05-2026', 'Transfer Out', 'Main Kitchen', '-10.00 PCS', '11.60', 'TR/26/54'),
+      ProductHistoryRecord('08-05-2026', 'Sale', 'Counter Sale', '-5.00 PCS', '20.00', 'INV-3456'),
+      ProductHistoryRecord('05-05-2026', 'Purchase', 'SRI MASANI AMMAN...', '+200.00 PCS', '11.50', 'bP260505-02'),
+    ];
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          backgroundColor: Colors.white,
+          child: Container(
+            width: 800, 
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('History: - ${product.name}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.of(context).pop(),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: DataTable(
+                    headingRowColor: MaterialStateProperty.all(Colors.grey.shade100),
+                    columns: const [
+                      DataColumn(label: Text('DATE')),
+                      DataColumn(label: Text('ACTIVITY')),
+                      DataColumn(label: Text('PARTY/LOCATION')),
+                      DataColumn(label: Text('QTY')),
+                      DataColumn(label: Text('PRICE')),
+                      DataColumn(label: Text('REFERENCE')),
+                    ],
+                    rows: historyData.map((record) => DataRow(
+                      cells: [
+                        DataCell(Text(record.date)),
+                        DataCell(Text(record.activity)),
+                        DataCell(Text(record.partyLocation)),
+                        DataCell(Text(record.qty, style: TextStyle(color: record.qty.startsWith('+') ? Colors.green : Colors.red, fontWeight: FontWeight.bold))),
+                        DataCell(Text('₹${record.price}')),
+                        DataCell(Text(record.reference)),
+                      ]
+                    )).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // --- NEW: EXACT DELETE PRODUCT DIALOG (Matches Image 4) ---
+  void _showDeleteProductDialog(BuildContext context, Product product) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          backgroundColor: Colors.white,
+          child: Container(
+            width: 400, 
+            padding: const EdgeInsets.all(30),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle, 
+                    border: Border.all(color: const Color(0xFFF9C4A6), width: 4) // Light orange border
+                  ), 
+                  child: const Center(
+                    child: Text('!', style: TextStyle(fontSize: 45, color: Color(0xFFF2A365), fontWeight: FontWeight.w400)) // Orange exclamation
+                  )
+                ),
+                const SizedBox(height: 25),
+                const Text('Are you sure?', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87)),
+                const SizedBox(height: 10),
+                const Text("You won't be able to revert this!", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey, fontSize: 14)),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context), 
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFDC2626), // Red color
+                        foregroundColor: Colors.white, 
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14), 
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))
+                      ), 
+                      child: const Text('Yes, delete it!', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))
+                    ),
+                    const SizedBox(width: 15),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context), 
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6B7280), // Grey color
+                        foregroundColor: Colors.white, 
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14), 
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))
+                      ), 
+                      child: const Text('Cancel', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold))
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
         );
@@ -165,11 +357,16 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           backgroundColor: Colors.white,
           child: Container(
-            width: 350, padding: const EdgeInsets.all(30),
+            width: 350, 
+            padding: const EdgeInsets.all(30),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(padding: const EdgeInsets.all(15), decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.orange, width: 2)), child: const Icon(Icons.priority_high, color: Colors.orange, size: 40)),
+                Container(
+                  padding: const EdgeInsets.all(15), 
+                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.orange, width: 2)), 
+                  child: const Icon(Icons.priority_high, color: Colors.orange, size: 40)
+                ),
                 const SizedBox(height: 20),
                 const Text('Are you sure?', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
@@ -178,9 +375,17 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC2626), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))), child: const Text('Yes, delete it!')),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context), 
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC2626), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))), 
+                      child: const Text('Yes, delete it!')
+                    ),
                     const SizedBox(width: 10),
-                    ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))), child: const Text('Cancel')),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context), 
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))), 
+                      child: const Text('Cancel')
+                    ),
                   ],
                 )
               ],
@@ -205,9 +410,11 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               backgroundColor: Colors.white,
               child: Container(
-                width: 400, padding: const EdgeInsets.all(24),
+                width: 400, 
+                padding: const EdgeInsets.all(24),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, 
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -220,8 +427,11 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
                     const Text('Select Format:', style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold)),
                     Row(
                       children: [
-                        Radio<String>(value: 'Normal (A4)', groupValue: selectedFormat, activeColor: const Color(0xFF1B59F8), onChanged: (val) => setDialogState(() => selectedFormat = val!)), const Text('Normal (A4)', style: TextStyle(fontSize: 13)), const SizedBox(width: 20),
-                        Radio<String>(value: 'Thermal (80mm)', groupValue: selectedFormat, activeColor: const Color(0xFF1B59F8), onChanged: (val) => setDialogState(() => selectedFormat = val!)), const Text('Thermal (80mm)', style: TextStyle(fontSize: 13)),
+                        Radio<String>(value: 'Normal (A4)', groupValue: selectedFormat, activeColor: const Color(0xFF1B59F8), onChanged: (val) => setDialogState(() => selectedFormat = val!)), 
+                        const Text('Normal (A4)', style: TextStyle(fontSize: 13)), 
+                        const SizedBox(width: 20),
+                        Radio<String>(value: 'Thermal (80mm)', groupValue: selectedFormat, activeColor: const Color(0xFF1B59F8), onChanged: (val) => setDialogState(() => selectedFormat = val!)), 
+                        const Text('Thermal (80mm)', style: TextStyle(fontSize: 13)),
                       ],
                     ),
                     const SizedBox(height: 15),
@@ -232,13 +442,16 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel', style: TextStyle(color: Colors.black87))), const SizedBox(width: 10),
+                        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel', style: TextStyle(color: Colors.black87))), 
+                        const SizedBox(width: 10),
                         ElevatedButton.icon(
                           onPressed: () {
-                            Navigator.pop(context); // Close options
-                            _showPrintPreviewScreen(context); // OPEN FULL PRINT PREVIEW
+                            Navigator.pop(context); 
+                            _showPrintPreviewScreen(context); 
                           },
-                          icon: const Icon(Icons.print, size: 16), label: const Text('Print'), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))),
+                          icon: const Icon(Icons.print, size: 16), 
+                          label: const Text('Print'), 
+                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))),
                         )
                       ],
                     )
@@ -252,23 +465,21 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
     );
   }
 
-  // --- FULL SCREEN PRINT PREVIEW (Matches Image 3 Exactly) ---
   void _showPrintPreviewScreen(BuildContext context) {
     showDialog(
       context: context,
-      useSafeArea: false, // Take up the whole screen
+      useSafeArea: false, 
       builder: (BuildContext context) {
         return Scaffold(
-          backgroundColor: const Color(0xFFF1F3F4), // Chrome print gray background
+          backgroundColor: const Color(0xFFF1F3F4), 
           body: Row(
             children: [
-              // LEFT SIDE: The Paper Preview
               Expanded(
                 child: Center(
                   child: SingleChildScrollView(
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 40),
-                      width: 700, // A4 aspect ratio approximation
+                      width: 700, 
                       height: 990,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -278,13 +489,10 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
                         padding: const EdgeInsets.all(40.0),
                         child: Column(
                           children: [
-                            // Header
                             const Text('SRI GOWMARIAMMAN F.P.L', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
                             const SizedBox(height: 8),
                             const Text('PURCHASE ENTRY', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),
                             const SizedBox(height: 30),
-                            
-                            // Vendor Info Box
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(border: Border.all(color: Colors.black)),
@@ -316,16 +524,12 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
                               ),
                             ),
                             const SizedBox(height: 15),
-
-                            // Material Type
                             Container(
                               width: double.infinity, padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(border: Border.all(color: Colors.black)),
                               child: const Text('MATERIAL TYPE: BAKERY', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                             ),
                             const SizedBox(height: 15),
-
-                            // Items Table
                             Table(
                               border: TableBorder.all(color: Colors.black),
                               columnWidths: const {0: FlexColumnWidth(1), 1: FlexColumnWidth(4), 2: FlexColumnWidth(1.5), 3: FlexColumnWidth(1.5), 4: FlexColumnWidth(2)},
@@ -344,11 +548,9 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
                               ],
                             ),
                             const SizedBox(height: 15),
-
-                            // Grand Total Box
                             Container(
                               padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 2)), // Thicker border
+                              decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 2)), 
                               child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
@@ -366,8 +568,6 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
                   ),
                 ),
               ),
-              
-              // RIGHT SIDE: Print Settings Panel
               Container(
                 width: 320,
                 color: Colors.white,
@@ -386,7 +586,6 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
                     const Divider(color: Colors.grey),
                     const SizedBox(height: 10),
                     const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text('More settings', style: TextStyle(fontSize: 14, color: Colors.black87)), Icon(Icons.keyboard_arrow_down, color: Colors.grey)]),
-                    
                     const Spacer(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -425,7 +624,9 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
       children: [
         Text(label, style: const TextStyle(fontSize: 13, color: Colors.black87)),
         Container(
-          width: 180, padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), decoration: BoxDecoration(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(4), border: Border.all(color: Colors.grey.shade300)),
+          width: 180, 
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), 
+          decoration: BoxDecoration(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(4), border: Border.all(color: Colors.grey.shade300)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -449,7 +650,9 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FE),
       drawer: isMobile ? const Drawer(child: AppSidebar()) : null,
-      appBar: isMobile ? AppBar(backgroundColor: Colors.white, elevation: 0.5, iconTheme: const IconThemeData(color: Colors.black), title: const Text("Bakery Products", style: TextStyle(color: Colors.black, fontSize: 16))) : null,
+      appBar: isMobile 
+        ? AppBar(backgroundColor: Colors.white, elevation: 0.5, iconTheme: const IconThemeData(color: Colors.black), title: const Text("Bakery Products", style: TextStyle(color: Colors.black, fontSize: 16))) 
+        : null,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -464,29 +667,20 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
                     children: [
                       if (!isMobile) _buildSecondarySidebar(),
                       Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            children: [
-                              // --- DYNAMIC HEADER ---
-                              if (_activeTabIndex == 0) _buildStockHeader(isMobile) 
-                              else if (_activeTabIndex == 1 && !_isCreatingPurchase) _buildPurchaseHeader(isMobile)
-                              else _buildCreatePurchaseHeader(),
-                              const SizedBox(height: 20),
-                              
-                              // --- DYNAMIC FILTERS ---
-                              if (_activeTabIndex == 1 && !_isCreatingPurchase) _buildPurchaseFilters(),
-                              if (_activeTabIndex == 1 && !_isCreatingPurchase) const SizedBox(height: 20),
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              children: [
+                                _buildDynamicHeader(isMobile),
+                                const SizedBox(height: 20),
+                                
+                                if (_activeTabIndex == 1 && !_isCreatingPurchase) _buildPurchaseFilters(),
+                                if (_activeTabIndex == 1 && !_isCreatingPurchase) const SizedBox(height: 20),
 
-                              // --- DYNAMIC CONTENT ---
-                              Expanded(
-                                child: _isLoading
-                                    ? const Center(child: CircularProgressIndicator())
-                                    : _activeTabIndex == 0 
-                                        ? _buildStockWebView()
-                                        : (!_isCreatingPurchase ? _buildPurchaseWebView() : _buildCreatePurchaseForm()), 
-                              ),
-                            ],
+                                _buildMainContent(), 
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -501,25 +695,134 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
     );
   }
 
+  // --- HELPER FUNCTION FOR CLEANER BUILD ---
+  Widget _buildDynamicHeader(bool isMobile) {
+    if (_activeTabIndex == 0) {
+      return _buildStockHeader(isMobile);
+    } else if (_activeTabIndex == 1 && !_isCreatingPurchase) {
+      return _buildPurchaseHeader(isMobile);
+    } else {
+      return _buildCreatePurchaseHeader();
+    }
+  }
+
+  // --- HELPER FUNCTION FOR CONTENT ---
+  Widget _buildMainContent() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    
+    if (_activeTabIndex == 0) {
+      return _buildStockWebView();
+    } 
+    
+    if (_isCreatingPurchase) {
+      return _buildCreatePurchaseForm();
+    } else {
+      return _buildPurchaseWebView();
+    }
+  }
+
   // --- COMMON UI COMPONENTS ---
   Widget _buildTopBar() {
     String breadcrumb = _activeTabIndex == 0 ? "Home / Purchase Section / Bakery Products / Available Stock" : "Home / Purchase Section / Bakery Products / Purchase";
-    return Container(height: 70, color: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20), child: Row(children: [const Icon(Icons.menu, color: Colors.grey), const SizedBox(width: 15), Text(breadcrumb, style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w500)), const Spacer(), Container(width: 300, height: 38, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)), child: const TextField(decoration: InputDecoration(hintText: "Search menus (Press /)", prefixIcon: Icon(Icons.search, size: 20, color: Colors.grey), border: InputBorder.none, contentPadding: EdgeInsets.only(top: 8)))), const SizedBox(width: 20), const CircleAvatar(radius: 18, backgroundColor: Colors.blue, child: Text("R", style: TextStyle(color: Colors.white)))]));
+    return Container(
+      height: 70, 
+      color: Colors.white, 
+      padding: const EdgeInsets.symmetric(horizontal: 20), 
+      child: Row(
+        children: [
+          const Icon(Icons.menu, color: Colors.grey), 
+          const SizedBox(width: 15), 
+          Text(breadcrumb, style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w500)), 
+          const Spacer(), 
+          Container(
+            width: 300, 
+            height: 38, 
+            decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)), 
+            child: const TextField(decoration: InputDecoration(hintText: "Search menus (Press /)", prefixIcon: Icon(Icons.search, size: 20, color: Colors.grey), border: InputBorder.none, contentPadding: EdgeInsets.only(top: 8)))
+          ), 
+          const SizedBox(width: 20), 
+          const CircleAvatar(radius: 18, backgroundColor: Colors.blue, child: Text("R", style: TextStyle(color: Colors.white)))
+        ]
+      )
+    );
   }
 
   Widget _buildSecondarySidebar() {
-    return Container(width: 220, margin: const EdgeInsets.only(top: 20, left: 20), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10)]), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Padding(padding: EdgeInsets.fromLTRB(20, 20, 20, 10), child: Text('VENDOR PRODUCT MENU', style: TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold, fontSize: 11))), _buildSecSidebarItem(Icons.grid_view, 'Available Stock', _activeTabIndex == 0, () => setState(() { _activeTabIndex = 0; _isCreatingPurchase = false; })), _buildSecSidebarItem(Icons.shopping_cart_checkout, 'Purchase Entry', _activeTabIndex == 1, () => setState(() { _activeTabIndex = 1; _isCreatingPurchase = false; }))]));
+    return Container(
+      width: 220, 
+      margin: const EdgeInsets.only(top: 20, left: 20), 
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10)]), 
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, 
+        children: [
+          const Padding(padding: EdgeInsets.fromLTRB(20, 20, 20, 10), child: Text('VENDOR PRODUCT MENU', style: TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold, fontSize: 11))), 
+          _buildSecSidebarItem(Icons.grid_view, 'Available Stock', _activeTabIndex == 0, () => setState(() { _activeTabIndex = 0; _isCreatingPurchase = false; })), 
+          _buildSecSidebarItem(Icons.shopping_cart_checkout, 'Purchase Entry', _activeTabIndex == 1, () => setState(() { _activeTabIndex = 1; _isCreatingPurchase = false; }))
+        ]
+      )
+    );
   }
 
   Widget _buildSecSidebarItem(IconData icon, String title, bool isActive, VoidCallback onTap) {
-    return Container(margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: isActive ? const Color(0xFF1B59F8) : Colors.transparent, borderRadius: BorderRadius.circular(8)), child: ListTile(leading: Icon(icon, size: 18, color: isActive ? Colors.white : Colors.grey), title: Text(title, style: TextStyle(color: isActive ? Colors.white : Colors.grey[700], fontWeight: isActive ? FontWeight.bold : FontWeight.w500, fontSize: 13)), dense: true, visualDensity: const VisualDensity(vertical: -2), onTap: onTap));
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), 
+      decoration: BoxDecoration(color: isActive ? const Color(0xFF1B59F8) : Colors.transparent, borderRadius: BorderRadius.circular(8)), 
+      child: ListTile(
+        leading: Icon(icon, size: 18, color: isActive ? Colors.white : Colors.grey), 
+        title: Text(title, style: TextStyle(color: isActive ? Colors.white : Colors.grey[700], fontWeight: isActive ? FontWeight.bold : FontWeight.w500, fontSize: 13)), 
+        dense: true, 
+        visualDensity: const VisualDensity(vertical: -2), 
+        onTap: onTap
+      )
+    );
   }
 
   // =========================================================================
   // TAB 0: STOCK VIEWS
   // =========================================================================
   Widget _buildStockHeader(bool isMobile) {
-    return Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)), child: Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, spacing: 20, runSpacing: 15, children: [const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Available Master Stock', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))), SizedBox(height: 4), Text('Consolidated inventory across all locations.', style: TextStyle(fontSize: 13, color: Colors.grey))]), Row(mainAxisSize: MainAxisSize.min, children: [SizedBox(width: isMobile ? 180 : 250, height: 42, child: TextField(controller: _searchController, decoration: InputDecoration(hintText: 'Search by product name...', hintStyle: const TextStyle(fontSize: 13), prefixIcon: const Icon(Icons.search, size: 18, color: Colors.grey), filled: true, fillColor: const Color(0xFFF8FAFC), border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none), contentPadding: const EdgeInsets.symmetric(horizontal: 16)))), const SizedBox(width: 15), ElevatedButton.icon(onPressed: () => _showCreateProductDialog(context), icon: const Icon(Icons.add, size: 18), label: Text(isMobile ? 'New' : 'Create New Product'), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), elevation: 0))])]));
+    return Container(
+      padding: const EdgeInsets.all(20), 
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)), 
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween, 
+        crossAxisAlignment: WrapCrossAlignment.center, 
+        spacing: 20, 
+        runSpacing: 15, 
+        children: [
+          const Column(
+            crossAxisAlignment: CrossAxisAlignment.start, 
+            children: [
+              Text('Available Master Stock', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))), 
+              SizedBox(height: 4), 
+              Text('Consolidated inventory across all locations.', style: TextStyle(fontSize: 13, color: Colors.grey))
+            ]
+          ), 
+          Row(
+            mainAxisSize: MainAxisSize.min, 
+            children: [
+              SizedBox(
+                width: isMobile ? 180 : 250, 
+                height: 42, 
+                child: TextField(
+                  controller: _searchController, 
+                  decoration: InputDecoration(hintText: 'Search by product name...', hintStyle: const TextStyle(fontSize: 13), prefixIcon: const Icon(Icons.search, size: 18, color: Colors.grey), filled: true, fillColor: const Color(0xFFF8FAFC), border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none), contentPadding: const EdgeInsets.symmetric(horizontal: 16))
+                )
+              ), 
+              const SizedBox(width: 15), 
+              ElevatedButton.icon(
+                onPressed: () => _showCreateProductDialog(context), 
+                icon: const Icon(Icons.add, size: 18), 
+                label: Text(isMobile ? 'New' : 'Create New Product'), 
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), elevation: 0)
+              )
+            ]
+          )
+        ]
+      )
+    );
   }
 
   Widget _buildStockWebView() {
@@ -539,7 +842,27 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
           DataCell(Container(padding: outStock ? const EdgeInsets.symmetric(horizontal: 10, vertical: 4) : EdgeInsets.zero, decoration: outStock ? BoxDecoration(color: const Color(0xFFFEE2E2), borderRadius: BorderRadius.circular(20)) : null, child: Text('${p.availableStock.toStringAsFixed(2)} ${p.unit.toLowerCase()}', style: TextStyle(color: outStock ? const Color(0xFFDC2626) : const Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 13)))),
           DataCell(Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [Text('₹${p.price.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), Text('Sell: ₹${p.price.toStringAsFixed(2)}', style: const TextStyle(color: Colors.grey, fontSize: 10))])),
           DataCell(Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), decoration: BoxDecoration(color: const Color(0xFFE0F2FE), borderRadius: BorderRadius.circular(20)), child: const Text('Active', style: TextStyle(color: Color(0xFF0284C7), fontWeight: FontWeight.bold, fontSize: 11)))),
-          DataCell(Row(children: [_actionBtn(Icons.shopping_cart_outlined, 'Purchase', Colors.blue, () => setState(() { _activeTabIndex = 1; _isCreatingPurchase = true; _isEditingPurchase = false; })), const SizedBox(width: 8), _actionBtn(Icons.arrow_forward_outlined, 'Transfer', Colors.green, (){}), const SizedBox(width: 8), const Icon(Icons.more_vert, size: 18, color: Colors.grey)])),
+          DataCell(Row(children: [
+            _actionBtn(Icons.shopping_cart_outlined, 'Purchase', Colors.blue, () => setState(() { _activeTabIndex = 1; _isCreatingPurchase = true; _isEditingPurchase = false; })),
+            const SizedBox(width: 8),
+            _smallIconBtn(Icons.history, Colors.grey.shade700, () => _showHistoryDialog(context, p)),
+            const SizedBox(width: 4),
+            PopupMenuButton<String>(
+              tooltip: 'More options',
+              onSelected: (value) {
+                if (value == 'edit') {
+                  _showCreateProductDialog(context);
+                } else if (value == 'delete') {
+                  _showDeleteProductDialog(context, p); 
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(value: 'edit', child: ListTile(leading: Icon(Icons.edit_outlined, size: 20), title: Text('Edit Product'), contentPadding: EdgeInsets.zero, dense: true)),
+                const PopupMenuItem<String>(value: 'delete', child: ListTile(leading: Icon(Icons.delete_outline, size: 20, color: Colors.red), title: Text('Delete', style: TextStyle(color: Colors.red)), contentPadding: EdgeInsets.zero, dense: true)),
+              ],
+              child: const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0), child: Icon(Icons.more_vert, size: 18, color: Colors.grey)),
+            ),
+          ])),
         ]);
       }).toList(),
       currentPage: _currentStockPage,
@@ -552,14 +875,48 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
   // TAB 1: PURCHASE ENTRY VIEWS
   // =========================================================================
   Widget _buildPurchaseHeader(bool isMobile) {
-    return Wrap(alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, spacing: 20, runSpacing: 15, children: [const Text('Bakery Product Purchase', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)), Row(mainAxisSize: MainAxisSize.min, children: [OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.description_outlined, size: 16, color: Color(0xFF10B981)), label: const Text('Export Excel', style: TextStyle(color: Color(0xFF10B981))), style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFF10B981)), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))), const SizedBox(width: 15), ElevatedButton.icon(onPressed: () => setState(() { _isCreatingPurchase = true; _isEditingPurchase = false; }), icon: const Icon(Icons.add, size: 18), label: const Text('Create New Purchase'), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), elevation: 0))])]);
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween, 
+      crossAxisAlignment: WrapCrossAlignment.center, 
+      spacing: 20, 
+      runSpacing: 15, 
+      children: [
+        const Text('Bakery Product Purchase', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)), 
+        Row(
+          mainAxisSize: MainAxisSize.min, 
+          children: [
+            OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.description_outlined, size: 16, color: Color(0xFF10B981)), label: const Text('Export Excel', style: TextStyle(color: Color(0xFF10B981))), style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFF10B981)), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))), 
+            const SizedBox(width: 15), 
+            ElevatedButton.icon(onPressed: () => setState(() { _isCreatingPurchase = true; _isEditingPurchase = false; }), icon: const Icon(Icons.add, size: 18), label: const Text('Create New Purchase'), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), elevation: 0))
+          ]
+        )
+      ]
+    );
   }
 
   Widget _buildPurchaseFilters() {
-    return Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade200)), child: Row(children: [Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('From Date', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), const SizedBox(height: 8), _buildFilterInput('01-05-2026', Icons.calendar_today_outlined)])), const SizedBox(width: 20), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('To Date', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), const SizedBox(height: 8), _buildFilterInput('14-05-2026', Icons.calendar_today_outlined)])), const SizedBox(width: 20), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Vendor', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), const SizedBox(height: 8), _buildFilterInput('Search vendor...', null)]))]));
+    return Container(
+      padding: const EdgeInsets.all(20), 
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade200)), 
+      child: Row(
+        children: [
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('From Date', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), const SizedBox(height: 8), _buildFilterInput('01-05-2026', Icons.calendar_today_outlined)])), 
+          const SizedBox(width: 20), 
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('To Date', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), const SizedBox(height: 8), _buildFilterInput('14-05-2026', Icons.calendar_today_outlined)])), 
+          const SizedBox(width: 20), 
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Vendor', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), const SizedBox(height: 8), _buildFilterInput('Search vendor...', null)]))
+        ]
+      )
+    );
   }
 
-  Widget _buildFilterInput(String hint, IconData? icon) { return Container(height: 40, decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)), child: TextField(decoration: InputDecoration(hintText: hint, hintStyle: const TextStyle(fontSize: 13), suffixIcon: icon != null ? Icon(icon, size: 16, color: Colors.grey) : null, border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12)))); }
+  Widget _buildFilterInput(String hint, IconData? icon) { 
+    return Container(
+      height: 40, 
+      decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)), 
+      child: TextField(decoration: InputDecoration(hintText: hint, hintStyle: const TextStyle(fontSize: 13), suffixIcon: icon != null ? Icon(icon, size: 16, color: Colors.grey) : null, border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12)))
+    ); 
+  }
 
   Widget _buildPurchaseWebView() {
     int start = _currentPurchasePage * _rowsPerPage;
@@ -568,12 +925,10 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
     List<PurchaseRecord> pageItems = _allPurchases.isEmpty ? [] : _allPurchases.sublist(start, end);
 
     return _buildCustomTableCard(
-      // --- ADDED S.NO TO COLUMNS ---
       columns: const ['S.NO', 'Date', 'Invoice No.', 'Vendor', 'Items', 'Batch', 'Grand Total', 'Images', 'Status', 'Actions'],
       rows: pageItems.asMap().entries.map((entry) {
         int idx = entry.key; PurchaseRecord r = entry.value;
         return DataRow(cells: [
-          // --- ADDED S.NO CELL DATA ---
           DataCell(Text((start + idx + 1).toString(), style: const TextStyle(color: Colors.grey, fontSize: 13))),
           DataCell(Text(r.date, style: const TextStyle(fontSize: 12, color: Colors.black87))),
           DataCell(Text(r.invoiceNo, style: const TextStyle(fontSize: 12))),
@@ -602,7 +957,13 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
   // NEW VIEW: CREATE / EDIT PURCHASE ENTRY FORM
   // =========================================================================
   Widget _buildCreatePurchaseHeader() {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(_isEditingPurchase ? 'Edit Purchase' : 'New Purchase Entry', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)), OutlinedButton.icon(onPressed: () => setState(() => _isCreatingPurchase = false), icon: const Icon(Icons.chevron_left, size: 16, color: Colors.grey), label: const Text('Back to List', style: TextStyle(color: Colors.grey)), style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))))]);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+      children: [
+        Text(_isEditingPurchase ? 'Edit Purchase' : 'New Purchase Entry', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)), 
+        OutlinedButton.icon(onPressed: () => setState(() => _isCreatingPurchase = false), icon: const Icon(Icons.chevron_left, size: 16, color: Colors.grey), label: const Text('Back to List', style: TextStyle(color: Colors.grey)), style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))))
+      ]
+    );
   }
 
   Widget _buildCreatePurchaseForm() {
@@ -613,14 +974,44 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildFormSectionHeader('Invoice Details'), const SizedBox(height: 15),
-            Row(children: [Expanded(child: _buildFormInput('Vendor *', _isEditingPurchase ? 'MURUGAN AGENCIES' : 'Select a vendor...')), const SizedBox(width: 15), Expanded(child: _buildFormInput('Invoice Number', _isEditingPurchase ? '2322' : 'Enter or generate...', suffixIcon: Icons.settings, suffixColor: Colors.blue)), const SizedBox(width: 15), Expanded(child: _buildFormInput('Purchase Date *', _isEditingPurchase ? '12-05-2026' : '14-05-2026', suffixIcon: Icons.calendar_today_outlined)), const SizedBox(width: 15), Expanded(child: _buildFormInput('Batch Code', _isEditingPurchase ? 'bP260513-01' : 'BP260514-01', suffixIcon: Icons.refresh))]), const Divider(height: 40, color: Color(0xFFF1F5F9)),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_buildFormSectionHeader('Purchase Items'), ElevatedButton.icon(onPressed: (){}, icon: const Icon(Icons.add, size: 14), label: const Text('Add Item (Alt+N)', style: TextStyle(fontSize: 12)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))))]), const SizedBox(height: 15),
-            Row(children: [Expanded(flex: 3, child: _buildFormInput('Bakery Product *', _isEditingPurchase ? 'Kinley Water' : 'Select product...')), const SizedBox(width: 10), Expanded(flex: 2, child: _buildFormInput('Expiry Date', 'dd-mm-yyyy', suffixIcon: Icons.calendar_today_outlined)), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormTextCol('Unit', _isEditingPurchase ? 'pcs' : '-')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormTextCol('Prev. Price', '₹0.00')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormInput('Purchasing Price *', _isEditingPurchase ? '11.6' : '0')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormInput('Selling Price', _isEditingPurchase ? '20' : '0')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormInput('Qty *', _isEditingPurchase ? '449.999' : '1')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormTextCol('Item Total', _isEditingPurchase ? '₹5,219.99' : '₹0.00', icon: Icons.delete_outline, iconColor: Colors.red))]), const Divider(height: 40, color: Color(0xFFF1F5F9)),
-            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Expanded(flex: 3, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildFormSectionHeader('Initial Payment'), const SizedBox(height: 15), Row(children: [Expanded(child: _buildFormInput('Paid Amount', '0', prefixText: '₹ ')), const SizedBox(width: 15), Expanded(child: _buildFormInput('Payment Method', 'Select...', suffixIcon: Icons.keyboard_arrow_down))]), const SizedBox(height: 15), _buildFormInput('Payment Notes', 'Optional: Cheque number, transaction ID, etc.', maxLines: 2)])), const SizedBox(width: 30), Expanded(flex: 2, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildFormSectionHeader('Invoice Summary'), const SizedBox(height: 15), Container(padding: const EdgeInsets.all(15), decoration: BoxDecoration(color: const Color(0xFFF8FAFC), border: Border.all(color: Colors.grey.shade200), borderRadius: BorderRadius.circular(8)), child: Column(children: [_buildSummaryRow('Sub Total', _isEditingPurchase ? '₹5,219.99' : '₹0.00', isBold: true), const Divider(height: 20, color: Colors.black12), _buildSummaryRow('Grand Total', _isEditingPurchase ? '₹5,219.99' : '₹0.00', isBold: true, valueColor: const Color(0xFF1B59F8)), const Divider(height: 20, color: Colors.black12), _buildSummaryRow('Paid Amount', '- ₹0.00'), const Divider(height: 20, color: Colors.black12), _buildSummaryRow('Balance Due', _isEditingPurchase ? '₹5,219.99' : '₹0.00', isBold: true, valueColor: Colors.red)]))]))]), const Divider(height: 40, color: Color(0xFFF1F5F9)),
-            Row(children: [const Icon(Icons.camera_alt_outlined, color: Color(0xFF1B59F8), size: 18), const SizedBox(width: 8), _buildFormSectionHeader('Image Attachments')]), const SizedBox(height: 15), const Text('Purchase Images', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87)), const SizedBox(height: 10), Container(width: 120, height: 120, decoration: BoxDecoration(color: const Color(0xFFF8FAFC), border: Border.all(color: Colors.grey.shade300, style: BorderStyle.solid), borderRadius: BorderRadius.circular(8)), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Container(padding: const EdgeInsets.all(4), decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.grey.shade400)), child: Icon(Icons.add, color: Colors.grey.shade500, size: 20)), const SizedBox(height: 8), Text('Add Images', style: TextStyle(fontSize: 11, color: Colors.grey.shade600))])), const SizedBox(height: 10), Text('ⓘ Images are stored on the server only when the purchase is saved.', style: TextStyle(fontSize: 11, color: Colors.grey.shade500)), Text('ⓘ Attachments are saved only when you click "Save" or "Update".', style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
+            _buildFormSectionHeader('Invoice Details'), 
+            const SizedBox(height: 15),
+            Row(children: [Expanded(child: _buildFormInput('Vendor *', _isEditingPurchase ? 'MURUGAN AGENCIES' : 'Select a vendor...')), const SizedBox(width: 15), Expanded(child: _buildFormInput('Invoice Number', _isEditingPurchase ? '2322' : 'Enter or generate...', suffixIcon: Icons.settings, suffixColor: Colors.blue)), const SizedBox(width: 15), Expanded(child: _buildFormInput('Purchase Date *', _isEditingPurchase ? '12-05-2026' : '14-05-2026', suffixIcon: Icons.calendar_today_outlined)), const SizedBox(width: 15), Expanded(child: _buildFormInput('Batch Code', _isEditingPurchase ? 'bP260513-01' : 'BP260514-01', suffixIcon: Icons.refresh))]), 
+            const Divider(height: 40, color: Color(0xFFF1F5F9)),
+            
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_buildFormSectionHeader('Purchase Items'), ElevatedButton.icon(onPressed: (){}, icon: const Icon(Icons.add, size: 14), label: const Text('Add Item (Alt+N)', style: TextStyle(fontSize: 12)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))))]), 
+            const SizedBox(height: 15),
+            Row(children: [Expanded(flex: 3, child: _buildFormInput('Bakery Product *', _isEditingPurchase ? 'Kinley Water' : 'Select product...')), const SizedBox(width: 10), Expanded(flex: 2, child: _buildFormInput('Expiry Date', 'dd-mm-yyyy', suffixIcon: Icons.calendar_today_outlined)), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormTextCol('Unit', _isEditingPurchase ? 'pcs' : '-')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormTextCol('Prev. Price', '₹0.00')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormInput('Purchasing Price *', _isEditingPurchase ? '11.6' : '0')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormInput('Selling Price', _isEditingPurchase ? '20' : '0')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormInput('Qty *', _isEditingPurchase ? '449.999' : '1')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormTextCol('Item Total', _isEditingPurchase ? '₹5,219.99' : '₹0.00', icon: Icons.delete_outline, iconColor: Colors.red))]), 
+            const Divider(height: 40, color: Color(0xFFF1F5F9)),
+            
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start, 
+              children: [
+                Expanded(flex: 3, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildFormSectionHeader('Initial Payment'), const SizedBox(height: 15), Row(children: [Expanded(child: _buildFormInput('Paid Amount', '0', prefixText: '₹ ')), const SizedBox(width: 15), Expanded(child: _buildFormInput('Payment Method', 'Select...', suffixIcon: Icons.keyboard_arrow_down))]), const SizedBox(height: 15), _buildFormInput('Payment Notes', 'Optional: Cheque number, transaction ID, etc.', maxLines: 2)])), 
+                const SizedBox(width: 30), 
+                Expanded(flex: 2, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildFormSectionHeader('Invoice Summary'), const SizedBox(height: 15), Container(padding: const EdgeInsets.all(15), decoration: BoxDecoration(color: const Color(0xFFF8FAFC), border: Border.all(color: Colors.grey.shade200), borderRadius: BorderRadius.circular(8)), child: Column(children: [_buildSummaryRow('Sub Total', _isEditingPurchase ? '₹5,219.99' : '₹0.00', isBold: true), const Divider(height: 20, color: Colors.black12), _buildSummaryRow('Grand Total', _isEditingPurchase ? '₹5,219.99' : '₹0.00', isBold: true, valueColor: const Color(0xFF1B59F8)), const Divider(height: 20, color: Colors.black12), _buildSummaryRow('Paid Amount', '- ₹0.00'), const Divider(height: 20, color: Colors.black12), _buildSummaryRow('Balance Due', _isEditingPurchase ? '₹5,219.99' : '₹0.00', isBold: true, valueColor: Colors.red)]))]))
+              ]
+            ), 
+            const Divider(height: 40, color: Color(0xFFF1F5F9)),
+            
+            Row(children: [const Icon(Icons.camera_alt_outlined, color: Color(0xFF1B59F8), size: 18), const SizedBox(width: 8), _buildFormSectionHeader('Image Attachments')]), 
+            const SizedBox(height: 15), 
+            const Text('Purchase Images', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87)), 
+            const SizedBox(height: 10), 
+            Container(width: 120, height: 120, decoration: BoxDecoration(color: const Color(0xFFF8FAFC), border: Border.all(color: Colors.grey.shade300, style: BorderStyle.solid), borderRadius: BorderRadius.circular(8)), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Container(padding: const EdgeInsets.all(4), decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.grey.shade400)), child: Icon(Icons.add, color: Colors.grey.shade500, size: 20)), const SizedBox(height: 8), Text('Add Images', style: TextStyle(fontSize: 11, color: Colors.grey.shade600))])), 
+            const SizedBox(height: 10), 
+            Text('ⓘ Images are stored on the server only when the purchase is saved.', style: TextStyle(fontSize: 11, color: Colors.grey.shade500)), 
+            Text('ⓘ Attachments are saved only when you click "Save" or "Update".', style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
+            
             const SizedBox(height: 30),
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: [ElevatedButton(onPressed: () => setState(() => _isCreatingPurchase = false), style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade600, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))), child: const Text('Cancel')), const SizedBox(width: 10), ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))), child: const Text('Save Purchase (Ctrl+S)'))])
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end, 
+              children: [
+                ElevatedButton(onPressed: () => setState(() => _isCreatingPurchase = false), style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade600, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))), child: const Text('Cancel')), 
+                const SizedBox(width: 10), 
+                ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))), child: const Text('Save Purchase (Ctrl+S)'))
+              ]
+            )
           ],
         ),
       ),
@@ -631,57 +1022,123 @@ class _BakeryProductsPageState extends State<BakeryProductsPage> {
   
   Widget _buildCustomTableCard({required List<String> columns, required List<DataRow> rows, required int currentPage, required int totalItems, required Function(int) onPageChanged}) {
     int totalPages = (totalItems / _rowsPerPage).ceil();
+    if (totalPages == 0) totalPages = 1;
     int startIdx = currentPage * _rowsPerPage + 1;
     int endIdx = (startIdx - 1) + _rowsPerPage;
     if (endIdx > totalItems) endIdx = totalItems;
-    if (totalItems == 0) { startIdx = 0; endIdx = 0; } // Handle empty list
+    if (totalItems == 0) { startIdx = 0; endIdx = 0; }
 
-    return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade200)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: SingleChildScrollView(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade200)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // THIS ConstrainedBox FORCES THE TABLE TO FIT WITHOUT HORIZONTAL SCROLLBAR
+              SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  headingRowHeight: 50, dataRowMaxHeight: 70, headingRowColor: MaterialStateProperty.all(const Color(0xFFF8FAFC)),
-                  columns: columns.map((c) => DataColumn(label: Text(c, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87)))).toList(),
-                  rows: rows,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: constraints.maxWidth), 
+                  child: DataTable(
+                    columnSpacing: 16, // Reduced gap between columns so it fits nicely
+                    horizontalMargin: 20,
+                    headingRowHeight: 50, 
+                    dataRowMaxHeight: 70, 
+                    headingRowColor: MaterialStateProperty.all(const Color(0xFFF8FAFC)),
+                    columns: columns.map((c) => DataColumn(label: Text(c, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87)))).toList(),
+                    rows: rows,
+                  ),
                 ),
               ),
-            ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade200))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text('Showing $startIdx to $endIdx of $totalItems entries', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    const SizedBox(width: 20),
+                    IconButton(icon: const Icon(Icons.chevron_left, size: 20), onPressed: currentPage > 0 ? () => onPageChanged(currentPage - 1) : null, color: currentPage > 0 ? Colors.black87 : Colors.grey.shade300),
+                    Text('Page ${currentPage + 1} of $totalPages', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    IconButton(icon: const Icon(Icons.chevron_right, size: 20), onPressed: currentPage < totalPages - 1 ? () => onPageChanged(currentPage + 1) : null, color: currentPage < totalPages - 1 ? Colors.black87 : Colors.grey.shade300),
+                  ],
+                ),
+              )
+            ],
           ),
-          // NEW CLEAN PAGINATION DESIGN
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade200))),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text('Showing $startIdx to $endIdx of $totalItems entries', style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                const SizedBox(width: 20),
-                IconButton(icon: const Icon(Icons.chevron_left, size: 20), onPressed: currentPage > 0 ? () => onPageChanged(currentPage - 1) : null, color: currentPage > 0 ? Colors.black87 : Colors.grey.shade300),
-                Text('Page ${currentPage + 1} of $totalPages', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                IconButton(icon: const Icon(Icons.chevron_right, size: 20), onPressed: currentPage < totalPages - 1 ? () => onPageChanged(currentPage + 1) : null, color: currentPage < totalPages - 1 ? Colors.black87 : Colors.grey.shade300),
-              ],
-            ),
-          )
-        ],
-      ),
+        );
+      }
     );
   }
 
   // Small Helpers
   Widget _actionBtn(IconData icon, String text, MaterialColor color, VoidCallback onTap) { return OutlinedButton.icon(onPressed: onTap, icon: Icon(icon, size: 14, color: color), label: Text(text, style: TextStyle(color: color, fontSize: 11)), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0), side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)))); }
-  Widget _smallIconBtn(IconData icon, Color color, VoidCallback onTap) { return InkWell(onTap: onTap, child: Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), child: Icon(icon, size: 14, color: color))); }
+  Widget _smallIconBtn(IconData icon, Color color, VoidCallback onTap) { return InkWell(onTap: onTap, borderRadius: BorderRadius.circular(4), child: Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), child: Icon(icon, size: 14, color: color))); }
   Widget _buildFormSectionHeader(String title) { return Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1B59F8))); }
   Widget _buildPopupLabel(String text) { return Padding(padding: const EdgeInsets.only(bottom: 6), child: Text(text, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey.shade600, letterSpacing: 0.5))); }
-  Widget _buildPopupTextField({String? initialValue}) { return TextFormField(initialValue: initialValue, decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), filled: true, fillColor: const Color(0xFFFCFDFE), border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade200)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade200)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF1B59F8))))); }
-  Widget _buildPopupDropdown(List<String> items) { return DropdownButtonFormField<String>(value: items.first, icon: const Icon(Icons.keyboard_arrow_down, size: 20, color: Colors.grey), decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), filled: true, fillColor: const Color(0xFFFCFDFE), border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade200)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade200))), items: items.map((String value) { return DropdownMenuItem<String>(value: value, child: Text(value, style: const TextStyle(fontSize: 14))); }).toList(), onChanged: (_) {}); }
-  Widget _buildFormInput(String label, String hint, {IconData? suffixIcon, Color? suffixColor, String? prefixText, int maxLines = 1}) { List<TextSpan> labelSpans = []; if (label.contains('*')) { labelSpans.add(TextSpan(text: label.replaceAll('*', ''), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87))); labelSpans.add(const TextSpan(text: '*', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.red))); } else { labelSpans.add(TextSpan(text: label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87))); } return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [RichText(text: TextSpan(children: labelSpans)), const SizedBox(height: 6), SizedBox(height: maxLines == 1 ? 38 : null, child: TextField(controller: TextEditingController(text: hint != 'Select a vendor...' && hint != 'Enter or generate...' && hint != 'Select product...' && hint != 'dd-mm-yyyy' && hint != 'Select...' && hint != 'Optional: Cheque number, transaction ID, etc.' ? hint : ''), maxLines: maxLines, style: const TextStyle(fontSize: 13), decoration: InputDecoration(hintText: hint, hintStyle: TextStyle(fontSize: 12, color: Colors.grey.shade400), prefixText: prefixText, prefixStyle: const TextStyle(fontSize: 13, color: Colors.black87), suffixIcon: suffixIcon != null ? Icon(suffixIcon, size: 16, color: suffixColor ?? Colors.grey) : null, contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF1B59F8))))))]); }
-  Widget _buildFormTextCol(String label, String value, {IconData? icon, Color? iconColor}) { return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87)), const SizedBox(height: 15), Row(mainAxisAlignment: MainAxisAlignment.center, children: [Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)), if (icon != null) ...[const SizedBox(width: 8), Icon(icon, size: 16, color: iconColor)]])]); }
-  Widget _buildSummaryRow(String label, String value, {bool isBold = false, Color? valueColor}) { return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(label, style: TextStyle(fontSize: 13, fontWeight: isBold ? FontWeight.bold : FontWeight.w500, color: Colors.black87)), Text(value, style: TextStyle(fontSize: 14, fontWeight: isBold ? FontWeight.bold : FontWeight.w500, color: valueColor ?? Colors.black87))]); }
+  
+  Widget _buildPopupTextField({String? initialValue}) { 
+    return TextFormField(
+      initialValue: initialValue, 
+      decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), filled: true, fillColor: const Color(0xFFFCFDFE), border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade200)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade200)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF1B59F8))))
+    ); 
+  }
+  
+  Widget _buildPopupDropdown(List<String> items) { 
+    return DropdownButtonFormField<String>(
+      value: items.first, 
+      icon: const Icon(Icons.keyboard_arrow_down, size: 20, color: Colors.grey), 
+      decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), filled: true, fillColor: const Color(0xFFFCFDFE), border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade200)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade200))), 
+      items: items.map((String value) { return DropdownMenuItem<String>(value: value, child: Text(value, style: const TextStyle(fontSize: 14))); }).toList(), 
+      onChanged: (_) {}
+    ); 
+  }
+  
+  Widget _buildFormInput(String label, String hint, {IconData? suffixIcon, Color? suffixColor, String? prefixText, int maxLines = 1}) { 
+    List<TextSpan> labelSpans = []; 
+    if (label.contains('*')) { 
+      labelSpans.add(TextSpan(text: label.replaceAll('*', ''), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87))); 
+      labelSpans.add(const TextSpan(text: '*', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.red))); 
+    } else { 
+      labelSpans.add(TextSpan(text: label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87))); 
+    } 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start, 
+      children: [
+        RichText(text: TextSpan(children: labelSpans)), 
+        const SizedBox(height: 6), 
+        SizedBox(
+          height: maxLines == 1 ? 38 : null, 
+          child: TextField(
+            controller: TextEditingController(text: hint != 'Select a vendor...' && hint != 'Enter or generate...' && hint != 'Select product...' && hint != 'dd-mm-yyyy' && hint != 'Select...' && hint != 'Optional: Cheque number, transaction ID, etc.' ? hint : ''), 
+            maxLines: maxLines, 
+            style: const TextStyle(fontSize: 13), 
+            decoration: InputDecoration(hintText: hint, hintStyle: TextStyle(fontSize: 12, color: Colors.grey.shade400), prefixText: prefixText, prefixStyle: const TextStyle(fontSize: 13, color: Colors.black87), suffixIcon: suffixIcon != null ? Icon(suffixIcon, size: 16, color: suffixColor ?? Colors.grey) : null, contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF1B59F8))))
+          )
+        )
+      ]
+    ); 
+  }
+  
+  Widget _buildFormTextCol(String label, String value, {IconData? icon, Color? iconColor}) { 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center, 
+      children: [
+        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87)), 
+        const SizedBox(height: 15), 
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)), if (icon != null) ...[const SizedBox(width: 8), Icon(icon, size: 16, color: iconColor)]])
+      ]
+    ); 
+  }
+  
+  Widget _buildSummaryRow(String label, String value, {bool isBold = false, Color? valueColor}) { 
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+      children: [
+        Text(label, style: TextStyle(fontSize: 13, fontWeight: isBold ? FontWeight.bold : FontWeight.w500, color: Colors.black87)), 
+        Text(value, style: TextStyle(fontSize: 14, fontWeight: isBold ? FontWeight.bold : FontWeight.w500, color: valueColor ?? Colors.black87))
+      ]
+    ); 
+  }
 }
