@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gowmari_mobile/screens/masters/masters_page.dart'; // Added import for the Masters page
+import 'package:gowmari_mobile/screens/masters/masters_page.dart';
 import 'package:gowmari_mobile/screens/inventory/bakery_products_page.dart';
+import 'package:gowmari_mobile/screens/inventory/packaging_material_page.dart'; // 1. IMPORT THE NEW PAGE
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -155,29 +156,24 @@ class AppSidebar extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               children: [
-                _menuItem(Icons.speed, "Overall Dashboard", isActive: true),
+                _menuItem(Icons.speed, "Overall Dashboard"), // Set to false, as we'll be on another page
                 const SizedBox(height: 20),
-                _menuItem(Icons.shopping_cart_outlined, "Purchase Section"),
+                _menuItem(Icons.shopping_cart_outlined, "Purchase Section", isActive: true), // Set this section to active
                 const SizedBox(height: 10),
                 
-                // Passed 'context' to all subItems and added 'destination' to Masters
                 _subItem(context, Icons.inventory_2_outlined, "Raw Material", badge: "192"),
                 _subItem(context, Icons.assignment_turned_in_outlined, "RM Request Management"),
                 _subItem(context, Icons.event_available_outlined, "Daily Usage Management"),
-                _subItem(context, Icons.inventory_2_outlined, "Packaging Material"),
+
+                // 2. THIS IS THE CORRECTED AND FINAL CHANGE
+                _subItem(context, Icons.inventory_2_outlined, "Packaging Material", destination: const PackagingMaterialPage()),
                 
-                // MASTERS LINK ADDED HERE
                 _subItem(context, Icons.storage_outlined, "Masters", destination: const MastersPage()),
-                
                 _subItem(context, Icons.account_balance_wallet_outlined, "Stock Cost"),
                 _subItem(context, Icons.assignment_outlined, "Inventory Audit Entry"),
                 _subItem(context, Icons.delete_outline, "Wastage Management"),
                 _subItem(context, Icons.history, "Reversal History"),
-                
-                // --- THIS IS THE ONLY LINE THAT CHANGED ---
-                // Added destination: const BakeryProductsPage() 
                 _subItem(context, Icons.shopping_cart_checkout, "Bakery Products", destination: const BakeryProductsPage()),
-                
                 _subItem(context, Icons.update, "Purchase Transfer History"),
                 _subItem(context, Icons.shopping_cart_checkout, "Purchase Report"),
               ],
@@ -205,15 +201,28 @@ class AppSidebar extends StatelessWidget {
             fontSize: 14, 
             fontWeight: FontWeight.bold)
         ),
+        onTap: () {
+          // You might want to add navigation for main menu items too
+        },
       ),
     );
   }
 
-  // Updated _subItem to handle clicks and navigation
   Widget _subItem(BuildContext context, IconData icon, String text, {String? badge, Widget? destination}) {
+    // Check if the current route is the destination to set active state
+    bool isActive = false;
+    if (destination != null) {
+      // A simple check; more robust routing might use ModalRoute.of(context)?.settings.name
+      isActive = ModalRoute.of(context)?.settings is MaterialPageRoute &&
+                 (ModalRoute.of(context)?.settings as MaterialPageRoute).builder(context).runtimeType == destination.runtimeType;
+    }
+
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: ListTile(
+        selected: isActive,
+        selectedTileColor: const Color(0xFFBBDEFB),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         visualDensity: const VisualDensity(vertical: -4),
         leading: Icon(icon, size: 20, color: const Color(0xFF1A237E)),
         title: Text(text, style: const TextStyle(fontSize: 13, color: Color(0xFF1A237E), fontWeight: FontWeight.w600)),
@@ -223,8 +232,8 @@ class AppSidebar extends StatelessWidget {
           child: Text(badge, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
         ) : null,
         onTap: () {
-          // If a destination page is provided, navigate to it!
           if (destination != null) {
+            // Use pushReplacement to avoid building up a stack of pages
             Navigator.pushReplacement(
               context, 
               MaterialPageRoute(builder: (context) => destination)
