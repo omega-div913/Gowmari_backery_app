@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'subsidebar.dart'; // Import unified layout
+import 'subsidebar.dart'; // Keeping this for MasterTopbar and SecondaryMastersSidebar
+// ADDED THE CORRECT IMPORT FOR OUR NEW SIDEBAR:
+import 'package:gowmari_mobile/screens/components/app_sidebar.dart'; 
 
 class UOMPage extends StatefulWidget {
   const UOMPage({super.key});
@@ -210,12 +212,15 @@ class _UOMPageState extends State<UOMPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FE),
-      drawer: isMobile ? const Drawer(child: MasterPrimarySidebar()) : null,
+      // CHANGED HERE: Using AppSidebar
+      drawer: isMobile ? const Drawer(child: AppSidebar(activeMenu: "Masters")) : null,
       appBar: isMobile ? AppBar(backgroundColor: Colors.white, elevation: 0.5, iconTheme: const IconThemeData(color: Colors.black), title: const Text("Unit of Measurement", style: TextStyle(color: Colors.black, fontSize: 16))) : null,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!isMobile) const SizedBox(width: 250, child: MasterPrimarySidebar()),
+          // CHANGED HERE: Using AppSidebar and explicitly telling it "Masters" is active!
+          if (!isMobile) const AppSidebar(activeMenu: "Masters"),
+          
           Expanded(
             child: Column(
               children: [

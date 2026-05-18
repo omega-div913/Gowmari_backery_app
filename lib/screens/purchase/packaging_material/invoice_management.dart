@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// Note: dart:html is removed to allow Windows compilation
 
 // --- DATA MODEL ---
 class InvoiceData {
@@ -62,8 +63,12 @@ class _InvoiceManagementDataTableState extends State<InvoiceManagementDataTable>
                         children: [
                           ElevatedButton.icon(
                             onPressed: () {
+                              // Safely handles the button click without crashing Windows
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Print action triggered."), duration: Duration(seconds: 4))
+                                const SnackBar(
+                                  content: Text("To print on Windows desktop, you need to implement the 'printing' package."),
+                                  backgroundColor: Colors.orange,
+                                )
                               );
                             },
                             icon: const Icon(Icons.print, size: 16),
