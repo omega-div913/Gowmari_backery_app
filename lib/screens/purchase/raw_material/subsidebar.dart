@@ -1,53 +1,114 @@
 import 'package:flutter/material.dart';
 import 'purchase_order.dart';
-import 'purchase_entry.dart';
+import 'purchase_entry.dart'; // Make sure this matches your Purchase Entry file name
+import 'invoice_management.dart'; // Make sure this matches your new Invoice Management file name
 
 class RawMaterialSubSidebar extends StatelessWidget {
   final String activePage;
+
   const RawMaterialSubSidebar({super.key, required this.activePage});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(25),
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+      width: 260,
+      margin: const EdgeInsets.only(left: 25, top: 25, bottom: 25),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Text("Stock settings", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87)),
+            padding: EdgeInsets.all(20.0),
+            child: Text(
+              "Stock settings",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+            ),
           ),
-          const SizedBox(height: 10),
-          _menuItem(context, Icons.shopping_bag_outlined, "Purchase Order", isActive: activePage == 'Purchase Order'),
-          _menuItem(context, Icons.shopping_cart_outlined, "Purchase Entry", isActive: activePage == 'Purchase Entry'),
-          _menuItem(context, Icons.receipt_long_outlined, "Invoice Management", isActive: activePage == 'Invoice Management'),
-          _menuItem(context, Icons.pie_chart_outline, "Section Wise\nConsumption", isActive: activePage == 'Section Wise Consumption'),
-          _menuItem(context, Icons.assignment_outlined, "Inventory Audit Entry", isActive: activePage == 'Inventory Audit Entry'),
+          
+          // Menu Items
+          _buildMenuItem(
+            context, 
+            "Purchase Order", 
+            Icons.shopping_bag_outlined, 
+            activePage == 'Purchase Order'
+          ),
+          _buildMenuItem(
+            context, 
+            "Purchase Entry", 
+            Icons.shopping_cart_outlined, 
+            activePage == 'Purchase Entry',
+            targetPage: const RawMaterialPurchaseEntryPage() // Routes to Purchase Entry
+          ),
+          _buildMenuItem(
+            context, 
+            "Invoice Management", 
+            Icons.receipt_long_outlined, 
+            activePage == 'Invoice Management',
+            targetPage: const InvoiceManagementPage() // Routes to Invoice Management
+          ),
+          _buildMenuItem(
+            context, 
+            "Section Wise Consumption", 
+            Icons.pie_chart_outline, 
+            activePage == 'Section Wise Consumption'
+          ),
+          _buildMenuItem(
+            context, 
+            "Inventory Audit Entry", 
+            Icons.inventory_outlined, 
+            activePage == 'Inventory Audit Entry'
+          ),
         ],
       ),
     );
   }
 
-  Widget _menuItem(BuildContext context, IconData icon, String text, {bool isActive = false}) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-      decoration: BoxDecoration(
-        color: isActive ? const Color(0xFF0D6EFD) : Colors.transparent,
-        borderRadius: BorderRadius.circular(6)
-      ),
-      child: ListTile(
-        dense: true,
-        leading: Icon(icon, size: 18, color: isActive ? Colors.white : Colors.grey.shade600),
-        title: Text(text, style: TextStyle(fontSize: 13, fontWeight: isActive ? FontWeight.bold : FontWeight.w500, color: isActive ? Colors.white : Colors.grey.shade800)),
-        onTap: () {
-          if (text == "Purchase Order") {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const RawMaterialPurchaseOrderPage()));
-          } else if (text == "Purchase Entry") {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const RawMaterialPurchaseEntryPage()));
-          }
-        },
+  Widget _buildMenuItem(BuildContext context, String title, IconData icon, bool isActive, {Widget? targetPage}) {
+    return InkWell(
+      onTap: () {
+        // Only navigate if the page is NOT currently active and a target route exists
+        if (!isActive && targetPage != null) {
+          Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation1, animation2) => targetPage,
+              transitionDuration: Duration.zero, // Zero duration for instant web-like snapping
+              reverseTransitionDuration: Duration.zero,
+            ),
+          );
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+        decoration: BoxDecoration(
+          color: isActive ? const Color(0xFF0D6EFD) : Colors.transparent, // Blue if active
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon, 
+              size: 20, 
+              color: isActive ? Colors.white : Colors.grey.shade600
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: isActive ? Colors.white : Colors.black87,
+                  fontSize: 14,
+                  fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
