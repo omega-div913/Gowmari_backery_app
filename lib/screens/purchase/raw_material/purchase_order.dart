@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gowmari_mobile/screens/components/app_sidebar.dart'; 
 import 'subsidebar.dart'; 
-// NOTE: The 'font_awesome_flutter' import has been REMOVED to fix the error.
 
 class RawMaterialPurchaseOrderPage extends StatefulWidget {
   const RawMaterialPurchaseOrderPage({super.key});
@@ -28,19 +27,34 @@ class _RawMaterialPurchaseOrderPageState extends State<RawMaterialPurchaseOrderP
   final List<String> _vendorList = ["Vendor A", "Vendor B", "Test Vendor"];
   final List<String> _materialList = ["Material X", "Material Y", "TEST"];
 
-  // Added more data to demonstrate pagination
-  final List<Map<String, dynamic>> _orders = List.generate(25, (index) => {
+  final List<Map<String, dynamic>> _orders = [
+    {
+      "orderDate": "18/05/2026",
+      "requestDate": "18/05/2026",
+      "vendor": "test1",
+      "material": "test11 (1.00 Pcs)",
+      "status": "Waiting For Approval",
+      "items": [{"material": "test11", "availableQty": "2.00", "quantity": "1", "unit": "Pcs"}]
+    },
+    {
       "orderDate": "18/05/2026",
       "requestDate": "19/05/2026",
-      "vendor": "test ${index+1}",
+      "vendor": "test",
+      "material": "TEST (1.00 Box)",
+      "status": "Pending",
+      "items": [{"material": "TEST", "availableQty": "5.00", "quantity": "1", "unit": "Box"}]
+    },
+    // Adding more for pagination demonstration
+    ...List.generate(20, (index) => {
+      "orderDate": "18/05/2026",
+      "requestDate": "19/05/2026",
+      "vendor": "test ${index + 2}",
       "material": "TEST (1.00 Box)",
       "status": "Waiting For Approval",
-      "items": [
-        {"material": "TEST", "availableQty": "2.00", "quantity": "1", "unit": "Box"}
-      ]
-  });
+      "items": [{"material": "TEST", "availableQty": "2.00", "quantity": "1", "unit": "Box"}]
+    })
+  ];
   
-  // Getter for paginated data
   List<Map<String, dynamic>> get paginatedOrders {
     final startIndex = (_currentPage - 1) * _itemsPerPage;
     final endIndex = (startIndex + _itemsPerPage > _orders.length) ? _orders.length : startIndex + _itemsPerPage;
@@ -117,7 +131,6 @@ class _RawMaterialPurchaseOrderPageState extends State<RawMaterialPurchaseOrderP
     );
   }
 
-  // Switcher to show the correct view
   Widget _getContentWidget() {
     if (_currentView == 1) return _buildCreateOrderForm();
     if (_currentView == 2) return _buildEditOrderForm(); 
@@ -125,7 +138,7 @@ class _RawMaterialPurchaseOrderPageState extends State<RawMaterialPurchaseOrderP
   }
 
   // =========================================================================
-  // VIEW 0: ORDER LIST
+  // VIEW 0: ORDER LIST (UPDATED DESIGN)
   // =========================================================================
   Widget _buildOrderList() {
     return Column(
@@ -136,12 +149,10 @@ class _RawMaterialPurchaseOrderPageState extends State<RawMaterialPurchaseOrderP
           children: [
             const Text("Purchase Order (Raw Material)", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black87)),
             ElevatedButton.icon(
-              onPressed: () {
-                setState(() => _currentView = 1);
-              },
+              onPressed: () => setState(() => _currentView = 1),
               icon: const Icon(Icons.add, size: 16),
               label: const Text("Create New Order"),
-              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D6EFD), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
             )
           ],
         ),
@@ -174,61 +185,57 @@ class _RawMaterialPurchaseOrderPageState extends State<RawMaterialPurchaseOrderP
                 decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade300))),
                 child: const Row(
                   children: [
-                    SizedBox(width: 50, child: Text("S.No", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
                     Expanded(flex: 2, child: Text("Order Date", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
                     Expanded(flex: 2, child: Text("Request Date", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
                     Expanded(flex: 2, child: Text("Vendor", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
                     Expanded(flex: 3, child: Text("Material(s)", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-                    Expanded(flex: 2, child: Text("Status", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13), textAlign: TextAlign.center)),
+                    Expanded(flex: 3, child: Text("Status", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13), textAlign: TextAlign.center)),
                     Expanded(flex: 3, child: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13), textAlign: TextAlign.right)), 
                   ],
                 ),
               ),
-              ...paginatedOrders.asMap().entries.map((entry) {
-                int indexOnPage = entry.key;
-                Map<String, dynamic> order = entry.value;
-                int sNo = indexOnPage + 1 + (_currentPage - 1) * _itemsPerPage;
-
+              ...paginatedOrders.map((order) {
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade200))),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(width: 50, child: Text("$sNo", style: const TextStyle(fontSize: 13))),
                       Expanded(flex: 2, child: Text(order["orderDate"], style: const TextStyle(fontSize: 13))),
                       Expanded(flex: 2, child: Text(order["requestDate"], style: const TextStyle(fontSize: 13))),
                       Expanded(flex: 2, child: Text(order["vendor"], style: const TextStyle(fontSize: 13))),
-                      Expanded(flex: 3, child: Text(order["material"], style: const TextStyle(fontSize: 13, color: Colors.blue, fontWeight: FontWeight.w500))),
-                      Expanded(flex: 2, child: Center(
+                      Expanded(flex: 3, child: Text(order["material"], style: const TextStyle(fontSize: 13, color: Color(0xFF0D6EFD), fontWeight: FontWeight.w500))),
+                      Expanded(flex: 3, child: Center(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(4)),
-                          child: Text(order["status"], style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87)),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: order["status"] == "Pending" ? const Color(0xFF0DCAF0) : const Color(0xFFFFC107), 
+                            borderRadius: BorderRadius.circular(4)
+                          ),
+                          child: Text(order["status"], style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: order["status"] == "Pending" ? Colors.white : Colors.black87)),
                         ),
                       )),
                       Expanded(
                         flex: 3, 
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: SingleChildScrollView( 
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _groupedBtn(Icons.print_outlined, Colors.grey.shade600, isFirst: true, onTap: () => _showPrintOptionsDialog(context)),
-                                _groupedBtn(Icons.chat_bubble_outline, const Color(0xFF198754), onTap: () => _showWhatsAppOptionsDialog(context)), 
-                                _groupedBtn(Icons.check, const Color(0xFF198754), isSolid: true),
-                                _groupedBtn(Icons.edit_outlined, const Color(0xFF0D6EFD), onTap: () => setState(() {
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            _gridActionBtn(Icons.print_outlined, Colors.grey.shade400, Colors.grey.shade600, onTap: () => _showPrintOptionsDialog(context)),
+                            const SizedBox(width: 4),
+                            _gridActionBtn(Icons.chat_bubble_outline, const Color(0xFF198754), const Color(0xFF198754), onTap: () => _showWhatsAppOptionsDialog(context)), 
+                            if (order["status"] != "Pending") ...[
+                              const SizedBox(width: 4),
+                              _gridActionBtn(Icons.check, const Color(0xFF198754), Colors.white, isSolid: true, onTap: () => _showApproveDialog(context, order)),
+                              const SizedBox(width: 4),
+                              _gridActionBtn(Icons.edit_outlined, const Color(0xFF0D6EFD), const Color(0xFF0D6EFD), onTap: () => setState(() {
                                   _editOrderItems = List<Map<String, dynamic>>.from(order['items']);
                                   _currentView = 2;
-                                })),
-                                _groupedBtn(Icons.delete_outline, const Color(0xFFDC3545), isLast: true, onTap: () => _showDeleteDialog(context)),
-                              ],
-                            ),
-                          ),
-                        )
+                              })),
+                              const SizedBox(width: 4),
+                              _gridActionBtn(Icons.delete_outline, const Color(0xFFDC3545), const Color(0xFFDC3545), onTap: () => _showDeleteDialog(context)),
+                            ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -239,6 +246,69 @@ class _RawMaterialPurchaseOrderPageState extends State<RawMaterialPurchaseOrderP
           ),
         )
       ],
+    );
+  }
+
+  // --- APPROVE POPUP ---
+  void _showApproveDialog(BuildContext context, Map<String, dynamic> order) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          child: Container(
+            width: 450,
+            padding: const EdgeInsets.all(40),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 80, height: 80,
+                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFC9DAE1), width: 4)),
+                  child: const Center(child: Text("?", style: TextStyle(fontSize: 50, color: Color(0xFF87ADBD), fontWeight: FontWeight.w300))),
+                ),
+                const SizedBox(height: 25),
+                const Text("Approve this Order?", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Color(0xFF595959))),
+                const SizedBox(height: 15),
+                Text("Approve PO for ${order['vendor']}?", style: const TextStyle(fontSize: 16, color: Color(0xFF545454))),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF28A745), padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
+                      child: const Text("Yes, Approve", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6E7881), padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
+                      child: const Text("Cancel", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // UPDATED SMALL ACTION BUTTONS
+  Widget _gridActionBtn(IconData icon, Color color, Color iconColor, {bool isSolid = false, VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 28, width: 30,
+        decoration: BoxDecoration(
+          color: isSolid ? color : Colors.white,
+          border: Border.all(color: color.withOpacity(0.5)),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Center(child: Icon(icon, size: 14, color: isSolid ? Colors.white : iconColor)),
+      ),
     );
   }
 
@@ -273,7 +343,6 @@ class _RawMaterialPurchaseOrderPageState extends State<RawMaterialPurchaseOrderP
     );
   }
 
-  // --- REUSABLE FORM BASE FOR CREATE & EDIT ---
   Widget _buildFormBase({required String title, required VoidCallback onBack, required List<Map<String, dynamic>> currentItems, Map<String, dynamic>? orderData}) {
     bool isEdit = orderData != null;
     
@@ -446,9 +515,7 @@ class _RawMaterialPurchaseOrderPageState extends State<RawMaterialPurchaseOrderP
     );
   }
 
-  // =========================================================================
-  // HELPER WIDGETS & POPUPS
-  // =========================================================================
+  // --- HELPERS ---
 
   Widget _buildPagination() {
     int totalPages = (_orders.length / _itemsPerPage).ceil();
@@ -480,31 +547,6 @@ class _RawMaterialPurchaseOrderPageState extends State<RawMaterialPurchaseOrderP
       child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.blue, fontSize: 13, fontWeight: FontWeight.bold))
     ),
   );
-  
-  Widget _groupedBtn(IconData icon, Color color, {bool isFirst = false, bool isLast = false, bool isSolid = false, VoidCallback? onTap}) {
-    return InkWell(
-      onTap: onTap ?? (){},
-      child: ClipRRect(
-        borderRadius: BorderRadius.horizontal(
-          left: isFirst ? const Radius.circular(4) : Radius.zero,
-          right: isLast ? const Radius.circular(4) : Radius.zero,
-        ),
-        child: Container(
-          height: 32, width: 36,
-          decoration: BoxDecoration(
-            color: isSolid ? color : Colors.white,
-            border: Border(
-              top: BorderSide(color: color, width: 1),
-              bottom: BorderSide(color: color, width: 1),
-              left: BorderSide(color: color, width: 1),
-              right: isLast ? BorderSide(color: color, width: 1) : BorderSide.none,
-            ),
-          ),
-          child: Center(child: Icon(icon, size: 16, color: isSolid ? Colors.white : color)),
-        ),
-      ),
-    );
-  }
 
   void _showWhatsAppOptionsDialog(BuildContext context) {
     bool allMaterial = true;
