@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gowmari_mobile/screens/masters/masters_page.dart';
+import 'subsidebar.dart'; // Import unified layout
 
 class RawMaterial {
   final String name;
@@ -15,17 +15,9 @@ class RawMaterial {
   final List<String> tags;
 
   RawMaterial({
-    required this.name,
-    this.tamilName = "",
-    required this.type,
-    required this.category,
-    required this.price,
-    required this.stock,
-    this.alertQty = 0,
-    required this.unit,
-    this.secondaryUnit = "None",
-    this.purchaseType = "Regular",
-    required this.tags,
+    required this.name, this.tamilName = "", required this.type, required this.category, required this.price,
+    required this.stock, this.alertQty = 0, required this.unit, this.secondaryUnit = "None",
+    this.purchaseType = "Regular", required this.tags,
   });
 }
 
@@ -46,9 +38,6 @@ class _RMMasterPageState extends State<RMMasterPage> {
     RawMaterial(name: "1 kg Sweet Container", tamilName: "", type: "PACKING MATERIAL", category: "Both", price: 17.50, stock: 465, unit: "pcs", tags: ["PACKING", "DONATION"]),
   ];
 
-  // ==========================================
-  // PAGINATION STATE
-  // ==========================================
   int _currentPage = 1;
   int _itemsPerPage = 100;
 
@@ -60,76 +49,29 @@ class _RMMasterPageState extends State<RMMasterPage> {
     return materials.sublist(startIndex, endIndex);
   }
 
-  // ==========================================
-  // 1. IMPORT EXCEL DIALOG (EXACT IMAGE 2)
-  // ==========================================
   void _showImportDialog() {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: Colors.white, surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Container(
-          width: 420,
-          padding: const EdgeInsets.all(24),
+          width: 420, padding: const EdgeInsets.all(24),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text("Bulk Import (.xlsx)", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
               const SizedBox(height: 16),
-              
-              // Download Template Button
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () {}, 
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    side: BorderSide(color: Colors.grey.shade300),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                  ),
-                  child: const Text("Download Template", style: TextStyle(color: Colors.black87, fontSize: 13)),
-                ),
-              ),
+              SizedBox(width: double.infinity, child: OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14), side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))), child: const Text("Download Template", style: TextStyle(color: Colors.black87, fontSize: 13)))),
               const SizedBox(height: 16),
-              
-              // Select File Section
               const Text("SELECT EXCEL FILE", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))),
               const SizedBox(height: 6),
               Container(
-                height: 40,
-                decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(color: const Color(0xFFF8F9FA), border: Border(right: BorderSide(color: Colors.grey.shade300))),
-                      alignment: Alignment.center,
-                      child: const Text("Choose File", style: TextStyle(fontSize: 12, color: Colors.black87)),
-                    ),
-                    const SizedBox(width: 10),
-                    const Text("No file chosen", style: TextStyle(fontSize: 12, color: Colors.grey)),
-                  ],
-                ),
+                height: 40, decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)),
+                child: Row(children: [Container(padding: const EdgeInsets.symmetric(horizontal: 12), decoration: BoxDecoration(color: const Color(0xFFF8F9FA), border: Border(right: BorderSide(color: Colors.grey.shade300))), alignment: Alignment.center, child: const Text("Choose File", style: TextStyle(fontSize: 12, color: Colors.black87))), const SizedBox(width: 10), const Text("No file chosen", style: TextStyle(fontSize: 12, color: Colors.grey))]),
               ),
               const SizedBox(height: 20),
-              
-              // Upload Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context), 
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0D6EFD), // Bootstrap blue
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                    elevation: 0,
-                  ),
-                  child: const Text("Upload Data", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                ),
-              ),
+              SizedBox(width: double.infinity, child: ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D6EFD), padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), elevation: 0), child: const Text("Upload Data", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)))),
             ],
           ),
         ),
@@ -137,49 +79,29 @@ class _RMMasterPageState extends State<RMMasterPage> {
     );
   }
 
-  // ==========================================
-  // 2. DELETE DIALOG (EXACT IMAGE 3)
-  // ==========================================
   void _showDeleteDialog() {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: Colors.white, surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Container(
-          width: 400,
-          padding: const EdgeInsets.all(32),
+          width: 400, padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Orange Exclamation Icon
-              Container(
-                height: 75, width: 75,
-                decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFF8BB86), width: 3)),
-                child: const Center(child: Text("!", style: TextStyle(fontSize: 45, color: Color(0xFFF8BB86), fontWeight: FontWeight.w300))),
-              ),
+              Container(height: 75, width: 75, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFF8BB86), width: 3)), child: const Center(child: Text("!", style: TextStyle(fontSize: 45, color: Color(0xFFF8BB86), fontWeight: FontWeight.w300)))),
               const SizedBox(height: 20),
               const Text("Are you sure?", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)),
               const SizedBox(height: 8),
               const Text("This will also delete associated stock records!", textAlign: TextAlign.center, style: TextStyle(color: Color(0xFF6C757D), fontSize: 13)),
               const SizedBox(height: 24),
-              
-              // Action Buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context), 
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC3545), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
-                    child: const Text("Yes, delete it!", style: TextStyle(color: Colors.white, fontSize: 13)),
-                  ),
+                  ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC3545), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))), child: const Text("Yes, delete it!", style: TextStyle(color: Colors.white, fontSize: 13))),
                   const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context), 
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6C757D), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
-                    child: const Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 13)),
-                  ),
+                  ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6C757D), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))), child: const Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 13))),
                 ],
               )
             ],
@@ -189,9 +111,6 @@ class _RMMasterPageState extends State<RMMasterPage> {
     );
   }
 
-  // ==========================================
-  // 3. CREATE / EDIT DIALOG (EXACT IMAGES 4 & 5)
-  // ==========================================
   void _showMaterialDialog({RawMaterial? material}) {
     bool isEdit = material != null;
     showDialog(
@@ -201,10 +120,9 @@ class _RMMasterPageState extends State<RMMasterPage> {
         bool isDialogMobile = screenWidth < 750;
 
         return Dialog(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
+          backgroundColor: Colors.white, surfaceTintColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          child: Container(
+          child: SizedBox(
             width: isDialogMobile ? screenWidth * 0.95 : 780,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -225,44 +143,18 @@ class _RMMasterPageState extends State<RMMasterPage> {
                     padding: const EdgeInsets.all(24),
                     child: Column(
                       children: [
-                        _responsiveRow(isDialogMobile, [
-                          _buildInput("MATERIAL NAME", material?.name ?? ""),
-                          _buildInput("TAMIL NAME", material?.tamilName ?? "தமிழ் பெயர்"),
-                        ]),
-                        const SizedBox(height: 20),
-                        _responsiveRow(isDialogMobile, [
-                          _buildInput("OPENING STOCK", material?.stock.toString() ?? "0"),
-                          _buildInput("ALERT QTY", material?.alertQty.toString() ?? "0"),
-                          _buildInput("PRICE / UNIT (₹)", material?.price.toString() ?? "0"),
-                        ]),
-                        const SizedBox(height: 20),
-                        _responsiveRow(isDialogMobile, [
-                          _buildDropdown("CATEGORY", material?.category ?? "Factory", ["Factory", "Bakery", "Both"]),
-                          _buildCheckList("MATERIAL TYPE", ["BAKERY", "CHAT MATERIAL", "CLEANING MATERIAL", "PACKING MATERIAL"], material?.type),
-                        ]),
-                        const SizedBox(height: 20),
-                        _buildDropdown("PURCHASE TYPE", material?.purchaseType ?? "Regular", ["Regular", "Urgent"]),
-                        const SizedBox(height: 20),
+                        _responsiveRow(isDialogMobile, [_buildInput("MATERIAL NAME", material?.name ?? ""), _buildInput("TAMIL NAME", material?.tamilName ?? "தமிழ் பெயர்")]), const SizedBox(height: 20),
+                        _responsiveRow(isDialogMobile, [_buildInput("OPENING STOCK", material?.stock.toString() ?? "0"), _buildInput("ALERT QTY", material?.alertQty.toString() ?? "0"), _buildInput("PRICE / UNIT (₹)", material?.price.toString() ?? "0")]), const SizedBox(height: 20),
+                        _responsiveRow(isDialogMobile, [_buildDropdown("CATEGORY", material?.category ?? "Factory", ["Factory", "Bakery", "Both"]), _buildCheckList("MATERIAL TYPE", ["BAKERY", "CHAT MATERIAL", "CLEANING MATERIAL", "PACKING MATERIAL"], material?.type)]), const SizedBox(height: 20),
+                        _buildDropdown("PURCHASE TYPE", material?.purchaseType ?? "Regular", ["Regular", "Urgent"]), const SizedBox(height: 20),
                         _responsiveRow(isDialogMobile, [
                           _buildCheckList("ASSIGN SECTIONS", ["BAKERY", "SWEET", "MURUKKU", "KOLUKATTAI"], null),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text("ASSIGN SUB-SECTIONS", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))),
-                              const SizedBox(height: 8),
-                              Container(
-                                height: 130, width: double.infinity,
-                                decoration: BoxDecoration(border: Border.all(color: const Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4)),
-                                child: Center(child: Text(isEdit ? "No sub-sections available for selected sections" : "Select a section first", style: const TextStyle(color: Colors.grey, fontSize: 12))),
-                              )
-                            ],
-                          ),
-                        ]),
-                        const SizedBox(height: 20),
-                        _responsiveRow(isDialogMobile, [
-                          _buildDropdown("PRIMARY UNIT", material?.unit ?? "Select", ["Select", "kg", "pcs", "ltr", "pkt"]),
-                          _buildDropdown("SECONDARY UNIT (OPT)", material?.secondaryUnit ?? "None", ["None", "gram", "ml"]),
-                        ]),
+                          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            const Text("ASSIGN SUB-SECTIONS", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))), const SizedBox(height: 8),
+                            Container(height: 130, width: double.infinity, decoration: BoxDecoration(border: Border.all(color: const Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4)), child: Center(child: Text(isEdit ? "No sub-sections available for selected sections" : "Select a section first", style: const TextStyle(color: Colors.grey, fontSize: 12))))
+                          ]),
+                        ]), const SizedBox(height: 20),
+                        _responsiveRow(isDialogMobile, [_buildDropdown("PRIMARY UNIT", material?.unit ?? "Select", ["Select", "kg", "pcs", "ltr", "pkt"]), _buildDropdown("SECONDARY UNIT (OPT)", material?.secondaryUnit ?? "None", ["None", "gram", "ml"])]),
                       ],
                     ),
                   ),
@@ -273,17 +165,8 @@ class _RMMasterPageState extends State<RMMasterPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context), 
-                        style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20), shape: RoundedRectangleBorder(side: const BorderSide(color: Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4))),
-                        child: const Text("Close", style: TextStyle(color: Colors.black87, fontSize: 13)),
-                      ),
-                      const SizedBox(width: 12),
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D6EFD), padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), elevation: 0),
-                        child: const Text("Save Record", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                      ),
+                      TextButton(onPressed: () => Navigator.pop(context), style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20), shape: RoundedRectangleBorder(side: const BorderSide(color: Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4))), child: const Text("Close", style: TextStyle(color: Colors.black87, fontSize: 13))), const SizedBox(width: 12),
+                      ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D6EFD), padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), elevation: 0), child: const Text("Save Record", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13))),
                     ],
                   ),
                 )
@@ -295,7 +178,6 @@ class _RMMasterPageState extends State<RMMasterPage> {
     );
   }
 
-  // --- Form Input Helpers ---
   Widget _responsiveRow(bool isMobile, List<Widget> children) {
     if (isMobile) return Column(children: children.map((w) => Padding(padding: const EdgeInsets.only(bottom: 15), child: w)).toList());
     return Row(crossAxisAlignment: CrossAxisAlignment.start, children: children.map((w) => Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 10), child: w))).toList());
@@ -304,29 +186,25 @@ class _RMMasterPageState extends State<RMMasterPage> {
   Widget _buildInput(String label, String hint) {
     bool isTamilHint = hint == "தமிழ் பெயர்";
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))),
-      const SizedBox(height: 8),
+      Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))), const SizedBox(height: 8),
       SizedBox(height: 42, child: TextFormField(initialValue: isTamilHint ? "" : hint, decoration: InputDecoration(hintText: isTamilHint ? hint : null, filled: true, fillColor: const Color(0xFFF8F9FA), contentPadding: const EdgeInsets.symmetric(horizontal: 12), border: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4)), enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4))))),
     ]);
   }
 
   Widget _buildDropdown(String label, String val, List<String> items) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))),
-      const SizedBox(height: 8),
+      Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))), const SizedBox(height: 8),
       SizedBox(height: 42, child: DropdownButtonFormField<String>(value: val, decoration: InputDecoration(filled: true, fillColor: const Color(0xFFF8F9FA), contentPadding: const EdgeInsets.symmetric(horizontal: 12), border: OutlineInputBorder(borderSide: const BorderSide(color: Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4))), items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 14)))).toList(), onChanged: (v) {})),
     ]);
   }
 
   Widget _buildCheckList(String label, List<String> opts, String? active) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))),
-      const SizedBox(height: 8),
+      Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF6C757D))), const SizedBox(height: 8),
       Container(height: 130, decoration: BoxDecoration(border: Border.all(color: const Color(0xFFDEE2E6)), borderRadius: BorderRadius.circular(4), color: const Color(0xFFF8F9FA)), child: ListView(padding: EdgeInsets.zero, children: opts.map((e) => CheckboxListTile(title: Text(e, style: const TextStyle(fontSize: 12)), value: active == e, onChanged: (v) {}, controlAffinity: ListTileControlAffinity.leading, dense: true, visualDensity: const VisualDensity(vertical: -4))).toList())),
     ]);
   }
 
-  // --- Main Page Build ---
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -335,6 +213,7 @@ class _RMMasterPageState extends State<RMMasterPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FE),
       drawer: isMobile ? const Drawer(child: MasterPrimarySidebar()) : null,
+      appBar: isMobile ? AppBar(backgroundColor: Colors.white, elevation: 0.5, iconTheme: const IconThemeData(color: Colors.black), title: const Text("Raw Materials", style: TextStyle(color: Colors.black, fontSize: 16))) : null,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -353,6 +232,7 @@ class _RMMasterPageState extends State<RMMasterPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              if (isMobile) const MobileSecondaryMenu(activePage: 'RM Master'),
                               const Text("Raw Material List", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
                               const SizedBox(height: 20),
                               _buildTopControls(isMobile),
@@ -402,21 +282,9 @@ class _RMMasterPageState extends State<RMMasterPage> {
               decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), 
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<int>(
-                  value: _itemsPerPage,
-                  icon: const Icon(Icons.arrow_drop_down, size: 16),
-                  style: const TextStyle(fontSize: 12, color: Colors.black87),
-                  onChanged: (int? newValue) {
-                    setState(() {
-                      _itemsPerPage = newValue!;
-                      _currentPage = 1; // Reset to page 1 on limit change
-                    });
-                  },
-                  items: <int>[5, 10, 50, 100].map<DropdownMenuItem<int>>((int value) {
-                    return DropdownMenuItem<int>(
-                      value: value,
-                      child: Text(value.toString()),
-                    );
-                  }).toList(),
+                  value: _itemsPerPage, icon: const Icon(Icons.arrow_drop_down, size: 16), style: const TextStyle(fontSize: 12, color: Colors.black87),
+                  onChanged: (int? newValue) { setState(() { _itemsPerPage = newValue!; _currentPage = 1; }); },
+                  items: <int>[5, 10, 50, 100].map<DropdownMenuItem<int>>((int value) { return DropdownMenuItem<int>(value: value, child: Text(value.toString())); }).toList(),
                 ),
               ),
             ),
@@ -439,10 +307,9 @@ class _RMMasterPageState extends State<RMMasterPage> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              headingRowHeight: 50,
-              dataRowMaxHeight: 70,
+              headingRowHeight: 50, dataRowMaxHeight: 70,
               columns: const [
-                DataColumn(label: Text('S.No', style: TextStyle(fontWeight: FontWeight.bold))), // <-- Added S.No Column
+                DataColumn(label: Text('S.No', style: TextStyle(fontWeight: FontWeight.bold))), 
                 DataColumn(label: Text('Name & Tamil Name', style: TextStyle(fontWeight: FontWeight.bold))),
                 DataColumn(label: Text('Type', style: TextStyle(fontWeight: FontWeight.bold))),
                 DataColumn(label: Text('Category', style: TextStyle(fontWeight: FontWeight.bold))),
@@ -455,10 +322,9 @@ class _RMMasterPageState extends State<RMMasterPage> {
                 int index = entry.key + (_currentPage - 1) * _itemsPerPage;
                 RawMaterial m = entry.value;
                 return DataRow(cells: [
-                  DataCell(Text('${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold))), // <-- Added S.No Cell
+                  DataCell(Text('${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold))), 
                   DataCell(Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                    const SizedBox(height: 4),
+                    Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), const SizedBox(height: 4),
                     Wrap(spacing: 5, children: m.tags.map((t) => Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: Colors.grey.shade100, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), child: Text(t, style: const TextStyle(fontSize: 9, color: Colors.grey)))).toList()),
                   ])),
                   DataCell(Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: const Color(0xFFE3F2FD), borderRadius: BorderRadius.circular(12)), child: Text(m.type, style: const TextStyle(color: Color(0xFF1E88E5), fontSize: 9, fontWeight: FontWeight.bold)))),
@@ -491,7 +357,7 @@ class _RMMasterPageState extends State<RMMasterPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Expanded(child: Text("${index + 1}. ${m.name}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))), // <-- Added S.No
+                  Expanded(child: Text("${index + 1}. ${m.name}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14))),
                   Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(4)), child: Text(m.type, style: const TextStyle(color: Colors.blue, fontSize: 8, fontWeight: FontWeight.bold))),
                 ]),
                 const SizedBox(height: 10),
@@ -512,37 +378,23 @@ class _RMMasterPageState extends State<RMMasterPage> {
   Widget _headerBtn(String l, IconData i, Color c, VoidCallback t) => OutlinedButton.icon(onPressed: t, icon: Icon(i, size: 16, color: c), label: Text(l, style: TextStyle(color: c, fontSize: 12)), style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))));
   Widget _actionIcon(IconData i, Color c, VoidCallback t) => Container(width: 30, height: 30, decoration: BoxDecoration(border: Border.all(color: c.withOpacity(0.3)), borderRadius: BorderRadius.circular(4)), child: IconButton(padding: EdgeInsets.zero, icon: Icon(i, size: 16, color: c), onPressed: t));
   
-  // Functional Pagination
   Widget _buildPagination() {
     int totalPages = (materials.length / _itemsPerPage).ceil();
-    if (totalPages <= 1) totalPages = 1; // Show at least 1 page
+    if (totalPages <= 1) totalPages = 1;
 
     List<Widget> pageButtons = [];
-    
-    // Prev Button
-    pageButtons.add(_pageBox("Prev", false, () {
-      if (_currentPage > 1) setState(() => _currentPage--);
-    }));
+    pageButtons.add(_pageBox("Prev", false, () { if (_currentPage > 1) setState(() => _currentPage--); }));
     pageButtons.add(const SizedBox(width: 5));
 
-    // Page Numbers
     for (int i = 1; i <= totalPages; i++) {
-      pageButtons.add(_pageBox("$i", _currentPage == i, () {
-        setState(() => _currentPage = i);
-      }));
+      pageButtons.add(_pageBox("$i", _currentPage == i, () { setState(() => _currentPage = i); }));
       if (i < totalPages) pageButtons.add(const SizedBox(width: 5));
     }
 
-    // Next Button
     pageButtons.add(const SizedBox(width: 5));
-    pageButtons.add(_pageBox("Next", false, () {
-      if (_currentPage < totalPages) setState(() => _currentPage++);
-    }));
+    pageButtons.add(_pageBox("Next", false, () { if (_currentPage < totalPages) setState(() => _currentPage++); }));
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0), 
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: pageButtons)
-    );
+    return Padding(padding: const EdgeInsets.all(16.0), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: pageButtons));
   }
 
   Widget _pageBox(String t, bool active, VoidCallback onTap) => InkWell(
