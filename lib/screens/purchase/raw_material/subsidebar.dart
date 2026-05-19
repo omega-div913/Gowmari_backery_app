@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'purchase_order.dart';
 import 'purchase_entry.dart'; // Make sure this matches your Purchase Entry file name
 import 'invoice_management.dart'; // Make sure this matches your new Invoice Management file name
+import 'section_wise_consumption.dart'; // Added import for Section Wise Consumption
 
 class RawMaterialSubSidebar extends StatelessWidget {
   final String activePage;
@@ -54,7 +55,8 @@ class RawMaterialSubSidebar extends StatelessWidget {
             context, 
             "Section Wise Consumption", 
             Icons.pie_chart_outline, 
-            activePage == 'Section Wise Consumption'
+            activePage == 'Section Wise Consumption',
+            targetPage: const SectionWiseConsumptionScreen() // Added routing to Section Wise Consumption
           ),
           _buildMenuItem(
             context, 
