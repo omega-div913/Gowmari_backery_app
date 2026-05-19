@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../components/app_sidebar.dart'; 
 import 'subsidebar.dart'; 
-import 'record_section_consumption.dart'; // Added import for navigation
+import 'record_section_consumption.dart';
 
 class SectionWiseConsumptionScreen extends StatefulWidget {
   const SectionWiseConsumptionScreen({Key? key}) : super(key: key);
@@ -11,78 +11,151 @@ class SectionWiseConsumptionScreen extends StatefulWidget {
       _SectionWiseConsumptionScreenState();
 }
 
-class _SectionWiseConsumptionScreenState
-    extends State<SectionWiseConsumptionScreen> {
+class _SectionWiseConsumptionScreenState extends State<SectionWiseConsumptionScreen> {
   DateTime? fromDate = DateTime.now();
   DateTime? toDate = DateTime.now();
   String? selectedSection;
   String? selectedSubSection;
   final TextEditingController searchController = TextEditingController();
 
-  final List<String> sections = ['All Active Sections', 'Kitchen', 'Bakery', 'Store'];
-  final List<String> subSections = ['All Sub Sections', 'Sub 1', 'Sub 2'];
-
   final List<Map<String, dynamic>> tableData = [
-    {"date": "19-05-2026", "section": "Kitchen", "sub": "Main Kitchen", "status": "Completed", "amount": "₹ 1,250.00"},
-    {"date": "19-05-2026", "section": "Bakery", "sub": "Oven Area", "status": "Pending", "amount": "₹ 850.00"},
-    {"date": "18-05-2026", "section": "Store", "sub": "Raw Stock", "status": "Completed", "amount": "₹ 2,400.00"},
+    {"date": "19/05/2026", "time": "03:38 PM", "section": "KADALAI MITTAI", "sub": "-", "status": "Completed", "amount": "16435.83"},
+    {"date": "19/05/2026", "time": "03:24 PM", "section": "KOLUKATTAI", "sub": "-", "status": "Completed", "amount": "7992.73"},
+    {"date": "19/05/2026", "time": "03:19 PM", "section": "KITCHEN", "sub": "-", "status": "Completed", "amount": "8565.66"},
   ];
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'DD-MM-YYYY';
-    return "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}";
+  // --- ACTIONS ---
+
+  // IMAGE 2: VIEW BILL DETAILS DIALOG
+  void _showViewDialog(BuildContext context, Map<String, dynamic> data) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: Container(
+          width: 500,
+          decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(8)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Consumption Bill Details", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                    IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.white70, size: 20)),
+                  ],
+                ),
+              ),
+              Container(
+                color: Colors.white,
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        _billInfo("SECTION", data['section']),
+                        _billInfo("SUB SECTION", data['sub']),
+                        _billInfo("DATE & TIME", "${data['date']} ${data['time']}"),
+                      ],
+                    ),
+                    const Divider(height: 30),
+                    _billRow("Verkadalai", "₹178.00", "50.00 kg", "₹8900.00"),
+                    _billRow("Mavu Vellam", "₹49.33", "11.00 kg", "₹542.63"),
+                    _billRow("Vellam", "₹50.00", "15.00 kg", "₹750.00"),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(color: const Color(0xFF0D6EFD), borderRadius: BorderRadius.circular(4)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("TOTAL VALUE", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          Text("₹${data['amount']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.print, color: Colors.white, size: 18),
+                label: const Text("Print Thermal Receipt", style: TextStyle(color: Colors.white)),
+                style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 20)),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
-  Future<void> _selectDate(BuildContext context, bool isFromDate) async {
-    final DateTime? picked = await showDatePicker(
+  // IMAGE 4: DELETE CONFIRMATION DIALOG
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, size: 80, color: Colors.orangeAccent),
+            const SizedBox(height: 20),
+            const Text("Are you sure?", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            const Text("Deleting this will add the quantities back to your stock!", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+            const SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFEF4444), foregroundColor: Colors.white),
+                  child: const Text("Yes, delete it!"),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3B82F6), foregroundColor: Colors.white),
+                  child: const Text("Cancel"),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
     );
-    if (picked != null) {
-      setState(() {
-        if (isFromDate) fromDate = picked; else toDate = picked;
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFFF3F6F9),
       body: Row(
         children: [
-          // 1. Main Sidebar
           const AppSidebar(activeMenu: "Raw Material"), 
-
           Expanded(
             child: Column(
               children: [
-                // 2. Top Header Bar (Breadcrumbs, Search, Profile) - Matches Image 1 & 3
                 _buildTopBar(),
-
                 Expanded(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // 3. Subsidebar
                       const RawMaterialSubSidebar(activePage: 'Section Wise Consumption'),
-
-                      // 4. Page Content Area
                       Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24.0),
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(20.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _buildPageHeader(),
-                              const SizedBox(height: 25),
-                              _buildFilterRow(),
                               const SizedBox(height: 20),
-                              _buildSearchRow(),
-                              const SizedBox(height: 25),
-                              Expanded(child: _buildDataTableGrid()),
+                              _buildFilterSection(),
+                              const SizedBox(height: 20),
+                              _buildDataTableGrid(),
                             ],
                           ),
                         ),
@@ -98,56 +171,29 @@ class _SectionWiseConsumptionScreenState
     );
   }
 
-  // NEW: Top Navigation Bar to match Image 1 & 3
+  // --- UI BUILDERS ---
+
   Widget _buildTopBar() {
     return Container(
-      height: 70,
+      height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-      ),
+      decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: Colors.grey.shade200))),
       child: Row(
         children: [
-          const Icon(Icons.menu, color: Colors.grey, size: 22),
-          const SizedBox(width: 20),
-          const Text(
-            "Home / Purchase Section / Raw Material",
-            style: TextStyle(color: Colors.grey, fontSize: 13),
-          ),
+          const Icon(Icons.menu, color: Colors.grey, size: 20),
+          const SizedBox(width: 15),
+          const Text("Home", style: TextStyle(color: Colors.grey, fontSize: 13)),
           const Spacer(),
-          // Search Pill
           Container(
-            width: 350,
-            height: 45,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const TextField(
-              decoration: InputDecoration(
-                hintText: "Search menus ( Press / )",
-                hintStyle: TextStyle(fontSize: 13, color: Colors.grey),
-                prefixIcon: Icon(Icons.search, color: Colors.grey, size: 20),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 8),
-              ),
-            ),
+            width: 300, height: 38,
+            decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(8)),
+            child: const TextField(decoration: InputDecoration(hintText: "Search menus ( Press / )", hintStyle: TextStyle(fontSize: 12, color: Colors.grey), prefixIcon: Icon(Icons.search, color: Colors.grey, size: 18), border: InputBorder.none, contentPadding: EdgeInsets.only(bottom: 10))),
           ),
-          const SizedBox(width: 25),
-          // Profile Section
-          Row(
-            children: [
-              Container(
-                width: 40, height: 40,
-                decoration: const BoxDecoration(color: Color(0xFF0D6EFD), shape: BoxShape.circle),
-                child: const Center(child: Text("R", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16))),
-              ),
-              const SizedBox(width: 12),
-              const Text("RTS", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-              const Icon(Icons.arrow_drop_down, color: Colors.black87),
-            ],
-          ),
+          const SizedBox(width: 20),
+          const CircleAvatar(radius: 16, backgroundColor: Color(0xFF0D6EFD), child: Text("R", style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold))),
+          const SizedBox(width: 8),
+          const Text("RTS", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          const Icon(Icons.arrow_drop_down, size: 18),
         ],
       ),
     );
@@ -160,206 +206,109 @@ class _SectionWiseConsumptionScreenState
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
-            Text('Section Wise Consumption', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-            SizedBox(height: 4),
-            Text('Operational Material Usage Registry', style: TextStyle(fontSize: 13, color: Colors.grey)),
+            Text('Section Wise Consumption', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF212529))),
+            Text('Operational Material Usage Registry', style: TextStyle(fontSize: 12, color: Colors.grey)),
           ],
         ),
         ElevatedButton.icon(
-          onPressed: () {
-            // Updated navigation to RecordSectionConsumptionScreen
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const RecordSectionConsumptionScreen()),
-            );
-          },
-          icon: const Icon(Icons.add, size: 18),
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RecordSectionConsumptionScreen(isEdit: false))),
+          icon: const Icon(Icons.add, size: 16),
           label: const Text('New Entry'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF0D6EFD),
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            elevation: 0,
-          ),
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D6EFD), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)), elevation: 0),
         ),
       ],
     );
   }
 
-  Widget _buildFilterRow() {
-    return Row(
-      children: [
-        Expanded(child: _buildInputLabelField("FROM DATE", _formatDate(fromDate), () => _selectDate(context, true))),
-        const SizedBox(width: 15),
-        Expanded(child: _buildInputLabelField("TO DATE", _formatDate(toDate), () => _selectDate(context, false))),
-        const SizedBox(width: 15),
-        Expanded(child: _buildDropdownLabelField("FILTER SECTIONS", sections, selectedSection, (val) => setState(() => selectedSection = val))),
-        const SizedBox(width: 15),
-        Expanded(child: _buildDropdownLabelField("FILTER SUB SECTIONS", subSections, selectedSubSection, (val) => setState(() => selectedSubSection = val))),
-      ],
-    );
-  }
-
-  Widget _buildSearchRow() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Expanded(
-          flex: 4,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("SEARCH RECORDS", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
-              const SizedBox(height: 8),
-              TextField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  hintText: 'Section, item, etc...',
-                  prefixIcon: const Icon(Icons.search, size: 20, color: Colors.grey),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 15),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey.shade300)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: Colors.grey.shade300)),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 15),
-        ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF1E293B),
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          ),
-          child: const Text("Filter"),
-        ),
-        const SizedBox(width: 10),
-        Container(
-          height: 55, width: 55,
-          decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
-          child: IconButton(icon: const Icon(Icons.refresh, color: Colors.grey), onPressed: () => setState(() => searchController.clear())),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDataTableGrid() {
+  Widget _buildFilterSection() {
     return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey.shade200)),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade200)),
       child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-            decoration: const BoxDecoration(color: Color(0xFFF1F5F9), borderRadius: BorderRadius.vertical(top: Radius.circular(10))),
-            child: Row(
-              children: [
-                _tableHeaderText("S.NO", 0.5),
-                _tableHeaderText("DATE ↓", 1.2),
-                _tableHeaderText("SECTION NAME ↑↓", 2),
-                _tableHeaderText("SUB SECTION", 2),
-                _tableHeaderText("STATUS", 1.5),
-                _tableHeaderText("TOTAL AMOUNT ↑↓", 2),
-                _tableHeaderText("ACTIONS", 1),
-              ],
-            ),
+          Row(
+            children: [
+              Expanded(child: _buildField("FROM DATE", "19-05-2026", Icons.calendar_today)),
+              const SizedBox(width: 15),
+              Expanded(child: _buildField("TO DATE", "19-05-2026", Icons.calendar_today)),
+              const SizedBox(width: 15),
+              Expanded(child: _buildField("FILTER SECTIONS", "All Active Sections", Icons.keyboard_arrow_down)),
+              const SizedBox(width: 15),
+              Expanded(child: _buildField("FILTER SUB SECTIONS", "All Sub Sections", Icons.keyboard_arrow_down)),
+            ],
           ),
-          Expanded(
-            child: ListView.separated(
-              itemCount: tableData.length,
-              separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade100),
-              itemBuilder: (context, index) {
-                final item = tableData[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                  child: Row(
-                    children: [
-                      Expanded(flex: 5, child: Text("${index + 1}", style: const TextStyle(fontSize: 13))),
-                      Expanded(flex: 12, child: Text(item['date'])),
-                      Expanded(flex: 20, child: Text(item['section'], style: const TextStyle(fontWeight: FontWeight.w500))),
-                      Expanded(flex: 20, child: Text(item['sub'])),
-                      Expanded(flex: 15, child: _statusBadge(item['status'])),
-                      Expanded(flex: 20, child: Text(item['amount'], style: const TextStyle(fontWeight: FontWeight.bold))),
-                      Expanded(flex: 10, child: Row(children: [
-                        Icon(Icons.edit_outlined, size: 18, color: Colors.blue.shade600),
-                        const SizedBox(width: 8),
-                        const Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
-                      ])),
-                    ],
-                  ),
-                );
-              },
-            ),
+          const SizedBox(height: 15),
+          Row(
+            children: [
+              Expanded(flex: 2, child: _buildField("SEARCH RECORDS", "Section, item, etc...", Icons.search)),
+              const SizedBox(width: 15),
+              ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1E293B), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 19)), child: const Text("Filter")),
+              const SizedBox(width: 10),
+              IconButton(onPressed: () {}, icon: const Icon(Icons.refresh), style: IconButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6), side: BorderSide(color: Colors.grey.shade300)))),
+            ],
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-            decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade200))),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Showing 1 to ${tableData.length} of ${tableData.length} entries", style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                Row(children: [ _pageBtn("Previous", false), const SizedBox(width: 5), _pageBtn("1", true), const SizedBox(width: 5), _pageBtn("Next", false)])
-              ],
-            ),
-          )
         ],
       ),
     );
   }
 
-  Widget _statusBadge(String status) {
-    bool isDone = status == "Completed";
+  Widget _buildDataTableGrid() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: isDone ? Colors.green.shade50 : Colors.orange.shade50, borderRadius: BorderRadius.circular(5)),
-      child: Text(status, style: TextStyle(fontSize: 11, color: isDone ? Colors.green : Colors.orange, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-    );
-  }
-
-  Widget _pageBtn(String text, bool active) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(color: active ? const Color(0xFF0D6EFD) : Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)),
-      child: Text(text, style: TextStyle(fontSize: 12, color: active ? Colors.white : Colors.black87)),
-    );
-  }
-
-  Widget _tableHeaderText(String text, double flex) => Expanded(flex: (flex * 10).toInt(), child: Text(text, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF64748B))));
-
-  Widget _buildInputLabelField(String label, String value, VoidCallback onTap) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
-        const SizedBox(height: 8),
-        InkWell(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
-            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(value, style: const TextStyle(fontSize: 14)), const Icon(Icons.calendar_today, size: 16, color: Colors.grey)]),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade200)),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+            color: const Color(0xFFF8FAFC),
+            child: Row(
+              children: [
+                _tableHeaderText("DATE ↓", 1.5),
+                _tableHeaderText("SECTION NAME ↑↓", 2),
+                _tableHeaderText("SUB SECTION", 2),
+                _tableHeaderText("STATUS", 1.5),
+                _tableHeaderText("TOTAL AMOUNT ↑↓", 1.5),
+                _tableHeaderText("ACTIONS", 1.5),
+              ],
+            ),
           ),
-        ),
-      ],
+          ListView.separated(
+            shrinkWrap: true,
+            itemCount: tableData.length,
+            separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade100),
+            itemBuilder: (context, index) {
+              final item = tableData[index];
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                child: Row(
+                  children: [
+                    Expanded(flex: 15, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(item['date'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), Text(item['time'], style: const TextStyle(fontSize: 11, color: Colors.grey))])),
+                    Expanded(flex: 20, child: Text(item['section'], style: const TextStyle(color: Color(0xFF0D6EFD), fontWeight: FontWeight.bold, fontSize: 12))),
+                    Expanded(flex: 20, child: Text(item['sub'])),
+                    Expanded(flex: 15, child: _statusBadge(item['status'])),
+                    Expanded(flex: 15, child: Text("₹${item['amount']}", style: const TextStyle(fontWeight: FontWeight.bold))),
+                    Expanded(flex: 15, child: Row(children: [
+                      _actionIcon(Icons.visibility_outlined, Colors.grey, () => _showViewDialog(context, item)),
+                      _actionIcon(Icons.edit_note_outlined, Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (context) => RecordSectionConsumptionScreen(isEdit: true, initialSection: item['section'])))),
+                      _actionIcon(Icons.delete_outline, Colors.red, () => _showDeleteDialog(context)),
+                      _actionIcon(Icons.print_outlined, Colors.blue, () {}),
+                    ])),
+                  ],
+                ),
+              );
+            },
+          ),
+          _pagination()
+        ],
+      ),
     );
   }
 
-  Widget _buildDropdownLabelField(String label, List<String> items, String? value, Function(String?) onChanged) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
-          child: DropdownButtonHideUnderline(child: DropdownButton<String>(isExpanded: true, value: value, hint: Text(items[0], style: const TextStyle(fontSize: 14)), items: items.map((String val) => DropdownMenuItem<String>(value: val, child: Text(val))).toList(), onChanged: onChanged)),
-        ),
-      ],
-    );
-  }
+  Widget _billInfo(String label, String value) => Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold)), Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))]));
+  Widget _billRow(String desc, String rate, String qty, String amt) => Padding(padding: const EdgeInsets.only(bottom: 8), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Expanded(flex: 2, child: Text(desc, style: const TextStyle(fontSize: 12))), Expanded(child: Text(rate, textAlign: TextAlign.right, style: const TextStyle(fontSize: 12))), Expanded(child: Text(qty, textAlign: TextAlign.right, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))), Expanded(child: Text(amt, textAlign: TextAlign.right, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)))]));
+  Widget _statusBadge(String s) => Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), decoration: BoxDecoration(color: const Color(0xFFE8F5E9), borderRadius: BorderRadius.circular(4)), child: Text(s, style: const TextStyle(fontSize: 10, color: Color(0xFF2E7D32), fontWeight: FontWeight.bold)));
+  Widget _actionIcon(IconData i, Color c, VoidCallback onTap) => InkWell(onTap: onTap, child: Container(margin: const EdgeInsets.only(right: 5), padding: const EdgeInsets.all(4), decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), border: Border.all(color: Colors.grey.shade200)), child: Icon(i, size: 16, color: i == Icons.visibility_outlined ? Colors.grey : c)));
+  Widget _pagination() => Container(padding: const EdgeInsets.all(15), decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade100))), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text("Showing 1 to 3 of 3 entries", style: TextStyle(fontSize: 12, color: Colors.grey)), Row(children: [_pageBtn("Previous", false), const SizedBox(width: 5), _pageBtn("1", true), const SizedBox(width: 5), _pageBtn("Next", false)])]));
+  Widget _pageBtn(String t, bool a) => Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), decoration: BoxDecoration(color: a ? const Color(0xFF0D6EFD) : Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), child: Text(t, style: TextStyle(fontSize: 12, color: a ? Colors.white : Colors.black87)));
+  Widget _tableHeaderText(String t, double f) => Expanded(flex: (f * 10).toInt(), child: Text(t, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF64748B))));
+  Widget _buildField(String l, String v, IconData i) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(l, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)), const SizedBox(height: 8), Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(v, style: const TextStyle(fontSize: 13)), Icon(i, size: 14, color: Colors.grey)]))]);
 }

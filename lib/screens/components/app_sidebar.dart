@@ -3,7 +3,9 @@ import 'package:gowmari_mobile/screens/dashboard/dashboard_screen.dart';
 import 'package:gowmari_mobile/screens/purchase/masters/uom_page.dart'; 
 import 'package:gowmari_mobile/screens/purchase/bakery_products/bakery_products_page.dart';
 import 'package:gowmari_mobile/screens/purchase/packaging_material/packaging_material_page.dart';
-import 'package:gowmari_mobile/screens/purchase/raw_material/purchase_order.dart'; 
+import 'package:gowmari_mobile/screens/purchase/raw_material/purchase_order.dart';
+import 'package:gowmari_mobile/screens/purchase/daily_usage_management/daily_usage_request.dart';
+
 
 class AppSidebar extends StatelessWidget {
   final String activeMenu; // Changed back to activeMenu for project compatibility
@@ -48,7 +50,7 @@ class AppSidebar extends StatelessWidget {
                 
                 _buildMenuItem(context, Icons.inventory_2_outlined, "Raw Material", badge: "192", destination: const RawMaterialPurchaseOrderPage()),
                 _buildMenuItem(context, Icons.assignment_turned_in_outlined, "RM Request Management"),
-                _buildMenuItem(context, Icons.event_available_outlined, "Daily Usage Management"),
+                _buildMenuItem(context, Icons.event_available_outlined, "Daily Usage Management", destination: const DailyUsageRequestPage()),
                 
                 _buildMenuItem(context, Icons.inventory_2_outlined, "Packaging Material", destination: const PackagingMaterialPage()),
                 _buildMenuItem(context, Icons.view_list, "Masters", destination: const UOMPage()), 
