@@ -6,7 +6,7 @@ import 'package:gowmari_mobile/screens/purchase/packaging_material/packaging_mat
 import 'package:gowmari_mobile/screens/purchase/raw_material/purchase_order.dart'; 
 
 class AppSidebar extends StatelessWidget {
-  final String activeMenu;
+  final String activeMenu; // Changed back to activeMenu for project compatibility
 
   const AppSidebar({
     super.key, 
@@ -37,7 +37,6 @@ class AppSidebar extends StatelessWidget {
           const SizedBox(height: 35),
           Expanded(
             child: ListView(
-              // THIS GIVES THE WHITE GAP ON LEFT/RIGHT (NEW DESIGN)
               padding: const EdgeInsets.symmetric(horizontal: 16), 
               children: [
                 _buildMenuItem(context, Icons.dashboard, "Overall Dashboard", destination: const DashboardScreen()),
@@ -79,10 +78,9 @@ class AppSidebar extends StatelessWidget {
   Widget _buildMenuItem(BuildContext context, IconData icon, String text, {String? badge, Widget? destination}) {
     bool isActive = false;
     
-    // Checks which page is active
     if (activeMenu.isNotEmpty) {
       isActive = (activeMenu == text);
-    } else if (destination != null) {
+    } else {
       final currentRouteName = ModalRoute.of(context)?.settings.name;
       if (currentRouteName == text) {
         isActive = true;
@@ -94,7 +92,6 @@ class AppSidebar extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 4), 
       decoration: BoxDecoration(
-        // THIS MAKES IT BRIGHT BLUE (#0D6EFD) AND ROUNDED
         color: isActive ? const Color(0xFF0D6EFD) : Colors.transparent, 
         borderRadius: BorderRadius.circular(8) 
       ),
