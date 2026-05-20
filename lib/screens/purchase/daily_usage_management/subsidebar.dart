@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'daily_usage_request.dart';
+import 'daily_purchase_orders.dart';
 
 class DailyUsageSubSidebar extends StatelessWidget {
   final String activePage;
@@ -38,7 +39,6 @@ class DailyUsageSubSidebar extends StatelessWidget {
               ),
             ),
           ),
-          // CORRECTED: changed Fact_check_outlined to fact_check_outlined
           _buildMenuItem(context, "Daily Usage Request", Icons.fact_check_outlined),
           _buildMenuItem(context, "Daily Usage PO", Icons.shopping_bag_outlined),
           _buildMenuItem(context, "Daily Usage Purchase", Icons.shopping_cart_outlined),
@@ -53,14 +53,26 @@ class DailyUsageSubSidebar extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        if (!isActive && title == "Daily Usage Request") {
-          Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (context, a1, a2) => const DailyUsageRequestPage(),
-              transitionDuration: Duration.zero,
-            ),
-          );
+        if (!isActive) {
+          if (title == "Daily Usage Request") {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, a1, a2) => const DailyUsageRequestPage(),
+                transitionDuration: Duration.zero,
+              ),
+            );
+          } 
+          // Added logic for Daily Usage PO
+          else if (title == "Daily Usage PO") {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, a1, a2) => const DailyPurchaseOrdersPage(),
+                transitionDuration: Duration.zero,
+              ),
+            );
+          }
         }
       },
       child: Container(
