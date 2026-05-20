@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../components/app_sidebar.dart';
 import 'subsidebar.dart';
+import 'daily_usage_manual_batch.dart';
 
 class DailyUsageTransferPage extends StatefulWidget {
   const DailyUsageTransferPage({super.key});
@@ -94,7 +95,7 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildTopControls(), // Repaired Wrap Layout
+                              _buildTopControls(),
                               const SizedBox(height: 20),
                               _buildTabs(),
                               const SizedBox(height: 20),
@@ -160,7 +161,7 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
     );
   }
 
-  // --- TITLE & FILTER CONTROLS (USING WRAP TO PREVENT OVERFLOW & MISSING ITEMS) ---
+  // --- TITLE & FILTER CONTROLS ---
   Widget _buildTopControls() {
     return Wrap(
       alignment: WrapAlignment.spaceBetween,
@@ -173,11 +174,12 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 12,
+              runSpacing: 8,
               children: [
                 const Text("Daily Usage Transfer", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                const SizedBox(width: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(color: Colors.amber.shade100, borderRadius: BorderRadius.circular(20)),
@@ -196,7 +198,6 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
           runSpacing: 12,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            // Search
             SizedBox(
               width: 180, height: 38,
               child: TextField(
@@ -210,7 +211,6 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
                 ),
               ),
             ),
-            // Outlet Dropdown
             Container(
               width: 130, height: 38,
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -226,7 +226,6 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
                 ),
               ),
             ),
-            // Date Picker
             SizedBox(
               width: 130, height: 38,
               child: TextField(
@@ -241,7 +240,6 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
                 ),
               ),
             ),
-            // Toggle Switch
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -249,7 +247,6 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
                 const Text("Pending Only", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
               ],
             ),
-            // Action Buttons
             ElevatedButton.icon(
               onPressed: () {},
               icon: const Icon(Icons.local_shipping, size: 16),
@@ -257,7 +254,9 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
               style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))),
             ),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const DailyUsageManualBatchPage()));
+              },
               icon: const Icon(Icons.add, size: 16),
               label: const Text("Manual Batch", style: TextStyle(fontWeight: FontWeight.bold)),
               style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D6EFD), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))),
@@ -336,7 +335,6 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
             int index = entry.key;
             var data = entry.value;
             return DataRow(
-              // Alternating row colors
               color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
                 return index % 2 != 0 ? const Color(0xFFF8FAFC) : Colors.white;
               }),
@@ -358,7 +356,7 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
                   child: Text(data['status'], style: TextStyle(color: Colors.amber.shade600, fontSize: 11, fontWeight: FontWeight.bold)),
                 )),
                 const DataCell(Text("-", style: TextStyle(color: Colors.grey))),
-                DataCell(_buildActionRow()),
+                DataCell(_buildActionRow(data)), // Pass data to Action Row
               ]
             );
           }).toList(),
@@ -367,7 +365,6 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
     );
   }
 
-  // Helper for Bill Pill
   Widget _buildBillPill(String bills) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -383,7 +380,6 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
     );
   }
 
-  // Helper for Section Totals
   Widget _buildSectionTotals(Map<String, String> sections) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -404,16 +400,16 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
     );
   }
 
-  // Helper for Action Row
-  Widget _buildActionRow() {
+  // --- ACTION ROW & DIALOGS ---
+  Widget _buildActionRow(Map<String, dynamic> data) {
     return Row(
       children: [
-        _iconBtn(Icons.visibility, const Color(0xFF06B6D4)),
-        _iconBtn(Icons.edit_square, const Color(0xFFEAB308)),
-        _iconBtn(Icons.delete, const Color(0xFFEF4444)),
+        _iconBtn(Icons.visibility, const Color(0xFF06B6D4), onTap: () => _showViewDialog(data)), // VIEW
+        _iconBtn(Icons.edit_square, const Color(0xFFEAB308), onTap: () {}), // EDIT (No action specified)
+        _iconBtn(Icons.delete, const Color(0xFFEF4444), onTap: () => _showDeleteDialog()), // DELETE
         const SizedBox(width: 8),
         _outlinedTextBtn("Full Bill"),
-        _outlinedTextBtn("Mat. Bill", isBlue: true),
+        _outlinedTextBtn("Mat. Bill", isBlue: true, onTap: () => _showMatBillDialog(data)), // MAT. BILL
         _outlinedTextBtn("Challan"),
         const SizedBox(width: 6),
         _filledTextBtn("Dispatch", const Color(0xFF0D6EFD)),
@@ -421,36 +417,315 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
     );
   }
 
-  Widget _iconBtn(IconData icon, Color color) {
-    return Container(
-      margin: const EdgeInsets.only(right: 6),
-      padding: const EdgeInsets.all(6),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withOpacity(0.3))),
-      child: Icon(icon, size: 14, color: color),
+  Widget _iconBtn(IconData icon, Color color, {VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(4),
+      child: Container(
+        margin: const EdgeInsets.only(right: 6),
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withOpacity(0.3))),
+        child: Icon(icon, size: 14, color: color),
+      ),
     );
   }
 
-  Widget _outlinedTextBtn(String text, {bool isBlue = false}) {
+  Widget _outlinedTextBtn(String text, {bool isBlue = false, VoidCallback? onTap}) {
     Color color = isBlue ? const Color(0xFF0D6EFD) : Colors.grey.shade600;
-    return Container(
-      margin: const EdgeInsets.only(right: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4), border: Border.all(color: isBlue ? Colors.blue.shade200 : Colors.grey.shade300)),
-      child: Row(
-        children: [
-          Icon(Icons.receipt, size: 12, color: color),
-          const SizedBox(width: 4),
-          Text(text, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
-        ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(4),
+      child: Container(
+        margin: const EdgeInsets.only(right: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4), border: Border.all(color: isBlue ? Colors.blue.shade200 : Colors.grey.shade300)),
+        child: Row(
+          children: [
+            Icon(Icons.receipt, size: 12, color: color),
+            const SizedBox(width: 4),
+            Text(text, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
+          ],
+        ),
       ),
     );
   }
 
   Widget _filledTextBtn(String text, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
-      child: Text(text, style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold)),
+    return InkWell(
+      onTap: (){},
+      borderRadius: BorderRadius.circular(4),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
+        child: Text(text, style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
+
+  // --- DIALOG 1: VIEW (DISPATCH DETAILS) EXACT SECOND IMAGE ---
+  void _showViewDialog(Map<String, dynamic> data) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: SizedBox(
+          width: 550,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF06B6D4), // Cyan background exactly like image
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Dispatch Details: ${data['batch']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(Icons.close, color: Colors.white, size: 20)
+                    )
+                  ]
+                )
+              ),
+              // Body
+              Padding(
+                padding: const EdgeInsets.all(25),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top Details
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        RichText(text: TextSpan(children: [
+                          const TextSpan(text: "Outlet: ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 13)),
+                          TextSpan(text: data['outlet'], style: const TextStyle(color: Colors.black87, fontSize: 13))
+                        ])),
+                        RichText(text: TextSpan(children: [
+                          const TextSpan(text: "Date: ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 13)),
+                          TextSpan(text: data['date'], style: const TextStyle(color: Colors.black87, fontSize: 13))
+                        ])),
+                      ]
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Text("Status: ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 13)),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(4)),
+                              child: Text(data['status'], style: const TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+                            )
+                          ],
+                        ),
+                        RichText(text: TextSpan(children: [
+                          const TextSpan(text: "Total: ", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 13)),
+                          TextSpan(text: "₹ ${data['amount']}", style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 13))
+                        ])),
+                      ]
+                    ),
+                    const Divider(height: 30, color: Color(0xFFE2E8F0)),
+                    
+                    // Tables (Mimicking specific data from Image 2 for perfect match)
+                    _buildViewSectionTable("BAKERY", [
+                      {"mat": "MILK 1 Lit", "qty": "145.00 ltr", "rate": "43.00", "total": "6235.00"}
+                    ]),
+                    const SizedBox(height: 20),
+                    _buildViewSectionTable("SERVICE MATERIAL", [
+                      {"mat": "WATER CAN 20 LIT", "qty": "8.00 pcs", "rate": "20.00", "total": "160.00"}
+                    ]),
+                  ]
+                )
+              )
+            ]
+          )
+        )
+      )
+    );
+  }
+
+  Widget _buildViewSectionTable(String title, List<Map<String, String>> items) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(color: Color(0xFF0D6EFD), fontWeight: FontWeight.bold, fontSize: 12)),
+        const SizedBox(height: 10),
+        Row(
+          children: const [
+            Expanded(flex: 3, child: Text("Material", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87))),
+            Expanded(flex: 2, child: Text("Quantity", textAlign: TextAlign.right, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87))),
+            Expanded(flex: 1, child: Text("Rate", textAlign: TextAlign.right, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87))),
+            Expanded(flex: 2, child: Text("Total", textAlign: TextAlign.right, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87))),
+          ],
+        ),
+        const Divider(height: 15, color: Color(0xFFE2E8F0)),
+        ...items.map((item) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            children: [
+              Expanded(flex: 3, child: Text(item['mat']!, style: const TextStyle(fontSize: 13, color: Colors.black87))),
+              Expanded(flex: 2, child: Text(item['qty']!, textAlign: TextAlign.right, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87))),
+              Expanded(flex: 1, child: Text(item['rate']!, textAlign: TextAlign.right, style: const TextStyle(fontSize: 13, color: Colors.black87))),
+              Expanded(flex: 2, child: Text(item['total']!, textAlign: TextAlign.right, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF10B981)))),
+            ],
+          ),
+        )).toList(),
+      ],
+    );
+  }
+
+  // --- DIALOG 2: SELECT MAT BILL EXACT THIRD IMAGE ---
+  void _showMatBillDialog(Map<String, dynamic> data) {
+    Map<String, String> sections = (data['sections'] as Map).cast<String, String>();
+    
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: SizedBox(
+          width: 450,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF0D6EFD), // Blue background exactly like image
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Select Material Type for Billing", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(Icons.close, color: Colors.white, size: 20)
+                    )
+                  ]
+                )
+              ),
+              // Body
+              Padding(
+                padding: const EdgeInsets.all(25),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Available Material Types in this Order:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87)),
+                    const SizedBox(height: 15),
+                    ...sections.keys.map((section) => _buildChecklistItem(section)).toList(),
+                    const SizedBox(height: 25),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade600, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14)),
+                          child: const Text("Cancel")
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: const Icon(Icons.print, size: 16),
+                          label: const Text("Print Selected"),
+                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3B82F6), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14)),
+                        )
+                      ]
+                    )
+                  ]
+                )
+              )
+            ]
+          )
+        )
+      )
+    );
+  }
+
+  Widget _buildChecklistItem(String title) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        bool isChecked = false;
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 18, height: 18,
+                child: Checkbox(
+                  value: isChecked,
+                  onChanged: (v) => setState(() => isChecked = v!),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
+                  side: BorderSide(color: Colors.grey.shade400, width: 1.5),
+                  activeColor: const Color(0xFF0D6EFD),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.grey.shade700)),
+            ]
+          )
+        );
+      }
+    );
+  }
+
+  // --- DIALOG 3: DELETE ORDER EXACT FOURTH IMAGE ---
+  void _showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: SizedBox(
+          width: 400,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 35),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFF97316), width: 3)),
+                  child: const Icon(Icons.priority_high, color: Color(0xFFF97316), size: 45)
+                ),
+                const SizedBox(height: 25),
+                const Text("Delete Order?", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)),
+                const SizedBox(height: 12),
+                const Text(
+                  "Are you sure you want to delete this pending order?\n(Requested materials will return to the matrix)", 
+                  textAlign: TextAlign.center, 
+                  style: TextStyle(color: Color(0xFF64748B), fontSize: 13, height: 1.5)
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC2626), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 14)),
+                      child: const Text("Yes, Delete!", style: TextStyle(fontWeight: FontWeight.bold))
+                    ),
+                    const SizedBox(width: 12),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3B82F6), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 14)),
+                      child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold))
+                    )
+                  ]
+                )
+              ]
+            )
+          )
+        )
+      )
     );
   }
 }
