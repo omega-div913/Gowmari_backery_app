@@ -5,10 +5,10 @@ import 'package:gowmari_mobile/screens/purchase/bakery_products/bakery_products_
 import 'package:gowmari_mobile/screens/purchase/packaging_material/packaging_material_page.dart';
 import 'package:gowmari_mobile/screens/purchase/raw_material/purchase_order.dart';
 import 'package:gowmari_mobile/screens/purchase/daily_usage_management/daily_usage_request.dart';
-
+import 'package:gowmari_mobile/screens/purchase/store_audit/store_audit.dart'; // Add this import
 
 class AppSidebar extends StatelessWidget {
-  final String activeMenu; // Changed back to activeMenu for project compatibility
+  final String activeMenu;
 
   const AppSidebar({
     super.key, 
@@ -56,7 +56,8 @@ class AppSidebar extends StatelessWidget {
                 _buildMenuItem(context, Icons.view_list, "Masters", destination: const UOMPage()), 
                 
                 _buildMenuItem(context, Icons.account_balance_wallet_outlined, "Stock Cost"),
-                _buildMenuItem(context, Icons.assignment_outlined, "Inventory Audit Entry"),
+                // UPDATED THIS LINE TO INCLUDE DESTINATION
+                _buildMenuItem(context, Icons.bar_chart, "Store Audit", destination: const StoreAuditPage()),
                 _buildMenuItem(context, Icons.delete_outline, "Wastage Management"),
                 _buildMenuItem(context, Icons.history, "Reversal History"),
                 
