@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'daily_usage_request.dart';
 import 'daily_purchase_orders.dart';
+import 'daily_purchase_entry.dart';
+import 'daily_usage_transfer.dart'; // Added Import
 
 class DailyUsageSubSidebar extends StatelessWidget {
   final String activePage;
@@ -63,12 +65,30 @@ class DailyUsageSubSidebar extends StatelessWidget {
               ),
             );
           } 
-          // Added logic for Daily Usage PO
           else if (title == "Daily Usage PO") {
             Navigator.pushReplacement(
               context,
               PageRouteBuilder(
                 pageBuilder: (context, a1, a2) => const DailyPurchaseOrdersPage(),
+                transitionDuration: Duration.zero,
+              ),
+            );
+          }
+          else if (title == "Daily Usage Purchase") {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, a1, a2) => const DailyPurchaseEntryPage(),
+                transitionDuration: Duration.zero,
+              ),
+            );
+          }
+          // Added logic for Daily Usage Transfer
+          else if (title == "Daily Usage Transfer") {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, a1, a2) => const DailyUsageTransferPage(),
                 transitionDuration: Duration.zero,
               ),
             );

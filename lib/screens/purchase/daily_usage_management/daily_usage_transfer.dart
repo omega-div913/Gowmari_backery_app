@@ -1,0 +1,456 @@
+import 'package:flutter/material.dart';
+import '../../components/app_sidebar.dart';
+import 'subsidebar.dart';
+
+class DailyUsageTransferPage extends StatefulWidget {
+  const DailyUsageTransferPage({super.key});
+
+  @override
+  State<DailyUsageTransferPage> createState() => _DailyUsageTransferPageState();
+}
+
+class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
+  String selectedTab = "Batch 01";
+  bool pendingOnly = true;
+
+  // Exact data from your image
+  final List<Map<String, dynamic>> _transferData = [
+    {
+      "batch": "rb260517-033",
+      "bills": "2002, 2001",
+      "sections": {"SERVICE MATERIAL": "8.00", "BAKERY": "145.00"},
+      "outlet": "AL",
+      "date": "17-05-2026",
+      "time": "04:57 PM",
+      "qty": "153.00",
+      "amount": "6395.00",
+      "status": "Pending"
+    },
+    {
+      "batch": "rb260517-038",
+      "bills": "2012",
+      "sections": {"BAKERY": "132.00"},
+      "outlet": "AMBA",
+      "date": "17-05-2026",
+      "time": "04:57 PM",
+      "qty": "132.00",
+      "amount": "5676.00",
+      "status": "Pending"
+    },
+    {
+      "batch": "rb260517-036",
+      "bills": "2008, 2007, 2009",
+      "sections": {"SERVICE MATERIAL": "11.00", "BAKERY": "130.00", "TEA COFFE MATERIAL": "5.00"},
+      "outlet": "BODI-1",
+      "date": "17-05-2026",
+      "time": "04:57 PM",
+      "qty": "146.00",
+      "amount": "6255.00",
+      "status": "Pending"
+    },
+    {
+      "batch": "rb260517-034",
+      "bills": "2004, 2003",
+      "sections": {"SERVICE MATERIAL": "7.00", "BAKERY": "125.00"},
+      "outlet": "FOREST ROAD",
+      "date": "17-05-2026",
+      "time": "04:57 PM",
+      "qty": "132.00",
+      "amount": "5515.00",
+      "status": "Pending"
+    },
+    {
+      "batch": "rb260517-035",
+      "bills": "2006, 2005",
+      "sections": {"SERVICE MATERIAL": "15.00", "BAKERY": "190.00"},
+      "outlet": "ITI",
+      "date": "17-05-2026",
+      "time": "04:57 PM",
+      "qty": "205.00",
+      "amount": "8470.00",
+      "status": "Pending"
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF3F6F9),
+      body: Row(
+        children: [
+          const AppSidebar(activeMenu: "Daily Usage Management"),
+          Expanded(
+            child: Column(
+              children: [
+                _buildExactHeader(),
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const DailyUsageSubSidebar(activePage: "Daily Usage Transfer"),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(25),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildTopControls(), // Repaired Wrap Layout
+                              const SizedBox(height: 20),
+                              _buildTabs(),
+                              const SizedBox(height: 20),
+                              _buildDataTableContainer(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- TOP HEADER ---
+  Widget _buildExactHeader() {
+    return Container(
+      height: 65,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.menu, color: Color(0xFF64748B), size: 20),
+          const SizedBox(width: 20),
+          const Text(
+            "Home / Purchase Section / Daily Usage Management / Transfer",
+            style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+          ),
+          const Spacer(),
+          Container(
+            width: 300,
+            height: 38,
+            decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(8)),
+            child: const TextField(
+              decoration: InputDecoration(
+                hintText: "Search menus ( Press / )",
+                hintStyle: TextStyle(fontSize: 13, color: Colors.grey),
+                prefixIcon: Icon(Icons.search, size: 18, color: Colors.grey),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 6),
+              ),
+            ),
+          ),
+          const SizedBox(width: 20),
+          const CircleAvatar(
+            radius: 16,
+            backgroundColor: Color(0xFF0D6EFD),
+            child: Text("R", style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+          ),
+          const SizedBox(width: 8),
+          const Text("RTS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+          const Icon(Icons.arrow_drop_down, size: 20),
+        ],
+      ),
+    );
+  }
+
+  // --- TITLE & FILTER CONTROLS (USING WRAP TO PREVENT OVERFLOW & MISSING ITEMS) ---
+  Widget _buildTopControls() {
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 20,
+      runSpacing: 15,
+      children: [
+        // Title Area
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text("Daily Usage Transfer", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
+                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(color: Colors.amber.shade100, borderRadius: BorderRadius.circular(20)),
+                  child: Text("19 Pending", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.amber.shade900)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            const Text("Manage daily material dispatches to outlets", style: TextStyle(color: Colors.grey, fontSize: 13)),
+          ],
+        ),
+        
+        // Filters & Actions
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            // Search
+            SizedBox(
+              width: 180, height: 38,
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: "Search Records...", hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
+                  prefixIcon: const Icon(Icons.search, size: 16, color: Colors.grey),
+                  filled: true, fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)),
+                ),
+              ),
+            ),
+            // Outlet Dropdown
+            Container(
+              width: 130, height: 38,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: "All Outlets",
+                  isExpanded: true,
+                  style: const TextStyle(fontSize: 13, color: Colors.black87),
+                  icon: const Icon(Icons.keyboard_arrow_down, size: 18),
+                  items: ["All Outlets", "AL", "AMBA"].map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
+                  onChanged: (v) {},
+                ),
+              ),
+            ),
+            // Date Picker
+            SizedBox(
+              width: 130, height: 38,
+              child: TextField(
+                readOnly: true,
+                decoration: InputDecoration(
+                  hintText: "17-05-2026", hintStyle: const TextStyle(fontSize: 13, color: Colors.black87),
+                  suffixIcon: const Icon(Icons.calendar_month, size: 16, color: Colors.blue),
+                  filled: true, fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.blue.shade200)),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.blue.shade200)),
+                ),
+              ),
+            ),
+            // Toggle Switch
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Switch(value: pendingOnly, onChanged: (v) => setState(() => pendingOnly = v), activeColor: Colors.blue, activeTrackColor: Colors.blue.shade100),
+                const Text("Pending Only", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF475569))),
+              ],
+            ),
+            // Action Buttons
+            ElevatedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.local_shipping, size: 16),
+              label: const Text("Dispatch All", style: TextStyle(fontWeight: FontWeight.bold)),
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF10B981), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.add, size: 16),
+              label: const Text("Manual Batch", style: TextStyle(fontWeight: FontWeight.bold)),
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D6EFD), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
+  // --- TABS ---
+  Widget _buildTabs() {
+    List<String> tabs = ["Batch 01", "Batch 02", "Batch 03", "Batch 04", "main test"];
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          ...tabs.map((tab) => _tabItem(tab, Icons.access_time)),
+          const SizedBox(width: 10),
+          _tabItem("Quick Transfer", Icons.bolt, isSpecial: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _tabItem(String title, IconData icon, {bool isSpecial = false}) {
+    bool isActive = selectedTab == title;
+    return InkWell(
+      onTap: () => setState(() => selectedTab = title),
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: isActive ? const Color(0xFF0D6EFD) : Colors.white,
+          border: Border.all(color: isActive ? const Color(0xFF0D6EFD) : Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: isActive ? Colors.white : (isSpecial ? Colors.amber.shade600 : Colors.grey.shade600)),
+            const SizedBox(width: 6),
+            Text(title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: isActive ? Colors.white : Colors.black87)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- DATA TABLE WITH HORIZONTAL SCROLL ---
+  Widget _buildDataTableContainer() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade200)),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal, 
+        child: DataTable(
+          headingRowColor: MaterialStateProperty.all(const Color(0xFFF8FAFC)),
+          dataRowHeight: 90,
+          columnSpacing: 25,
+          horizontalMargin: 20,
+          headingTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1E293B), fontSize: 13),
+          columns: const [
+            DataColumn(label: SizedBox(width: 20, child: Icon(Icons.check_box_outline_blank, color: Colors.grey, size: 20))),
+            DataColumn(label: Text("Batch\nCode")),
+            DataColumn(label: Text("Bill No")),
+            DataColumn(label: Text("Section Totals")),
+            DataColumn(label: Text("Outlet Name")),
+            DataColumn(label: Text("Date\n& Time")),
+            DataColumn(label: Text("Total\nQty")),
+            DataColumn(label: Text("Total\nAmount")),
+            DataColumn(label: Text("Status")),
+            DataColumn(label: Text("D.Status")),
+            DataColumn(label: Text("Actions")), 
+          ],
+          rows: _transferData.asMap().entries.map((entry) {
+            int index = entry.key;
+            var data = entry.value;
+            return DataRow(
+              // Alternating row colors
+              color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+                return index % 2 != 0 ? const Color(0xFFF8FAFC) : Colors.white;
+              }),
+              cells: [
+                const DataCell(Icon(Icons.check_box_outline_blank, color: Colors.grey, size: 20)),
+                DataCell(Text(data['batch'], style: const TextStyle(color: Color(0xFF0D6EFD), fontWeight: FontWeight.w600, fontSize: 13))),
+                DataCell(_buildBillPill(data['bills'])),
+                DataCell(_buildSectionTotals((data['sections'] as Map).cast<String, String>())),
+                DataCell(Text(data['outlet'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                DataCell(Column(
+                  mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [Text(data['date'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)), Text(data['time'], style: const TextStyle(fontSize: 11, color: Colors.grey))],
+                )),
+                DataCell(Text(data['qty'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                DataCell(Text("₹ ${data['amount']}", style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF10B981), fontSize: 13))),
+                DataCell(Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(color: Colors.amber.shade50, borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.amber.shade200)),
+                  child: Text(data['status'], style: TextStyle(color: Colors.amber.shade600, fontSize: 11, fontWeight: FontWeight.bold)),
+                )),
+                const DataCell(Text("-", style: TextStyle(color: Colors.grey))),
+                DataCell(_buildActionRow()),
+              ]
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  // Helper for Bill Pill
+  Widget _buildBillPill(String bills) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(6), border: Border.all(color: Colors.blue.shade100)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.receipt_long, size: 14, color: Color(0xFF0D6EFD)),
+          const SizedBox(width: 6),
+          Text(bills, style: const TextStyle(fontSize: 12, color: Color(0xFF0D6EFD), fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  // Helper for Section Totals
+  Widget _buildSectionTotals(Map<String, String> sections) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: sections.entries.map((e) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 2),
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(text: "${e.key}: ", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Color(0xFF334155))),
+                TextSpan(text: e.value, style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  // Helper for Action Row
+  Widget _buildActionRow() {
+    return Row(
+      children: [
+        _iconBtn(Icons.visibility, const Color(0xFF06B6D4)),
+        _iconBtn(Icons.edit_square, const Color(0xFFEAB308)),
+        _iconBtn(Icons.delete, const Color(0xFFEF4444)),
+        const SizedBox(width: 8),
+        _outlinedTextBtn("Full Bill"),
+        _outlinedTextBtn("Mat. Bill", isBlue: true),
+        _outlinedTextBtn("Challan"),
+        const SizedBox(width: 6),
+        _filledTextBtn("Dispatch", const Color(0xFF0D6EFD)),
+      ],
+    );
+  }
+
+  Widget _iconBtn(IconData icon, Color color) {
+    return Container(
+      margin: const EdgeInsets.only(right: 6),
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(4), border: Border.all(color: color.withOpacity(0.3))),
+      child: Icon(icon, size: 14, color: color),
+    );
+  }
+
+  Widget _outlinedTextBtn(String text, {bool isBlue = false}) {
+    Color color = isBlue ? const Color(0xFF0D6EFD) : Colors.grey.shade600;
+    return Container(
+      margin: const EdgeInsets.only(right: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4), border: Border.all(color: isBlue ? Colors.blue.shade200 : Colors.grey.shade300)),
+      child: Row(
+        children: [
+          Icon(Icons.receipt, size: 12, color: color),
+          const SizedBox(width: 4),
+          Text(text, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Widget _filledTextBtn(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
+      child: Text(text, style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold)),
+    );
+  }
+}
