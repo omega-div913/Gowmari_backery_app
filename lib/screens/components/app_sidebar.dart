@@ -7,6 +7,7 @@ import 'package:gowmari_mobile/screens/purchase/raw_material/purchase_order.dart
 import 'package:gowmari_mobile/screens/purchase/daily_usage_management/daily_usage_request.dart';
 import 'package:gowmari_mobile/screens/purchase/store_audit/store_audit.dart'; 
 import 'package:gowmari_mobile/screens/purchase/reversal_history/purchase_reversal_history.dart';
+import 'package:gowmari_mobile/screens/purchase/purchase_transfer_history/purchase_transfer_history.dart';
 
 class AppSidebar extends StatelessWidget {
   final String activeMenu;
@@ -59,12 +60,13 @@ class AppSidebar extends StatelessWidget {
                 _buildMenuItem(context, Icons.account_balance_wallet_outlined, "Stock Cost"),
                 _buildMenuItem(context, Icons.bar_chart, "Store Audit", destination: const StoreAuditPage()),
                 _buildMenuItem(context, Icons.delete_outline, "Wastage Management"),
-                
-                // UPDATED THIS LINE TO INCLUDE DESTINATION
                 _buildMenuItem(context, Icons.history, "Reversal History", destination: const PurchaseReversalHistoryPage()),
                 
                 _buildMenuItem(context, Icons.shopping_cart_checkout, "Bakery Products", destination: const BakeryProductsPage()),
-                _buildMenuItem(context, Icons.update, "Purchase Transfer History"),
+                
+                // REMOVED 'const' TO PREVENT COMPILATION ERROR
+                _buildMenuItem(context, Icons.update, "Purchase Transfer History", destination: const PurchaseTransferHistoryPage()),
+                
                 _buildMenuItem(context, Icons.shopping_cart_checkout, "Purchase Report"),
               ],
             ),
@@ -127,7 +129,7 @@ class AppSidebar extends StatelessWidget {
               context, 
               PageRouteBuilder(
                 settings: RouteSettings(name: text), 
-                pageBuilder: (context, animation1, animation2) => destination,
+                pageBuilder: (context, animation1, animation2) => destination!,
                 transitionDuration: Duration.zero, 
                 reverseTransitionDuration: Duration.zero,
               ),
