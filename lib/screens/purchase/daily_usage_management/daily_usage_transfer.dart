@@ -602,7 +602,7 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
         _outlinedTextBtn("Mat. Bill", isBlue: true, onTap: () => _showMatBillDialog(data)),
         _outlinedTextBtn("Challan"),
         const SizedBox(width: 6),
-        _filledTextBtn("Dispatch", const Color(0xFF0D6EFD)),
+        _filledTextBtn("Dispatch", const Color(0xFF0D6EFD), onTap: () => _showDispatchConfirmDialog()),
       ],
     );
   }
@@ -630,9 +630,9 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
     );
   }
 
-  Widget _filledTextBtn(String text, Color color) {
+  Widget _filledTextBtn(String text, Color color, {VoidCallback? onTap}) {
     return InkWell(
-      onTap: (){}, borderRadius: BorderRadius.circular(4),
+      onTap: onTap ?? (){}, borderRadius: BorderRadius.circular(4),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
@@ -777,9 +777,9 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
   }
 
   Widget _buildChecklistItem(String title) {
+    bool isChecked = false; // Moved outside the StatefulBuilder to persist state
     return StatefulBuilder(
       builder: (context, setState) {
-        bool isChecked = false;
         return Container(
           margin: const EdgeInsets.only(bottom: 10), padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)),
@@ -819,6 +819,52 @@ class _DailyUsageTransferPageState extends State<DailyUsageTransferPage> {
                     ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC2626), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 14)), child: const Text("Yes, Delete!", style: TextStyle(fontWeight: FontWeight.bold))),
                     const SizedBox(width: 12),
                     ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF3B82F6), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 14)), child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold)))
+                  ]
+                )
+              ]
+            )
+          )
+        )
+      )
+    );
+  }
+
+  void _showDispatchConfirmDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        child: SizedBox(
+          width: 400,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 35),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(15), 
+                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFF97316), width: 3)), 
+                  child: const Icon(Icons.priority_high, color: Color(0xFFF97316), size: 45)
+                ),
+                const SizedBox(height: 25),
+                const Text("Confirm Dispatch?", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)),
+                const SizedBox(height: 12),
+                const Text("Inventory will be deducted.", textAlign: TextAlign.center, style: TextStyle(color: Color(0xFF64748B), fontSize: 13, height: 1.5)),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context), 
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6366F1), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 14)), 
+                      child: const Text("Yes, Dispatch", style: TextStyle(fontWeight: FontWeight.bold))
+                    ),
+                    const SizedBox(width: 12),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context), 
+                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF64748B), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 14)), 
+                      child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold))
+                    )
                   ]
                 )
               ]

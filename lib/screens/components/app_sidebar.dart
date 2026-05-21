@@ -5,7 +5,8 @@ import 'package:gowmari_mobile/screens/purchase/bakery_products/bakery_products_
 import 'package:gowmari_mobile/screens/purchase/packaging_material/packaging_material_page.dart';
 import 'package:gowmari_mobile/screens/purchase/raw_material/purchase_order.dart';
 import 'package:gowmari_mobile/screens/purchase/daily_usage_management/daily_usage_request.dart';
-import 'package:gowmari_mobile/screens/purchase/store_audit/store_audit.dart'; // Add this import
+import 'package:gowmari_mobile/screens/purchase/store_audit/store_audit.dart'; 
+import 'package:gowmari_mobile/screens/purchase/reversal_history/purchase_reversal_history.dart';
 
 class AppSidebar extends StatelessWidget {
   final String activeMenu;
@@ -56,10 +57,11 @@ class AppSidebar extends StatelessWidget {
                 _buildMenuItem(context, Icons.view_list, "Masters", destination: const UOMPage()), 
                 
                 _buildMenuItem(context, Icons.account_balance_wallet_outlined, "Stock Cost"),
-                // UPDATED THIS LINE TO INCLUDE DESTINATION
                 _buildMenuItem(context, Icons.bar_chart, "Store Audit", destination: const StoreAuditPage()),
                 _buildMenuItem(context, Icons.delete_outline, "Wastage Management"),
-                _buildMenuItem(context, Icons.history, "Reversal History"),
+                
+                // UPDATED THIS LINE TO INCLUDE DESTINATION
+                _buildMenuItem(context, Icons.history, "Reversal History", destination: const PurchaseReversalHistoryPage()),
                 
                 _buildMenuItem(context, Icons.shopping_cart_checkout, "Bakery Products", destination: const BakeryProductsPage()),
                 _buildMenuItem(context, Icons.update, "Purchase Transfer History"),
