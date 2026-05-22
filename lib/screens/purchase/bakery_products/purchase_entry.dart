@@ -32,11 +32,14 @@ class _PurchaseEntryState extends State<PurchaseEntry> {
 
   bool _isCreatingPurchase = false;
   bool _isEditingPurchase = false;
+  
+  int _itemCount = 1; // Variable to control item row count
 
   @override
   void initState() {
     super.initState();
     _isCreatingPurchase = widget.startInCreateMode;
+    _itemCount = 1;
     _fetchData();
   }
 
@@ -47,6 +50,7 @@ class _PurchaseEntryState extends State<PurchaseEntry> {
       setState(() {
         _isCreatingPurchase = true;
         _isEditingPurchase = false;
+        _itemCount = 1;
       });
       widget.onResetCreateMode();
     }
@@ -111,7 +115,7 @@ class _PurchaseEntryState extends State<PurchaseEntry> {
           children: [
             OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.description_outlined, size: 16, color: Color(0xFF10B981)), label: const Text('Export Excel', style: TextStyle(color: Color(0xFF10B981))), style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFF10B981)), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))), 
             const SizedBox(width: 15), 
-            ElevatedButton.icon(onPressed: () => setState(() { _isCreatingPurchase = true; _isEditingPurchase = false; }), icon: const Icon(Icons.add, size: 18), label: const Text('Create New Purchase'), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), elevation: 0))
+            ElevatedButton.icon(onPressed: () => setState(() { _isCreatingPurchase = true; _isEditingPurchase = false; _itemCount = 1; }), icon: const Icon(Icons.add, size: 18), label: const Text('Create New Purchase'), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)), elevation: 0))
           ]
         )
       ]
@@ -157,7 +161,7 @@ class _PurchaseEntryState extends State<PurchaseEntry> {
           const DataCell(Text('—', style: TextStyle(color: Colors.grey))),
           DataCell(Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: const Color(0xFFDC2626), borderRadius: BorderRadius.circular(4)), child: Text(r.status, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10)))),
           DataCell(Row(mainAxisSize: MainAxisSize.min, children: [
-            _smallIconBtn(Icons.edit_outlined, Colors.blue, () => setState(() { _isCreatingPurchase = true; _isEditingPurchase = true; })), 
+            _smallIconBtn(Icons.edit_outlined, Colors.blue, () => setState(() { _isCreatingPurchase = true; _isEditingPurchase = true; _itemCount = 1; })), 
             const SizedBox(width: 4),
             _smallIconBtn(Icons.delete_outline, Colors.red, () => _showDeletePurchaseDialog(context)), 
             const SizedBox(width: 4),
@@ -197,10 +201,59 @@ class _PurchaseEntryState extends State<PurchaseEntry> {
             Row(children: [Expanded(child: _buildFormInput('Vendor *', _isEditingPurchase ? 'MURUGAN AGENCIES' : 'Select a vendor...')), const SizedBox(width: 15), Expanded(child: _buildFormInput('Invoice Number', _isEditingPurchase ? '2322' : 'Enter or generate...', suffixIcon: Icons.settings, suffixColor: Colors.blue)), const SizedBox(width: 15), Expanded(child: _buildFormInput('Purchase Date *', _isEditingPurchase ? '12-05-2026' : '14-05-2026', suffixIcon: Icons.calendar_today_outlined)), const SizedBox(width: 15), Expanded(child: _buildFormInput('Batch Code', _isEditingPurchase ? 'bP260513-01' : 'BP260514-01', suffixIcon: Icons.refresh))]), 
             const Divider(height: 40, color: Color(0xFFF1F5F9)),
             
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_buildFormSectionHeader('Purchase Items'), ElevatedButton.icon(onPressed: (){}, icon: const Icon(Icons.add, size: 14), label: const Text('Add Item (Alt+N)', style: TextStyle(fontSize: 12)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))))]), 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+              children: [
+                _buildFormSectionHeader('Purchase Items'), 
+                ElevatedButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _itemCount++; // Add item logic
+                    });
+                  }, 
+                  icon: const Icon(Icons.add, size: 14), 
+                  label: const Text('Add Item (Alt+N)', style: TextStyle(fontSize: 12)), 
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1B59F8), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)))
+                )
+              ]
+            ), 
             const SizedBox(height: 15),
-            Row(children: [Expanded(flex: 3, child: _buildFormInput('Bakery Product *', _isEditingPurchase ? 'Kinley Water' : 'Select product...')), const SizedBox(width: 10), Expanded(flex: 2, child: _buildFormInput('Expiry Date', 'dd-mm-yyyy', suffixIcon: Icons.calendar_today_outlined)), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormTextCol('Unit', _isEditingPurchase ? 'pcs' : '-')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormTextCol('Prev. Price', '₹0.00')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormInput('Purchasing Price *', _isEditingPurchase ? '11.6' : '0')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormInput('Selling Price', _isEditingPurchase ? '20' : '0')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormInput('Qty *', _isEditingPurchase ? '449.999' : '1')), const SizedBox(width: 10), Expanded(flex: 1, child: _buildFormTextCol('Item Total', _isEditingPurchase ? '₹5,219.99' : '₹0.00', icon: Icons.delete_outline, iconColor: Colors.red))]), 
-            const Divider(height: 40, color: Color(0xFFF1F5F9)),
+            
+            ...List.generate(_itemCount, (index) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10.0),
+                child: Row(children: [
+                  Expanded(flex: 3, child: _buildFormInput(index == 0 ? 'Bakery Product *' : '', _isEditingPurchase && index == 0 ? 'Kinley Water' : 'Select product...')), 
+                  const SizedBox(width: 8), 
+                  Expanded(flex: 2, child: _buildFormInput(index == 0 ? 'Expiry Date' : '', 'dd-mm-yyyy', suffixIcon: Icons.calendar_today_outlined)), 
+                  const SizedBox(width: 8), 
+                  Expanded(flex: 1, child: _buildFormTextCol(index == 0 ? 'Unit' : '', _isEditingPurchase && index == 0 ? 'pcs' : '-')), 
+                  const SizedBox(width: 8), 
+                  Expanded(flex: 1, child: _buildFormTextCol(index == 0 ? 'Prev. Price' : '', '₹0.00')), 
+                  const SizedBox(width: 8), 
+                  Expanded(flex: 1, child: _buildFormInput(index == 0 ? 'Purchasing Price *' : '', _isEditingPurchase && index == 0 ? '11.6' : '0')), 
+                  const SizedBox(width: 8), 
+                  Expanded(flex: 1, child: _buildFormInput(index == 0 ? 'Selling Price' : '', _isEditingPurchase && index == 0 ? '20' : '0')), 
+                  const SizedBox(width: 8), 
+                  Expanded(flex: 1, child: _buildFormInput(index == 0 ? 'Qty *' : '', _isEditingPurchase && index == 0 ? '449.999' : '1')), 
+                  const SizedBox(width: 8), 
+                  Expanded(flex: 1, child: _buildFormTextCol(
+                    index == 0 ? 'Item Total' : '', 
+                    _isEditingPurchase && index == 0 ? '₹5,219.99' : '₹0.00', 
+                    icon: Icons.delete_outline, 
+                    iconColor: Colors.red,
+                    onIconTap: () {
+                      if (_itemCount > 1) {
+                        setState(() {
+                          _itemCount--;
+                        });
+                      }
+                    }
+                  ))
+                ]),
+              );
+            }), 
+            const Divider(height: 30, color: Color(0xFFF1F5F9)),
             
             Row(
               crossAxisAlignment: CrossAxisAlignment.start, 
@@ -240,9 +293,71 @@ class _PurchaseEntryState extends State<PurchaseEntry> {
   Widget _smallIconBtn(IconData icon, Color color, VoidCallback onTap) { return InkWell(onTap: onTap, borderRadius: BorderRadius.circular(4), child: Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), child: Icon(icon, size: 14, color: color))); }
   Widget _buildFormSectionHeader(String title) { return Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1B59F8))); }
   
-  Widget _buildFormInput(String label, String hint, {IconData? suffixIcon, Color? suffixColor, String? prefixText, int maxLines = 1}) { List<TextSpan> labelSpans = []; if (label.contains('*')) { labelSpans.add(TextSpan(text: label.replaceAll('*', ''), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87))); labelSpans.add(const TextSpan(text: '*', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.red))); } else { labelSpans.add(TextSpan(text: label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87))); } return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [RichText(text: TextSpan(children: labelSpans)), const SizedBox(height: 6), SizedBox(height: maxLines == 1 ? 38 : null, child: TextField(controller: TextEditingController(text: hint != 'Select a vendor...' && hint != 'Enter or generate...' && hint != 'Select product...' && hint != 'dd-mm-yyyy' && hint != 'Select...' && hint != 'Optional: Cheque number, transaction ID, etc.' ? hint : ''), maxLines: maxLines, style: const TextStyle(fontSize: 13), decoration: InputDecoration(hintText: hint, hintStyle: TextStyle(fontSize: 12, color: Colors.grey.shade400), prefixText: prefixText, prefixStyle: const TextStyle(fontSize: 13, color: Colors.black87), suffixIcon: suffixIcon != null ? Icon(suffixIcon, size: 16, color: suffixColor ?? Colors.grey) : null, contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF1B59F8))))))]); }
+  Widget _buildFormInput(String label, String hint, {IconData? suffixIcon, Color? suffixColor, String? prefixText, int maxLines = 1}) { 
+    List<TextSpan> labelSpans = []; 
+    if (label.isNotEmpty) {
+      if (label.contains('*')) { 
+        labelSpans.add(TextSpan(text: label.replaceAll('*', ''), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87))); 
+        labelSpans.add(const TextSpan(text: '*', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.red))); 
+      } else { 
+        labelSpans.add(TextSpan(text: label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87))); 
+      } 
+    }
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start, 
+      children: [
+        if (label.isNotEmpty) ...[
+          RichText(maxLines: 1, overflow: TextOverflow.ellipsis, text: TextSpan(children: labelSpans)), 
+          const SizedBox(height: 6), 
+        ],
+        SizedBox(
+          height: maxLines == 1 ? 38 : null, 
+          child: TextField(
+            controller: TextEditingController(text: hint != 'Select a vendor...' && hint != 'Enter or generate...' && hint != 'Select product...' && hint != 'dd-mm-yyyy' && hint != 'Select...' && hint != 'Optional: Cheque number, transaction ID, etc.' ? hint : ''), 
+            maxLines: maxLines, 
+            style: const TextStyle(fontSize: 13), 
+            decoration: InputDecoration(
+              hintText: hint, 
+              hintStyle: TextStyle(fontSize: 12, color: Colors.grey.shade400), 
+              prefixText: prefixText, 
+              prefixStyle: const TextStyle(fontSize: 13, color: Colors.black87), 
+              suffixIcon: suffixIcon != null ? Icon(suffixIcon, size: 16, color: suffixColor ?? Colors.grey) : null, 
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), 
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), 
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), 
+              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF1B59F8)))
+            )
+          )
+        )
+      ]
+    ); 
+  }
   
-  Widget _buildFormTextCol(String label, String value, {IconData? icon, Color? iconColor}) { return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87)), const SizedBox(height: 15), Row(mainAxisAlignment: MainAxisAlignment.center, children: [Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)), if (icon != null) ...[const SizedBox(width: 8), Icon(icon, size: 16, color: iconColor)]])]); }
+  Widget _buildFormTextCol(String label, String value, {IconData? icon, Color? iconColor, VoidCallback? onIconTap}) { 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center, 
+      children: [
+        if (label.isNotEmpty) ...[
+          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87)), 
+          const SizedBox(height: 6), 
+        ],
+        SizedBox(
+          height: 38,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center, 
+            children: [
+              Flexible(child: Text(value, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500))), 
+              if (icon != null) ...[
+                const SizedBox(width: 4), 
+                InkWell(onTap: onIconTap, child: Icon(icon, size: 16, color: iconColor))
+              ]
+            ]
+          )
+        )
+      ]
+    ); 
+  }
   
   Widget _buildSummaryRow(String label, String value, {bool isBold = false, Color? valueColor}) { return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(label, style: TextStyle(fontSize: 13, fontWeight: isBold ? FontWeight.bold : FontWeight.w500, color: Colors.black87)), Text(value, style: TextStyle(fontSize: 14, fontWeight: isBold ? FontWeight.bold : FontWeight.w500, color: valueColor ?? Colors.black87))]); }
 

@@ -67,7 +67,9 @@ class _RawMaterialPurchaseEntryPageState extends State<RawMaterialPurchaseEntryP
               ]),
             ),
             Expanded(child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              if (MediaQuery.of(context).size.width > 850) const SizedBox(width: 260, child: RawMaterialSubSidebar(activePage: 'Purchase Entry')),
+              // CHANGED HERE: Added && !_isFormView to hide the sub-sidebar when the form is active
+              if (MediaQuery.of(context).size.width > 850 && !_isFormView) 
+                const SizedBox(width: 260, child: RawMaterialSubSidebar(activePage: 'Purchase Entry')),
               Expanded(child: ScrollConfiguration(behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false), child: SingleChildScrollView(padding: const EdgeInsets.all(25), child: _isFormView ? _buildNewPurchaseForm() : _buildListView()))),
             ]))
           ]))
@@ -199,7 +201,21 @@ class _RawMaterialPurchaseEntryPageState extends State<RawMaterialPurchaseEntryP
           const SizedBox(width: 15), Expanded(child: _buildFormInput("Purchase Date", "18-05-2026", suffixIcon: Icons.calendar_today, suffixColor: Colors.black54)),
           if (_isEditMode) ...[const SizedBox(width: 15), Expanded(child: _buildFormInput("Batch Code", "RB260518-01", isFilled: true, suffixIcon: Icons.refresh, suffixColor: Colors.black54))],
         ]),
-        if (!_isEditMode) ...[const SizedBox(height: 15), Row(children: [Expanded(flex: 1, child: _buildFormInput("Batch Code", "RB260518-09", isFilled: true, suffixIcon: Icons.refresh, suffixColor: Colors.black54)), const Expanded(flex: 3, child: SizedBox())])]
+        const SizedBox(height: 15),
+        Row(children: [
+          Expanded(child: _buildFormInput("Action Mode", "Select Action...", isDropdown: true)),
+          const SizedBox(width: 15),
+          Expanded(child: _buildFormInput("Work Mode", "Select Work Mode...", isDropdown: true)),
+          if (!_isEditMode) ...[
+            const SizedBox(width: 15),
+            Expanded(child: _buildFormInput("Batch Code", "RB260518-09", isFilled: true, suffixIcon: Icons.refresh, suffixColor: Colors.black54)),
+            const SizedBox(width: 15),
+            const Expanded(child: SizedBox())
+          ] else ...[
+            const SizedBox(width: 15),
+            const Expanded(flex: 2, child: SizedBox())
+          ]
+        ])
       ])), const SizedBox(height: 20),
       _buildSectionCard(title: "Purchase Items", headerTrailing: Row(children: [
         Container(decoration: BoxDecoration(border: Border.all(color: Colors.blue), borderRadius: BorderRadius.circular(4)), child: Row(children: [

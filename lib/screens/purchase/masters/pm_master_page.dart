@@ -168,19 +168,20 @@ class _PMMasterPageState extends State<PMMasterPage> {
                     children: [
                       if (!isTablet) const SizedBox(width: 260, child: SecondaryMastersSidebar(activePage: 'PM Master')),
                       Expanded(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (isTablet) const MobileSecondaryMenu(activePage: 'PM Master'),
-                              const SizedBox(height: 10),
-                              _buildPageHeader(isTablet),
-                              const SizedBox(height: 20),
-                              _buildTopActionRow(isTablet),
-                              const SizedBox(height: 20),
-                              _buildDataTableContainer(),
-                            ],
+                        child: ScrollConfiguration(
+                          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.all(25),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (isTablet) const MobileSecondaryMenu(activePage: 'PM Master'),
+                                const SizedBox(height: 10),
+                                _buildPageHeader(isTablet),
+                                const SizedBox(height: 20),
+                                _buildDataTableContainer(),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -197,62 +198,97 @@ class _PMMasterPageState extends State<PMMasterPage> {
 
   Widget _buildPageHeader(bool isTablet) {
     return Wrap(
-      alignment: WrapAlignment.spaceBetween, crossAxisAlignment: WrapCrossAlignment.center, spacing: 15, runSpacing: 15,
+      alignment: WrapAlignment.spaceBetween, 
+      crossAxisAlignment: WrapCrossAlignment.center, 
+      spacing: 15, runSpacing: 15,
       children: [
-        const Text("Packaging Raw Material List", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
-        if (isTablet) SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: () => _showMaterialDialog(), icon: const Icon(Icons.add, size: 16, color: Colors.white), label: const Text("Create New Material", style: TextStyle(color: Colors.white)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1), elevation: 0, padding: const EdgeInsets.symmetric(vertical: 12)))),
-      ],
-    );
-  }
-
-  Widget _buildTopActionRow(bool isTablet) {
-    if (isTablet) {
-      return Column(
-        children: [
-          TextField(controller: _searchController, decoration: InputDecoration(hintText: "Search by name...", prefixIcon: const Icon(Icons.search, size: 18), border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)), contentPadding: const EdgeInsets.symmetric(vertical: 0))),
-          const SizedBox(height: 10),
-          Row(children: [Expanded(child: _headerActionBtn("Import", Icons.file_upload_outlined, Colors.green, _showImportDialog)), const SizedBox(width: 10), Expanded(child: _headerActionBtn("Export", Icons.file_download_outlined, Colors.black54, () {}))])
-        ],
-      );
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Container(width: 300, height: 40, decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)), child: TextField(controller: _searchController, decoration: const InputDecoration(hintText: "Search by name...", prefixIcon: Icon(Icons.search, size: 18), border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 10)))),
-        Row(children: [_headerActionBtn("Import Excel", Icons.file_upload_outlined, Colors.green, _showImportDialog), const SizedBox(width: 10), _headerActionBtn("Export Excel", Icons.file_download_outlined, Colors.black54, () {}), const SizedBox(width: 10), ElevatedButton.icon(onPressed: () => _showMaterialDialog(), icon: const Icon(Icons.add, size: 16, color: Colors.white), label: const Text("Create New Material", style: TextStyle(color: Colors.white)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)), elevation: 0))])
+        const Text("Packaging Raw Material List", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _headerActionBtn("Import Excel", Icons.file_upload_outlined, Colors.green, _showImportDialog), const SizedBox(width: 10), 
+            _headerActionBtn("Export Excel", Icons.file_download_outlined, Colors.black54, () {}), const SizedBox(width: 10), 
+            ElevatedButton.icon(onPressed: () => _showMaterialDialog(), icon: const Icon(Icons.add, size: 16, color: Colors.white), label: const Text("Create New Material", style: TextStyle(color: Colors.white)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D6EFD), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), elevation: 0))
+          ],
+        )
       ],
     );
   }
 
   Widget _headerActionBtn(String label, IconData icon, Color color, VoidCallback onTap) {
-    return OutlinedButton.icon(onPressed: onTap, icon: Icon(icon, size: 16, color: color), label: Text(label, style: TextStyle(color: color, fontSize: 13)), style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))));
+    return OutlinedButton.icon(onPressed: onTap, icon: Icon(icon, size: 16, color: color), label: Text(label, style: TextStyle(color: color, fontSize: 13)), style: OutlinedButton.styleFrom(side: BorderSide(color: color.withOpacity(0.4)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))));
   }
 
   Widget _buildDataTableContainer() {
     final paginatedData = _getPaginatedData();
+    int total = _filteredMaterials.length;
+
     return Container(
-      width: double.infinity, decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
+      width: double.infinity, 
+      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              headingTextStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87), dataRowMinHeight: 50, dataRowMaxHeight: 50,
-              columns: const [DataColumn(label: Text('S.No')), DataColumn(label: Text('Name')), DataColumn(label: Text('Opening Stock')), DataColumn(label: Text('Unit')), DataColumn(label: Text('Actions'))],
-              rows: paginatedData.asMap().entries.map((entry) {
-                int index = entry.key; PackagingMaterial m = entry.value; int sNo = (_currentPage * _itemsPerPage) + index + 1;
-                return DataRow(cells: [
-                  DataCell(Text('$sNo', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), 
-                  DataCell(Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-                  DataCell(Text(m.openingStock.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-                  DataCell(Text(m.unit, style: const TextStyle(fontSize: 13))),
-                  DataCell(Row(children: [_actionIconBtn(Icons.edit_outlined, Colors.blue, () => _showMaterialDialog(material: m)), const SizedBox(width: 8), _actionIconBtn(Icons.delete_outline, Colors.red, _showDeleteDialog)])),
-                ]);
-              }).toList(),
+          // Search and Top Stats row inside the container
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 300, height: 38, 
+                  decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)), 
+                  child: TextField(
+                    controller: _searchController, 
+                    decoration: const InputDecoration(hintText: "Search by name...", hintStyle: TextStyle(fontSize: 13, color: Colors.grey), prefixIcon: Icon(Icons.search, size: 18, color: Colors.grey), border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 10))
+                  )
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6), color: Colors.white),
+                  child: Text("Showing ${paginatedData.length} of $total records", style: const TextStyle(fontSize: 13, color: Colors.black87, fontWeight: FontWeight.w600)),
+                )
+              ],
             ),
           ),
-          Divider(height: 1, color: Colors.grey.shade300),
+          
+          // Full-width Grid View Layout
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: Colors.grey.shade300), top: BorderSide(color: Colors.grey.shade300))),
+            child: const Row(
+              children: [
+                Expanded(flex: 4, child: Text("Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                Expanded(flex: 2, child: Text("Opening Stock", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                Expanded(flex: 2, child: Text("Unit", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                Expanded(flex: 2, child: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+              ],
+            ),
+          ),
+          
+          // Dynamic List Generation
+          ...paginatedData.map((m) {
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade200))),
+              child: Row(
+                children: [
+                  Expanded(flex: 4, child: Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                  Expanded(flex: 2, child: Text(m.openingStock.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
+                  Expanded(flex: 2, child: Text(m.unit, style: const TextStyle(fontSize: 13))),
+                  Expanded(flex: 2, child: Row(
+                    children: [
+                      _actionIconBtn(Icons.edit_outlined, Colors.blue, () => _showMaterialDialog(material: m)), 
+                      const SizedBox(width: 8), 
+                      _actionIconBtn(Icons.delete_outline, Colors.red, _showDeleteDialog)
+                    ]
+                  )),
+                ],
+              ),
+            );
+          }).toList(),
+
+          // Centered Pagination Row
           _buildPaginationControls(),
         ],
       ),
@@ -266,7 +302,7 @@ class _PMMasterPageState extends State<PMMasterPage> {
   Widget _buildPaginationControls() {
     int total = _filteredMaterials.length;
     int totalPages = (total / _itemsPerPage).ceil();
-    if (totalPages <= 1) totalPages = 1;
+    if (totalPages <= 1) return const SizedBox.shrink();
 
     List<Widget> pageButtons = [];
     pageButtons.add(_pageBox("Prev", false, () { if (_currentPage > 0) setState(() => _currentPage--); }));
@@ -280,18 +316,10 @@ class _PMMasterPageState extends State<PMMasterPage> {
     pageButtons.add(const SizedBox(width: 5));
     pageButtons.add(_pageBox("Next", false, () { if (_currentPage < totalPages - 1) setState(() => _currentPage++); }));
 
-    int startItem = total == 0 ? 0 : (_currentPage * _itemsPerPage) + 1;
-    int endItem = (_currentPage + 1) * _itemsPerPage;
-    if (endItem > total) endItem = total;
-
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("Showing $startItem to $endItem of $total entries", style: const TextStyle(fontSize: 13, color: Colors.grey)),
-          Wrap(alignment: WrapAlignment.center, spacing: 2, runSpacing: 8, children: pageButtons),
-        ],
+      child: Center(
+        child: Wrap(alignment: WrapAlignment.center, spacing: 2, runSpacing: 8, children: pageButtons),
       ),
     );
   }
@@ -299,9 +327,9 @@ class _PMMasterPageState extends State<PMMasterPage> {
   Widget _pageBox(String t, bool active, VoidCallback onTap) => InkWell(
     onTap: onTap,
     child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), 
-      decoration: BoxDecoration(color: active ? Colors.blue : Colors.white, border: Border.all(color: active ? Colors.blue : Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), 
-      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.blue, fontSize: 12, fontWeight: FontWeight.bold))
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), 
+      decoration: BoxDecoration(color: active ? Colors.blue : const Color(0xFFF8F9FA), border: Border.all(color: active ? Colors.blue : Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), 
+      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.black87, fontSize: 13))
     ),
   );
 
