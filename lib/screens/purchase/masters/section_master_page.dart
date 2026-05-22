@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'subsidebar.dart'; // Import unified layout
+import 'package:gowmari_mobile/screens/components/app_sidebar.dart'; 
 
 class SectionMasterPage extends StatefulWidget {
   const SectionMasterPage({super.key});
@@ -153,12 +154,12 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FE),
-      drawer: isMobile ? const Drawer(child: MasterPrimarySidebar()) : null,
+      drawer: isMobile ? const Drawer(child: AppSidebar(activeMenu: "Masters")) : null,
       appBar: isMobile ? AppBar(backgroundColor: Colors.white, elevation: 0.5, iconTheme: const IconThemeData(color: Colors.black), title: const Text("Section Master", style: TextStyle(color: Colors.black, fontSize: 16))) : null,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!isMobile) const SizedBox(width: 250, child: MasterPrimarySidebar()),
+          if (!isMobile) const AppSidebar(activeMenu: "Masters"),
           Expanded(
             child: Column(
               children: [
