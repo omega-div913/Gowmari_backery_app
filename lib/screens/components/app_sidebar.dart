@@ -8,8 +8,9 @@ import 'package:gowmari_mobile/screens/purchase/daily_usage_management/daily_usa
 import 'package:gowmari_mobile/screens/purchase/store_audit/store_audit.dart'; 
 import 'package:gowmari_mobile/screens/purchase/reversal_history/purchase_reversal_history.dart';
 import 'package:gowmari_mobile/screens/purchase/purchase_transfer_history/purchase_transfer_history.dart';
-// ADDED IMPORT FOR PURCHASE REPORT
 import 'package:gowmari_mobile/screens/purchase/purchase_report/purchase_report.dart';
+// ADDED IMPORT FOR WASTAGE MANAGEMENT
+import 'package:gowmari_mobile/screens/purchase/wastage_management/wastage_management.dart';
 
 class AppSidebar extends StatelessWidget {
   final String activeMenu;
@@ -61,13 +62,14 @@ class AppSidebar extends StatelessWidget {
                 
                 _buildMenuItem(context, Icons.account_balance_wallet_outlined, "Stock Cost"),
                 _buildMenuItem(context, Icons.bar_chart, "Store Audit", destination: const StoreAuditPage()),
-                _buildMenuItem(context, Icons.delete_outline, "Wastage Management"),
+                
+                // UPDATED THIS LINE TO INCLUDE DESTINATION
+                _buildMenuItem(context, Icons.delete_outline, "Wastage Management", destination: const WastageManagementPage()),
+                
                 _buildMenuItem(context, Icons.history, "Reversal History", destination: const PurchaseReversalHistoryPage()),
                 
                 _buildMenuItem(context, Icons.shopping_cart_checkout, "Bakery Products", destination: const BakeryProductsPage()),
                 _buildMenuItem(context, Icons.update, "Purchase Transfer History", destination: const PurchaseTransferHistoryPage()),
-                
-                // UPDATED THIS LINE TO INCLUDE DESTINATION
                 _buildMenuItem(context, Icons.shopping_cart_checkout, "Purchase Report", destination: const PurchaseReportPage()),
               ],
             ),
