@@ -74,11 +74,6 @@ class AppSidebar extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildMenuItem(context, Icons.verified_user_outlined, "Access Provider"),
-          ),
           const SizedBox(height: 25),
         ],
       ),
