@@ -53,35 +53,65 @@ class _PMMasterPageState extends State<PMMasterPage> {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 10,
+        backgroundColor: Colors.white,
         child: Container(
-          width: 450, padding: const EdgeInsets.all(24),
+          width: 500,
           child: Column(
             mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(isEdit ? "Edit Material" : "Create Material", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, size: 20)),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(left: 24, right: 20, top: 20, bottom: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(isEdit ? "Edit Material" : "Create Material", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
+                    InkWell(
+                      onTap: () => Navigator.pop(context), 
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle), child: Icon(Icons.close, size: 18, color: Colors.grey.shade700))
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 20),
-              _dialogFieldLabel("MATERIAL NAME"), _dialogTextField(nameController), const SizedBox(height: 15),
-              Row(
-                children: [
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_dialogFieldLabel("OPENING STOCK QUANTITY"), _dialogTextField(openingStockController, isNumeric: true)])), const SizedBox(width: 15),
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_dialogFieldLabel("ALERT QUANTITY"), _dialogTextField(alertQuantityController, isNumeric: true)])),
-                ],
-              ),
-              const SizedBox(height: 15),
-              _dialogFieldLabel("UNIT"), _dialogDropdown(selectedUnit, (val) => selectedUnit = val), const SizedBox(height: 25),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  OutlinedButton(onPressed: () => Navigator.pop(context), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12), side: BorderSide(color: Colors.grey.shade300)), child: const Text("Close", style: TextStyle(color: Colors.black87))), const SizedBox(width: 10),
-                  ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF007BFF), padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12), elevation: 0), child: const Text("Save Record", style: TextStyle(color: Colors.white))),
-                ],
+              Divider(height: 1, color: Colors.grey.shade200),
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _dialogFieldLabel("MATERIAL NAME"), _dialogTextField(nameController), const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_dialogFieldLabel("OPENING STOCK QUANTITY"), _dialogTextField(openingStockController, isNumeric: true)])), const SizedBox(width: 16),
+                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_dialogFieldLabel("ALERT QUANTITY"), _dialogTextField(alertQuantityController, isNumeric: true)])),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    _dialogFieldLabel("UNIT"), 
+                    StatefulBuilder(
+                      builder: (context, setDialogState) => _dialogDropdown(selectedUnit, (val) => setDialogState(() => selectedUnit = val))
+                    ), 
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context), 
+                          style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))), 
+                          child: Text("Cancel", style: TextStyle(color: Colors.grey.shade700, fontSize: 14, fontWeight: FontWeight.w600))
+                        ), 
+                        const SizedBox(width: 12),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context), 
+                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2962FF), elevation: 2, shadowColor: const Color(0xFF2962FF).withOpacity(0.4), padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), 
+                          child: const Text("Save Record", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               )
             ],
           ),
@@ -94,21 +124,23 @@ class _PMMasterPageState extends State<PMMasterPage> {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: Colors.white,
+        elevation: 10,
         child: Container(
-          width: 400, padding: const EdgeInsets.all(30),
+          width: 400, padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(height: 80, width: 80, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFF8BB86), width: 3)), child: const Center(child: Text("!", style: TextStyle(fontSize: 45, color: Color(0xFFF8BB86))))),
-              const SizedBox(height: 20),
-              const Text("Are you sure?", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)), const SizedBox(height: 8),
-              const Text("You won't be able to revert this!", style: TextStyle(color: Colors.grey, fontSize: 14)), const SizedBox(height: 25),
+              Container(width: 80, height: 80, decoration: BoxDecoration(color: Colors.red.shade50, shape: BoxShape.circle), child: const Center(child: Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 40))),
+              const SizedBox(height: 24),
+              const Text("Are you sure?", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)), const SizedBox(height: 12),
+              Text("This action cannot be undone. You won't be able to revert this!", style: TextStyle(color: Colors.grey.shade600, fontSize: 14, height: 1.5), textAlign: TextAlign.center), const SizedBox(height: 32),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC3545), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12)), child: const Text("Yes, delete it!", style: TextStyle(color: Colors.white))), const SizedBox(width: 10),
-                  ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5A95E0), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12)), child: const Text("Cancel", style: TextStyle(color: Colors.white))),
+                  Expanded(child: OutlinedButton(onPressed: () => Navigator.pop(context), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14), side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), child: Text("Cancel", style: TextStyle(color: Colors.grey.shade700, fontSize: 14, fontWeight: FontWeight.w600)))),
+                  const SizedBox(width: 16),
+                  Expanded(child: ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, elevation: 2, shadowColor: Colors.redAccent.withOpacity(0.4), padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), child: const Text("Delete", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)))),
                 ],
               )
             ],
@@ -122,17 +154,31 @@ class _PMMasterPageState extends State<PMMasterPage> {
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: Colors.white,
+        elevation: 10,
         child: Container(
-          width: 400, padding: const EdgeInsets.all(24),
+          width: 450, padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Bulk Import (.xlsx)", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), const SizedBox(height: 15),
-              SizedBox(width: double.infinity, child: OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300), padding: const EdgeInsets.symmetric(vertical: 12)), child: const Text("Download Template", style: TextStyle(color: Colors.black87)))), const SizedBox(height: 15),
-              const Text("SELECT EXCEL FILE", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black54)), const SizedBox(height: 5),
-              Container(height: 40, decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)), child: Row(children: [Container(padding: const EdgeInsets.symmetric(horizontal: 12), decoration: BoxDecoration(color: Colors.grey.shade100, border: Border(right: BorderSide(color: Colors.grey.shade300))), alignment: Alignment.center, child: const Text("Choose File", style: TextStyle(fontSize: 12))), const SizedBox(width: 10), const Text("No file chosen", style: TextStyle(fontSize: 12, color: Colors.grey))])), const SizedBox(height: 20),
-              SizedBox(width: double.infinity, child: ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF007BFF), elevation: 0, padding: const EdgeInsets.symmetric(vertical: 12)), child: const Text("Upload Data", style: TextStyle(color: Colors.white))))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Bulk Import (.xlsx)", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
+                  InkWell(
+                    onTap: () => Navigator.pop(context), 
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle), child: Icon(Icons.close, size: 18, color: Colors.grey.shade700))
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              SizedBox(width: double.infinity, child: OutlinedButton(onPressed: () {}, style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14), side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), child: const Text("Download Template", style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.w600)))),
+              const SizedBox(height: 24),
+              const Text("SELECT EXCEL FILE", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blueGrey)), const SizedBox(height: 8),
+              Container(height: 44, decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(10), color: Colors.grey.shade50), child: Row(children: [Container(padding: const EdgeInsets.symmetric(horizontal: 16), decoration: BoxDecoration(color: Colors.grey.shade200, border: Border(right: BorderSide(color: Colors.grey.shade300)), borderRadius: const BorderRadius.horizontal(left: Radius.circular(10))), alignment: Alignment.center, child: const Text("Choose File", style: TextStyle(fontSize: 13, color: Colors.black87, fontWeight: FontWeight.w600))), const SizedBox(width: 12), Text("No file chosen", style: TextStyle(fontSize: 13, color: Colors.grey.shade500))])), const SizedBox(height: 32),
+              SizedBox(width: double.infinity, child: ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2962FF), elevation: 2, shadowColor: const Color(0xFF2962FF).withOpacity(0.4), padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), child: const Text("Upload Data", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))))
             ],
           ),
         ),
@@ -140,9 +186,21 @@ class _PMMasterPageState extends State<PMMasterPage> {
     );
   }
 
-  Widget _dialogFieldLabel(String text) => Padding(padding: const EdgeInsets.only(bottom: 6), child: Text(text, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black54)));
-  Widget _dialogTextField(TextEditingController ctrl, {bool isNumeric = false}) => Container(height: 40, decoration: BoxDecoration(color: const Color(0xFFF8F9FA), borderRadius: BorderRadius.circular(6), border: Border.all(color: Colors.grey.shade300)), child: TextField(controller: ctrl, keyboardType: isNumeric ? TextInputType.number : TextInputType.text, decoration: const InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10)), style: const TextStyle(fontSize: 13)));
-  Widget _dialogDropdown(String? value, Function(String?) onChange) => Container(height: 40, padding: const EdgeInsets.symmetric(horizontal: 10), decoration: BoxDecoration(color: const Color(0xFFF8F9FA), borderRadius: BorderRadius.circular(6), border: Border.all(color: Colors.grey.shade300)), child: DropdownButtonHideUnderline(child: DropdownButton<String>(value: value, isExpanded: true, hint: const Text("Please select one", style: TextStyle(fontSize: 13)), items: _availableUnits.map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 13)))).toList(), onChanged: (v) => setState(() => onChange(v)))));
+  Widget _dialogFieldLabel(String text) => Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(text, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blueGrey)));
+  
+  Widget _dialogTextField(TextEditingController ctrl, {bool isNumeric = false}) => TextFormField(
+    controller: ctrl, keyboardType: isNumeric ? TextInputType.number : TextInputType.text, 
+    decoration: InputDecoration(filled: true, fillColor: Colors.grey.shade50, contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF2962FF), width: 1.5))), 
+    style: const TextStyle(fontSize: 14)
+  );
+
+  Widget _dialogDropdown(String? value, Function(String?) onChange) => DropdownButtonFormField<String>(
+    value: value, icon: Icon(Icons.keyboard_arrow_down, size: 20, color: Colors.grey.shade600),
+    decoration: InputDecoration(filled: true, fillColor: Colors.grey.shade50, contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF2962FF), width: 1.5))), 
+    hint: const Text("Please select one", style: TextStyle(fontSize: 14)), 
+    items: _availableUnits.map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 14)))).toList(), 
+    onChanged: onChange
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -171,14 +229,14 @@ class _PMMasterPageState extends State<PMMasterPage> {
                         child: ScrollConfiguration(
                           behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                           child: SingleChildScrollView(
-                            padding: const EdgeInsets.all(25),
+                            padding: const EdgeInsets.all(30), // Increased padding
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 if (isTablet) const MobileSecondaryMenu(activePage: 'PM Master'),
-                                const SizedBox(height: 10),
+                                if (isTablet) const SizedBox(height: 20),
                                 _buildPageHeader(isTablet),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 24),
                                 _buildDataTableContainer(),
                               ],
                             ),
@@ -202,13 +260,18 @@ class _PMMasterPageState extends State<PMMasterPage> {
       crossAxisAlignment: WrapCrossAlignment.center, 
       spacing: 15, runSpacing: 15,
       children: [
-        const Text("Packaging Raw Material List", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)),
+        const Text("Packaging Raw Material List", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF1A237E))), // Modern Header
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _headerActionBtn("Import Excel", Icons.file_upload_outlined, Colors.green, _showImportDialog), const SizedBox(width: 10), 
-            _headerActionBtn("Export Excel", Icons.file_download_outlined, Colors.black54, () {}), const SizedBox(width: 10), 
-            ElevatedButton.icon(onPressed: () => _showMaterialDialog(), icon: const Icon(Icons.add, size: 16, color: Colors.white), label: const Text("Create New Material", style: TextStyle(color: Colors.white)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D6EFD), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), elevation: 0))
+            _headerActionBtn("Import Excel", Icons.file_upload_outlined, Colors.green, _showImportDialog), const SizedBox(width: 12), 
+            _headerActionBtn("Export Excel", Icons.file_download_outlined, Colors.blueGrey, () {}), const SizedBox(width: 12), 
+            ElevatedButton.icon(
+              onPressed: () => _showMaterialDialog(), 
+              icon: const Icon(Icons.add, size: 18, color: Colors.white), 
+              label: const Text("Create New Material", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)), 
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2962FF), shadowColor: const Color(0xFF2962FF).withOpacity(0.4), elevation: 4, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12))
+            )
           ],
         )
       ],
@@ -216,7 +279,10 @@ class _PMMasterPageState extends State<PMMasterPage> {
   }
 
   Widget _headerActionBtn(String label, IconData icon, Color color, VoidCallback onTap) {
-    return OutlinedButton.icon(onPressed: onTap, icon: Icon(icon, size: 16, color: color), label: Text(label, style: TextStyle(color: color, fontSize: 13)), style: OutlinedButton.styleFrom(side: BorderSide(color: color.withOpacity(0.4)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))));
+    return OutlinedButton.icon(
+      onPressed: onTap, icon: Icon(icon, size: 18, color: color), label: Text(label, style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w600)), 
+      style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))
+    );
   }
 
   Widget _buildDataTableContainer() {
@@ -225,78 +291,86 @@ class _PMMasterPageState extends State<PMMasterPage> {
 
     return Container(
       width: double.infinity, 
-      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Search and Top Stats row inside the container
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: 300, height: 38, 
-                  decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)), 
-                  child: TextField(
-                    controller: _searchController, 
-                    decoration: const InputDecoration(hintText: "Search by name...", hintStyle: TextStyle(fontSize: 13, color: Colors.grey), prefixIcon: Icon(Icons.search, size: 18, color: Colors.grey), border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 10))
-                  )
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6), color: Colors.white),
-                  child: Text("Showing ${paginatedData.length} of $total records", style: const TextStyle(fontSize: 13, color: Colors.black87, fontWeight: FontWeight.w600)),
-                )
-              ],
-            ),
-          ),
-          
-          // Full-width Grid View Layout
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: Colors.grey.shade300), top: BorderSide(color: Colors.grey.shade300))),
-            child: const Row(
-              children: [
-                Expanded(flex: 4, child: Text("Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-                Expanded(flex: 2, child: Text("Opening Stock", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-                Expanded(flex: 2, child: Text("Unit", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-                Expanded(flex: 2, child: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-              ],
-            ),
-          ),
-          
-          // Dynamic List Generation
-          ...paginatedData.map((m) {
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade200))),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 5))]),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(flex: 4, child: Text(m.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-                  Expanded(flex: 2, child: Text(m.openingStock.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13))),
-                  Expanded(flex: 2, child: Text(m.unit, style: const TextStyle(fontSize: 13))),
-                  Expanded(flex: 2, child: Row(
-                    children: [
-                      _actionIconBtn(Icons.edit_outlined, Colors.blue, () => _showMaterialDialog(material: m)), 
-                      const SizedBox(width: 8), 
-                      _actionIconBtn(Icons.delete_outline, Colors.red, _showDeleteDialog)
-                    ]
-                  )),
+                  Container(
+                    width: 350, height: 44, 
+                    decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(10)), 
+                    child: TextField(
+                      controller: _searchController, 
+                      decoration: InputDecoration(hintText: "Search by name...", hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400), prefixIcon: Icon(Icons.search, size: 20, color: Colors.grey.shade500), border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(vertical: 12))
+                    )
+                  ),
+                  Text("Showing ${paginatedData.length} of $total records", style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
                 ],
               ),
-            );
-          }).toList(),
+            ),
+            
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+              color: const Color(0xFFF8FAFC), // Modern header
+              child: const Row(
+                children: [
+                  Expanded(flex: 4, child: Text("NAME", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))),
+                  Expanded(flex: 2, child: Text("OPENING STOCK", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))),
+                  Expanded(flex: 2, child: Text("UNIT", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))),
+                  Expanded(flex: 2, child: Text("ACTIONS", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey), textAlign: TextAlign.center)),
+                ],
+              ),
+            ),
+            
+            ...paginatedData.map((m) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade100))),
+                child: Row(
+                  children: [
+                    Expanded(flex: 4, child: Text(m.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black87))),
+                    Expanded(flex: 2, child: Text(m.openingStock.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.black87))),
+                    Expanded(flex: 2, child: Text(m.unit, style: const TextStyle(fontSize: 14, color: Colors.black87))),
+                    Expanded(flex: 2, child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _actionIconBtn(Icons.edit_rounded, Colors.blueAccent, () => _showMaterialDialog(material: m)), 
+                        const SizedBox(width: 12), 
+                        _actionIconBtn(Icons.delete_outline_rounded, Colors.redAccent, _showDeleteDialog)
+                      ]
+                    )),
+                  ],
+                ),
+              );
+            }).toList(),
 
-          // Centered Pagination Row
-          _buildPaginationControls(),
-        ],
+            Container(
+              decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade100))),
+              child: _buildPaginationControls()
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _actionIconBtn(IconData icon, Color color, VoidCallback onTap) {
-    return Container(width: 30, height: 30, decoration: BoxDecoration(border: Border.all(color: color.withOpacity(0.5)), borderRadius: BorderRadius.circular(4)), child: IconButton(padding: EdgeInsets.zero, icon: Icon(icon, size: 16, color: color), onPressed: onTap));
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 36, height: 36, 
+        decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+        child: Icon(icon, size: 18, color: color),
+      ),
+    );
   }
 
   Widget _buildPaginationControls() {
@@ -306,30 +380,32 @@ class _PMMasterPageState extends State<PMMasterPage> {
 
     List<Widget> pageButtons = [];
     pageButtons.add(_pageBox("Prev", false, () { if (_currentPage > 0) setState(() => _currentPage--); }));
-    pageButtons.add(const SizedBox(width: 5));
+    pageButtons.add(const SizedBox(width: 8));
 
     for (int i = 0; i < totalPages; i++) {
       pageButtons.add(_pageBox("${i + 1}", _currentPage == i, () { setState(() => _currentPage = i); }));
-      if (i < totalPages - 1) pageButtons.add(const SizedBox(width: 5));
+      if (i < totalPages - 1) pageButtons.add(const SizedBox(width: 8));
     }
 
-    pageButtons.add(const SizedBox(width: 5));
+    pageButtons.add(const SizedBox(width: 8));
     pageButtons.add(_pageBox("Next", false, () { if (_currentPage < totalPages - 1) setState(() => _currentPage++); }));
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Center(
-        child: Wrap(alignment: WrapAlignment.center, spacing: 2, runSpacing: 8, children: pageButtons),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: pageButtons
       ),
     );
   }
 
   Widget _pageBox(String t, bool active, VoidCallback onTap) => InkWell(
     onTap: onTap,
+    borderRadius: BorderRadius.circular(8),
     child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), 
-      decoration: BoxDecoration(color: active ? Colors.blue : const Color(0xFFF8F9FA), border: Border.all(color: active ? Colors.blue : Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), 
-      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.black87, fontSize: 13))
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8), 
+      decoration: BoxDecoration(color: active ? const Color(0xFF2962FF) : Colors.transparent, border: Border.all(color: active ? const Color(0xFF2962FF) : Colors.grey.shade300), borderRadius: BorderRadius.circular(8)), 
+      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.black87, fontSize: 13, fontWeight: active ? FontWeight.bold : FontWeight.w500))
     ),
   );
 

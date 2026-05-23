@@ -28,38 +28,44 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Modern rounded corners
           backgroundColor: Colors.white,
+          elevation: 10,
           child: SizedBox(
             width: 550,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  padding: const EdgeInsets.only(left: 24, right: 20, top: 20, bottom: 16),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Create Vendor", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
-                      InkWell(onTap: () => Navigator.pop(context), child: const Icon(Icons.close, size: 20, color: Colors.grey)),
+                      const Text("Create Vendor", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
+                      InkWell(
+                        onTap: () => Navigator.pop(context), 
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle), child: Icon(Icons.close, size: 18, color: Colors.grey.shade700))
+                      ),
                     ],
                   ),
                 ),
-                Divider(height: 1, color: Colors.grey.shade300),
+                Divider(height: 1, color: Colors.grey.shade200),
                 Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _dialogField("Vendor Name", maxLines: 1), const SizedBox(height: 15),
-                      _dialogField("Address", maxLines: 3), const SizedBox(height: 15),
-                      _dialogField("Phone Number", maxLines: 1), const SizedBox(height: 15),
-                      _dialogField("GST Number", maxLines: 1), const SizedBox(height: 25),
-                      Wrap(
-                        alignment: WrapAlignment.end, spacing: 10,
+                      _dialogField("Vendor Name", maxLines: 1), const SizedBox(height: 16),
+                      _dialogField("Address", maxLines: 3), const SizedBox(height: 16),
+                      _dialogField("Phone Number", maxLines: 1), const SizedBox(height: 16),
+                      _dialogField("GST Number", maxLines: 1), const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          _dialogBtn("Close", const Color(0xFF6C757D), () => Navigator.pop(context)),
-                          _dialogBtn("Save", const Color(0xFF0D47A1), () => Navigator.pop(context)),
+                          _dialogBtn("Cancel", isPrimary: false, onTap: () => Navigator.pop(context)),
+                          const SizedBox(width: 12),
+                          _dialogBtn("Save Vendor", isPrimary: true, onTap: () => Navigator.pop(context)),
                         ],
                       )
                     ],
@@ -78,38 +84,44 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           backgroundColor: Colors.white,
+          elevation: 10,
           child: SizedBox(
             width: 550,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  padding: const EdgeInsets.only(left: 24, right: 20, top: 20, bottom: 16),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Edit Vendor", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
-                      InkWell(onTap: () => Navigator.pop(context), child: const Icon(Icons.close, size: 20, color: Colors.grey)),
+                      const Text("Edit Vendor", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
+                      InkWell(
+                        onTap: () => Navigator.pop(context), 
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle), child: Icon(Icons.close, size: 18, color: Colors.grey.shade700))
+                      ),
                     ],
                   ),
                 ),
-                Divider(height: 1, color: Colors.grey.shade300),
+                Divider(height: 1, color: Colors.grey.shade200),
                 Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _dialogField("Vendor Name", maxLines: 1, initialValue: vendor['name']), const SizedBox(height: 15),
-                      _dialogField("Address", maxLines: 3, initialValue: vendor['address']), const SizedBox(height: 15),
-                      _dialogField("Phone Number", maxLines: 1, initialValue: vendor['phone']), const SizedBox(height: 15),
-                      _dialogField("GST Number", maxLines: 1, initialValue: vendor['gst']), const SizedBox(height: 25),
-                      Wrap(
-                        alignment: WrapAlignment.end, spacing: 10,
+                      _dialogField("Vendor Name", maxLines: 1, initialValue: vendor['name']), const SizedBox(height: 16),
+                      _dialogField("Address", maxLines: 3, initialValue: vendor['address']), const SizedBox(height: 16),
+                      _dialogField("Phone Number", maxLines: 1, initialValue: vendor['phone']), const SizedBox(height: 16),
+                      _dialogField("GST Number", maxLines: 1, initialValue: vendor['gst']), const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          _dialogBtn("Close", const Color(0xFF6C757D), () => Navigator.pop(context)),
-                          _dialogBtn("Save", const Color(0xFF0D47A1), () => Navigator.pop(context)),
+                          _dialogBtn("Cancel", isPrimary: false, onTap: () => Navigator.pop(context)),
+                          const SizedBox(width: 12),
+                          _dialogBtn("Update Vendor", isPrimary: true, onTap: () => Navigator.pop(context)),
                         ],
                       )
                     ],
@@ -128,24 +140,41 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           backgroundColor: Colors.white,
+          elevation: 10,
           child: Container(
-            width: 400, padding: const EdgeInsets.all(25),
+            width: 400, padding: const EdgeInsets.all(32),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(width: 80, height: 80, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFF8BB86), width: 4)), child: const Center(child: Text("!", style: TextStyle(fontSize: 50, color: Color(0xFFF8BB86), fontWeight: FontWeight.w300)))),
-                const SizedBox(height: 25),
-                const Text("Are you sure?", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF545454)), textAlign: TextAlign.center),
-                const SizedBox(height: 10),
-                const Text("You won't be able to revert this!", style: TextStyle(fontSize: 14, color: Color(0xFF545454)), textAlign: TextAlign.center),
-                const SizedBox(height: 30),
-                Wrap(
-                  alignment: WrapAlignment.center, spacing: 10, runSpacing: 10,
+                Container( // Modern icon container
+                  width: 80, height: 80, 
+                  decoration: BoxDecoration(color: Colors.red.shade50, shape: BoxShape.circle), 
+                  child: const Center(child: Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 40))
+                ),
+                const SizedBox(height: 24),
+                const Text("Delete Vendor?", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87), textAlign: TextAlign.center),
+                const SizedBox(height: 12),
+                Text("This action cannot be undone. Are you sure you want to permanently delete this vendor?", style: TextStyle(fontSize: 14, color: Colors.grey.shade600, height: 1.5), textAlign: TextAlign.center),
+                const SizedBox(height: 32),
+                Row(
                   children: [
-                    ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC3545), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))), onPressed: () => Navigator.pop(context), child: const Text("Yes, delete it!", style: TextStyle(color: Colors.white, fontSize: 14))),
-                    ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF007BFF), elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))), onPressed: () => Navigator.pop(context), child: const Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 14))),
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14), side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), 
+                        onPressed: () => Navigator.pop(context), 
+                        child: Text("Cancel", style: TextStyle(color: Colors.grey.shade700, fontSize: 14, fontWeight: FontWeight.w600))
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, elevation: 2, shadowColor: Colors.redAccent.withOpacity(0.4), padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), 
+                        onPressed: () => Navigator.pop(context), 
+                        child: const Text("Delete", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -160,14 +189,36 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, color: Colors.black87)), const SizedBox(height: 6),
-        TextFormField(initialValue: initialValue, maxLines: maxLines, decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12), border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Colors.blue)))),
+        Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.black87)), const SizedBox(height: 8),
+        TextFormField(
+          initialValue: initialValue, 
+          maxLines: maxLines, 
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey.shade50,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), 
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none), 
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF2962FF), width: 1.5))
+          )
+        ),
       ],
     );
   }
 
-  Widget _dialogBtn(String label, Color color, VoidCallback onTap) {
-    return SizedBox(height: 38, child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: color, elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))), onPressed: onTap, child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold))));
+  Widget _dialogBtn(String label, {required bool isPrimary, required VoidCallback onTap}) {
+    if (isPrimary) {
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2962FF), elevation: 2, shadowColor: const Color(0xFF2962FF).withOpacity(0.4), padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))), 
+        onPressed: onTap, 
+        child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
+      );
+    } else {
+      return TextButton(
+        style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))), 
+        onPressed: onTap, 
+        child: Text(label, style: TextStyle(color: Colors.grey.shade700, fontSize: 14, fontWeight: FontWeight.w600))
+      );
+    }
   }
 
   @override
@@ -198,14 +249,14 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
                         child: ScrollConfiguration(
                           behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                           child: SingleChildScrollView(
-                            padding: const EdgeInsets.all(25),
+                            padding: const EdgeInsets.all(30), // Increased padding
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 if (isTablet) const MobileSecondaryMenu(activePage: 'Vendor Master'),
                                 if (isTablet) const SizedBox(height: 20),
                                 _buildPageHeader(context, isTablet), 
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 24),
                                 _buildDataTable(),
                               ],
                             ),
@@ -228,12 +279,17 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
       direction: isTablet ? Axis.vertical : Axis.horizontal,
       crossAxisAlignment: isTablet ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: [
-        const Text("Vendor Master", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
+        const Text("Vendor Master", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF1A237E))), // Modern Header
         if (!isTablet) const Spacer(),
         if (isTablet) const SizedBox(height: 15),
         SizedBox(
-          width: isTablet ? double.infinity : null, height: 38,
-          child: ElevatedButton.icon(onPressed: () => _showCreateVendorDialog(context), icon: const Icon(Icons.add, size: 18, color: Colors.white), label: const Text("Create New Vendor", style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)), elevation: 0)),
+          width: isTablet ? double.infinity : null, height: 44,
+          child: ElevatedButton.icon(
+            onPressed: () => _showCreateVendorDialog(context), 
+            icon: const Icon(Icons.add, size: 18, color: Colors.white), 
+            label: const Text("Create New Vendor", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)), 
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2962FF), shadowColor: const Color(0xFF2962FF).withOpacity(0.4), elevation: 4, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))) // Pill shape
+          ),
         ),
       ],
     );
@@ -241,72 +297,102 @@ class _VendorMasterPageState extends State<VendorMasterPage> {
 
   Widget _buildDataTable() {
     return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 300), child: Container(height: 38, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6), border: Border.all(color: Colors.grey.shade300)), child: const TextField(decoration: InputDecoration(hintText: "Search by name...", hintStyle: TextStyle(fontSize: 13, color: Colors.grey), prefixIcon: Icon(Icons.search, size: 18, color: Colors.grey), border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 12)))))),
-                const SizedBox(width: 10),
-                const Text("Showing 10 of 74 records", style: TextStyle(color: Colors.grey, fontSize: 13)),
-              ],
-            ),
-          ),
-          Divider(height: 1, color: Colors.grey.shade300),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15), decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade300))),
-            child: const Row(children: [SizedBox(width: 50, child: Text("S.No", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), Expanded(flex: 3, child: Text("Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), Expanded(flex: 4, child: Text("Address", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), Expanded(flex: 2, child: Text("Phone", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), Expanded(flex: 2, child: Text("GST Number", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), SizedBox(width: 80, child: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13), textAlign: TextAlign.center))]),
-          ),
-          ListView.separated(
-            shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: vendors.length, separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade200),
-            itemBuilder: (context, index) {
-              final v = vendors[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
-                  children: [
-                    SizedBox(width: 50, child: Text("${index + 1}", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87))),
-                    Expanded(flex: 3, child: Text(v['name']!, style: const TextStyle(fontSize: 12, color: Colors.black87))),
-                    Expanded(flex: 4, child: Text(v['address']!, style: const TextStyle(fontSize: 12, color: Colors.black87), maxLines: 2, overflow: TextOverflow.ellipsis)),
-                    Expanded(flex: 2, child: Text(v['phone']!, style: const TextStyle(fontSize: 12, color: Colors.black87))),
-                    Expanded(flex: 2, child: Text(v['gst']!, style: const TextStyle(fontSize: 12, color: Colors.black87))),
-                    SizedBox(width: 80, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [_actionBtn(Icons.edit_outlined, Colors.blue, () => _showEditVendorDialog(context, v)), const SizedBox(width: 8), _actionBtn(Icons.delete_outline, Colors.red, () => _showDeleteDialog(context))])),
-                  ],
-                ),
-              );
-            },
-          ),
-          Divider(height: 1, color: Colors.grey.shade300),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+      decoration: BoxDecoration(
+        color: Colors.white, 
+        borderRadius: BorderRadius.circular(16), 
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 5))]
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [_pageBtn("Previous"), _pageBtn("1", isActive: true), _pageBtn("2"), _pageBtn("3"), _pageBtn("4"), _pageBtn("5"), _pageBtn("6"), _pageBtn("7"), _pageBtn("8"), _pageBtn("Next")],
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 350), 
+                      child: Container(
+                        height: 44, 
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey.shade300)), 
+                        child: TextField(decoration: InputDecoration(hintText: "Search by name...", hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400), prefixIcon: Icon(Icons.search, size: 20, color: Colors.grey.shade500), border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(vertical: 12)))
+                      )
+                    )
+                  ),
+                  const SizedBox(width: 10),
+                  Text("Showing 10 of 74 records", style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.w500)),
+                ],
               ),
             ),
-          )
-        ],
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18), 
+              color: const Color(0xFFF8FAFC), // Modern header
+              child: const Row(children: [SizedBox(width: 60, child: Text("S.NO", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))), Expanded(flex: 3, child: Text("NAME", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))), Expanded(flex: 4, child: Text("ADDRESS", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))), Expanded(flex: 2, child: Text("PHONE", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))), Expanded(flex: 2, child: Text("GST NUMBER", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))), SizedBox(width: 100, child: Text("ACTIONS", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey), textAlign: TextAlign.center))]),
+            ),
+            ListView.separated(
+              shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: vendors.length, 
+              separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade100),
+              itemBuilder: (context, index) {
+                final v = vendors[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 60, child: Text("${index + 1}", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87))),
+                      Expanded(flex: 3, child: Text(v['name']!, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black87))),
+                      Expanded(flex: 4, child: Text(v['address']!, style: const TextStyle(fontSize: 13, color: Colors.black54), maxLines: 2, overflow: TextOverflow.ellipsis)),
+                      Expanded(flex: 2, child: Text(v['phone']!, style: const TextStyle(fontSize: 13, color: Colors.black87))),
+                      Expanded(flex: 2, child: Text(v['gst']!, style: const TextStyle(fontSize: 13, color: Colors.black87))),
+                      SizedBox(width: 100, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [_actionBtn(Icons.edit_rounded, Colors.blueAccent, () => _showEditVendorDialog(context, v)), const SizedBox(width: 12), _actionBtn(Icons.delete_outline_rounded, Colors.redAccent, () => _showDeleteDialog(context))])),
+                    ],
+                  ),
+                );
+              },
+            ),
+            Container(
+              decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade100))),
+              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [_pageBtn("Previous"), const SizedBox(width: 8), _pageBtn("1", isActive: true), const SizedBox(width: 8), _pageBtn("2"), const SizedBox(width: 8), _pageBtn("3"), const SizedBox(width: 8), _pageBtn("4"), const SizedBox(width: 8), _pageBtn("5"), const SizedBox(width: 8), _pageBtn("6"), const SizedBox(width: 8), _pageBtn("Next")],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
   Widget _actionBtn(IconData icon, Color color, VoidCallback onTap) {
-    return Container(
-      width: 30, height: 30, decoration: BoxDecoration(border: Border.all(color: color.withOpacity(0.5)), borderRadius: BorderRadius.circular(4)),
-      child: IconButton(padding: EdgeInsets.zero, icon: Icon(icon, size: 14, color: color), onPressed: onTap),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 36, height: 36, 
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8)
+        ),
+        child: Icon(icon, size: 18, color: color),
+      ),
     );
   }
 
   Widget _pageBtn(String text, {bool isActive = false}) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(color: isActive ? const Color(0xFF0D47A1) : Colors.white, border: Border.all(color: isActive ? const Color(0xFF0D47A1) : Colors.grey.shade300), borderRadius: BorderRadius.circular(4)),
-      child: Text(text, style: TextStyle(color: isActive ? Colors.white : Colors.blue, fontSize: 12)),
+    return InkWell(
+      onTap: () {}, // Add logic as needed
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(color: isActive ? const Color(0xFF2962FF) : Colors.transparent, border: Border.all(color: isActive ? const Color(0xFF2962FF) : Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
+        child: Text(text, style: TextStyle(color: isActive ? Colors.white : Colors.black87, fontSize: 13, fontWeight: isActive ? FontWeight.bold : FontWeight.w500)),
+      ),
     );
   }
 }

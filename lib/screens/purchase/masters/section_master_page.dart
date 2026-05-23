@@ -118,24 +118,42 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), // Modern rounded corners
           backgroundColor: Colors.white,
+          elevation: 10,
           child: Container(
-            width: 400, padding: const EdgeInsets.all(30),
+            width: 400,
+            padding: const EdgeInsets.all(32),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(width: 80, height: 80, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: const Color(0xFFF8BB86), width: 4)), child: const Center(child: Text("!", style: TextStyle(fontSize: 50, color: Color(0xFFF8BB86), fontWeight: FontWeight.w300)))),
-                const SizedBox(height: 25),
-                const Text("Are you sure?", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF545454)), textAlign: TextAlign.center),
-                const SizedBox(height: 15),
-                Text(warningText, style: const TextStyle(fontSize: 14, color: Color(0xFF545454)), textAlign: TextAlign.center),
-                const SizedBox(height: 30),
-                Wrap(
-                  alignment: WrapAlignment.center, spacing: 10, runSpacing: 10,
+                Container( // Modern icon container
+                  width: 80, height: 80, 
+                  decoration: BoxDecoration(color: Colors.red.shade50, shape: BoxShape.circle), 
+                  child: const Center(child: Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 40))
+                ),
+                const SizedBox(height: 24),
+                const Text("Are you sure?", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87), textAlign: TextAlign.center),
+                const SizedBox(height: 12),
+                Text(warningText, style: TextStyle(fontSize: 14, color: Colors.grey.shade600, height: 1.5), textAlign: TextAlign.center),
+                const SizedBox(height: 32),
+                Row(
                   children: [
-                    ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC3545), padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), elevation: 0), onPressed: () => Navigator.pop(context), child: const Text("Yes, delete it!", style: TextStyle(color: Colors.white, fontSize: 14))),
-                    ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D6EFD), padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), elevation: 0), onPressed: () => Navigator.pop(context), child: const Text("Cancel", style: TextStyle(color: Colors.white, fontSize: 14))),
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14), side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), 
+                        onPressed: () => Navigator.pop(context), 
+                        child: Text("Cancel", style: TextStyle(color: Colors.grey.shade700, fontSize: 14, fontWeight: FontWeight.w600))
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, elevation: 2, shadowColor: Colors.redAccent.withOpacity(0.4), padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), 
+                        onPressed: () => Navigator.pop(context), 
+                        child: const Text("Yes, delete it!", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold))
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -173,20 +191,20 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
                         child: ScrollConfiguration(
                           behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                           child: SingleChildScrollView(
-                            padding: const EdgeInsets.all(25),
+                            padding: const EdgeInsets.all(30), // Increased padding for breathability
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 if (isTablet) const MobileSecondaryMenu(activePage: 'Section Master'),
                                 if (isTablet) const SizedBox(height: 20),
-                                const Text("Section Master", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
-                                const SizedBox(height: 20),
+                                const Text("Section Master", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF1A237E))), // Modern Header
+                                const SizedBox(height: 24),
                                 _buildTabs(),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 24),
                                 if (isSectionsTabActive) ...[
-                                  _buildSectionsForm(), const SizedBox(height: 20), _buildSectionsTable(),
+                                  _buildSectionsForm(), const SizedBox(height: 24), _buildSectionsTable(),
                                 ] else ...[
-                                  _buildSubSectionsForm(), const SizedBox(height: 20), _buildSubSectionsTable(),
+                                  _buildSubSectionsForm(), const SizedBox(height: 24), _buildSubSectionsTable(),
                                 ],
                               ],
                             ),
@@ -206,7 +224,7 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
 
   Widget _buildTabs() {
     return Container(
-      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1.0))),
+      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade200, width: 2.0))), // Softer border
       child: Row(
         children: [
           _tabItem("Sections", isSectionsTabActive, () => _switchTab(true)),
@@ -220,12 +238,14 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
-          color: isActive ? Colors.white : Colors.transparent,
-          border: Border(top: BorderSide(color: isActive ? Colors.grey.shade300 : Colors.transparent), left: BorderSide(color: isActive ? Colors.grey.shade300 : Colors.transparent), right: BorderSide(color: isActive ? Colors.grey.shade300 : Colors.transparent), bottom: BorderSide(color: isActive ? Colors.white : Colors.transparent, width: 2.0)),
+          color: Colors.transparent,
+          border: Border(
+            bottom: BorderSide(color: isActive ? const Color(0xFF2962FF) : Colors.transparent, width: 3.0) // Sleek active indicator
+          ),
         ),
-        child: Text(title, style: TextStyle(color: isActive ? const Color(0xFF0D47A1) : Colors.grey.shade600, fontWeight: isActive ? FontWeight.bold : FontWeight.w500, fontSize: 14)),
+        child: Text(title, style: TextStyle(color: isActive ? const Color(0xFF2962FF) : Colors.grey.shade500, fontWeight: isActive ? FontWeight.bold : FontWeight.w600, fontSize: 14)),
       ),
     );
   }
@@ -233,21 +253,33 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
   Widget _buildSectionsForm() {
     bool isEditing = editSectionId != null;
     return Container(
-      width: double.infinity, padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6), border: Border.all(color: Colors.grey.shade300)),
+      width: double.infinity, 
+      padding: const EdgeInsets.all(24), 
+      decoration: BoxDecoration(
+        color: Colors.white, 
+        borderRadius: BorderRadius.circular(16), // Modern card
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 4))]
+      ),
       child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.end, spacing: 20, runSpacing: 15,
+        crossAxisAlignment: WrapCrossAlignment.end, spacing: 20, runSpacing: 20,
         children: [
-          _buildTextField(isEditing ? "Edit Section" : "Section Name", "e.g. Cold Storage, Factory A", _sectionNameCtrl, 280),
-          _buildDropdown("Visibility", visibilityOptions, _selectedVisibility, (val) => setState(() => _selectedVisibility = val!), 200),
+          _buildTextField(isEditing ? "Edit Section" : "Section Name", "e.g. Cold Storage, Factory A", _sectionNameCtrl, 300),
+          _buildDropdown("Visibility", visibilityOptions, _selectedVisibility, (val) => setState(() => _selectedVisibility = val!), 220),
           if (!isEditing)
-            SizedBox(height: 40, child: ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.add_circle_outline, size: 18, color: Colors.white), label: const Text("Add Section", style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)), elevation: 0)))
+            SizedBox(
+              height: 44, 
+              child: ElevatedButton.icon(
+                onPressed: () {}, icon: const Icon(Icons.add_circle_outline, size: 18, color: Colors.white), label: const Text("Add Section", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)), 
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2962FF), shadowColor: const Color(0xFF2962FF).withOpacity(0.4), elevation: 3, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))
+              )
+            )
           else
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: 40, child: ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.check_circle_outline, size: 18, color: Colors.black87), label: const Text("Update Section", style: TextStyle(color: Colors.black87, fontSize: 13, fontWeight: FontWeight.bold)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFC107), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)), elevation: 0))),
-                const SizedBox(width: 10),
-                SizedBox(height: 40, child: OutlinedButton(onPressed: _cancelEditing, style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade400), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))), child: const Text("Cancel", style: TextStyle(color: Colors.black87, fontSize: 13)))),
+                SizedBox(height: 44, child: OutlinedButton(onPressed: _cancelEditing, style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), child: Text("Cancel", style: TextStyle(color: Colors.grey.shade700, fontSize: 14, fontWeight: FontWeight.w600)))),
+                const SizedBox(width: 12),
+                SizedBox(height: 44, child: ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.check_circle_outline, size: 18, color: Colors.white), label: const Text("Update Section", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00B0FF), shadowColor: const Color(0xFF00B0FF).withOpacity(0.4), elevation: 3, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))))),
               ],
             ),
         ],
@@ -257,54 +289,57 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
 
   Widget _buildSectionsTable() {
     return Container(
-      width: double.infinity, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
-      child: Column(
-        children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SizedBox(
-              width: 850, 
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15), decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade300))),
-                    child: const Row(children: [SizedBox(width: 50, child: Text("S.No", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), Expanded(child: Text("Section Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), SizedBox(width: 150, child: Text("Visibility", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), SizedBox(width: 120, child: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)))]),
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: paginatedSections.length,
-                    itemBuilder: (context, index) {
-                      final data = paginatedSections[index];
-                      int sNo = index + 1 + (_currentPage - 1) * _itemsPerPage;
-                      bool isRowEditing = data["id"] == editSectionId;
-                      bool isBoth = data["visibility"] == "Both";
+      width: double.infinity, 
+      decoration: BoxDecoration(
+        color: Colors.white, 
+        borderRadius: BorderRadius.circular(16), 
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 5))]
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: 850, 
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18), 
+                      color: const Color(0xFFF8FAFC), // Modern header
+                      child: const Row(children: [SizedBox(width: 60, child: Text("S.NO", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))), Expanded(child: Text("SECTION NAME", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))), SizedBox(width: 150, child: Text("VISIBILITY", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))), SizedBox(width: 120, child: Text("ACTIONS", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey)))]),
+                    ),
+                    ListView.separated(
+                      shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: paginatedSections.length,
+                      separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade100),
+                      itemBuilder: (context, index) {
+                        final data = paginatedSections[index];
+                        int sNo = index + 1 + (_currentPage - 1) * _itemsPerPage;
+                        bool isRowEditing = data["id"] == editSectionId;
+                        bool isBoth = data["visibility"] == "Both";
 
-                      return Container(
-                        color: isRowEditing ? const Color(0xFFFFF3CD) : Colors.transparent,
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                              child: Row(
-                                children: [
-                                  SizedBox(width: 50, child: Text("$sNo", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87))),
-                                  Expanded(child: Text(data["name"]!, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87))),
-                                  SizedBox(width: 150, child: Align(alignment: Alignment.centerLeft, child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: isBoth ? const Color(0xFF20C997) : const Color(0xFF0DCAF0), borderRadius: BorderRadius.circular(12)), child: Text(data["visibility"]!, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold))))),
-                                  SizedBox(width: 120, child: Row(children: [_actionBtn(Icons.edit_outlined, Colors.blue, () => _startEditingSection(data)), const SizedBox(width: 8), _actionBtn(Icons.delete_outline, Colors.red, () => _showDeleteDialog(context, "Raw materials and Sub-Sections linked to this will be deleted/lose link."))])),
-                                ],
-                              ),
-                            ),
-                            if (index < paginatedSections.length - 1) Divider(height: 1, color: Colors.grey.shade200),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                        return Container(
+                          color: isRowEditing ? Colors.blue.shade50.withOpacity(0.5) : Colors.transparent, // Modern edit highlight
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          child: Row(
+                            children: [
+                              SizedBox(width: 60, child: Text("$sNo", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87))),
+                              Expanded(child: Text(data["name"]!, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black87))),
+                              SizedBox(width: 150, child: Align(alignment: Alignment.centerLeft, child: Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), decoration: BoxDecoration(color: isBoth ? const Color(0xFF00BFA5) : const Color(0xFF00B0FF), borderRadius: BorderRadius.circular(20)), child: Text(data["visibility"]!, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold))))),
+                              SizedBox(width: 120, child: Row(children: [_actionBtn(Icons.edit_rounded, Colors.blueAccent, () => _startEditingSection(data)), const SizedBox(width: 10), _actionBtn(Icons.delete_outline_rounded, Colors.redAccent, () => _showDeleteDialog(context, "Raw materials and Sub-Sections linked to this will be deleted/lose link."))])),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          _buildPagination(isSection: true),
-        ],
+            Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade100))), child: _buildPagination(isSection: true)),
+          ],
+        ),
       ),
     );
   }
@@ -312,21 +347,33 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
   Widget _buildSubSectionsForm() {
     bool isEditing = editSubSectionId != null;
     return Container(
-      width: double.infinity, padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6), border: Border.all(color: Colors.grey.shade300)),
+      width: double.infinity, 
+      padding: const EdgeInsets.all(24), 
+      decoration: BoxDecoration(
+        color: Colors.white, 
+        borderRadius: BorderRadius.circular(16), 
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 4))]
+      ),
       child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.end, spacing: 20, runSpacing: 15,
+        crossAxisAlignment: WrapCrossAlignment.end, spacing: 20, runSpacing: 20,
         children: [
-          _buildDropdown("Parent Section", parentOptions, _selectedParentSection, (val) => setState(() => _selectedParentSection = val!), 220),
-          _buildTextField(isEditing ? "Edit Sub Section" : "Sub Section Name", "e.g. Freezer 1, Assembly Line A", _subSectionNameCtrl, 280),
+          _buildDropdown("Parent Section", parentOptions, _selectedParentSection, (val) => setState(() => _selectedParentSection = val!), 240),
+          _buildTextField(isEditing ? "Edit Sub Section" : "Sub Section Name", "e.g. Freezer 1", _subSectionNameCtrl, 300),
           if (!isEditing)
-            SizedBox(height: 40, child: ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.add_circle_outline, size: 18, color: Colors.white), label: const Text("Add Sub Section", style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF198754), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)), elevation: 0)))
+            SizedBox(
+              height: 44, 
+              child: ElevatedButton.icon(
+                onPressed: () {}, icon: const Icon(Icons.add_circle_outline, size: 18, color: Colors.white), label: const Text("Add Sub Section", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)), 
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00C853), shadowColor: const Color(0xFF00C853).withOpacity(0.4), elevation: 3, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))
+              )
+            )
           else
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: 40, child: ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.check_circle_outline, size: 18, color: Colors.black87), label: const Text("Update Sub Section", style: TextStyle(color: Colors.black87, fontSize: 13, fontWeight: FontWeight.bold)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFC107), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)), elevation: 0))),
-                const SizedBox(width: 10),
-                SizedBox(height: 40, child: OutlinedButton(onPressed: _cancelEditing, style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade400), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))), child: const Text("Cancel", style: TextStyle(color: Colors.black87, fontSize: 13)))),
+                SizedBox(height: 44, child: OutlinedButton(onPressed: _cancelEditing, style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey.shade300), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), child: Text("Cancel", style: TextStyle(color: Colors.grey.shade700, fontSize: 14, fontWeight: FontWeight.w600)))),
+                const SizedBox(width: 12),
+                SizedBox(height: 44, child: ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.check_circle_outline, size: 18, color: Colors.white), label: const Text("Update Sub Section", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFAB00), shadowColor: const Color(0xFFFFAB00).withOpacity(0.4), elevation: 3, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))))),
               ],
             ),
         ],
@@ -336,53 +383,56 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
 
   Widget _buildSubSectionsTable() {
     return Container(
-      width: double.infinity, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
-      child: Column(
-        children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SizedBox(
-              width: 850, 
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15), decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade300))),
-                    child: const Row(children: [SizedBox(width: 50, child: Text("S.No", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), SizedBox(width: 200, child: Text("Parent Section", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), Expanded(child: Text("Sub Section Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13))), SizedBox(width: 120, child: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)))]),
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: paginatedSubSections.length,
-                    itemBuilder: (context, index) {
-                      final data = paginatedSubSections[index];
-                      int sNo = index + 1 + (_currentPage - 1) * _itemsPerPage;
-                      bool isRowEditing = data["id"] == editSubSectionId;
+      width: double.infinity, 
+      decoration: BoxDecoration(
+        color: Colors.white, 
+        borderRadius: BorderRadius.circular(16), 
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 5))]
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: 850, 
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18), 
+                      color: const Color(0xFFF8FAFC), 
+                      child: const Row(children: [SizedBox(width: 60, child: Text("S.NO", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))), SizedBox(width: 200, child: Text("PARENT SECTION", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))), Expanded(child: Text("SUB SECTION NAME", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey))), SizedBox(width: 120, child: Text("ACTIONS", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Colors.blueGrey)))]),
+                    ),
+                    ListView.separated(
+                      shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), itemCount: paginatedSubSections.length,
+                      separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade100),
+                      itemBuilder: (context, index) {
+                        final data = paginatedSubSections[index];
+                        int sNo = index + 1 + (_currentPage - 1) * _itemsPerPage;
+                        bool isRowEditing = data["id"] == editSubSectionId;
 
-                      return Container(
-                        color: isRowEditing ? const Color(0xFFFFF3CD) : Colors.transparent,
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                              child: Row(
-                                children: [
-                                  SizedBox(width: 50, child: Text("$sNo", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87))),
-                                  SizedBox(width: 200, child: data["parent"]!.isNotEmpty ? Align(alignment: Alignment.centerLeft, child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: Colors.grey.shade500, borderRadius: BorderRadius.circular(4)), child: Text(data["parent"]!, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)))) : const SizedBox.shrink()),
-                                  Expanded(child: Text(data["name"]!, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87))),
-                                  SizedBox(width: 120, child: Row(children: [_actionBtn(Icons.edit_outlined, Colors.blue, () => _startEditingSubSection(data)), const SizedBox(width: 8), _actionBtn(Icons.delete_outline, Colors.red, () => _showDeleteDialog(context, "This sub-section will be permanently deleted."))])),
-                                ],
-                              ),
-                            ),
-                            if (index < paginatedSubSections.length - 1) Divider(height: 1, color: Colors.grey.shade200),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                        return Container(
+                          color: isRowEditing ? Colors.blue.shade50.withOpacity(0.5) : Colors.transparent,
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          child: Row(
+                            children: [
+                              SizedBox(width: 60, child: Text("$sNo", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87))),
+                              SizedBox(width: 200, child: data["parent"]!.isNotEmpty ? Align(alignment: Alignment.centerLeft, child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: Colors.blueGrey.shade100, borderRadius: BorderRadius.circular(6)), child: Text(data["parent"]!, style: TextStyle(color: Colors.blueGrey.shade800, fontSize: 11, fontWeight: FontWeight.bold)))) : const SizedBox.shrink()),
+                              Expanded(child: Text(data["name"]!, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black87))),
+                              SizedBox(width: 120, child: Row(children: [_actionBtn(Icons.edit_rounded, Colors.blueAccent, () => _startEditingSubSection(data)), const SizedBox(width: 10), _actionBtn(Icons.delete_outline_rounded, Colors.redAccent, () => _showDeleteDialog(context, "This sub-section will be permanently deleted."))])),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          _buildPagination(isSection: false),
-        ],
+            Container(decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade100))), child: _buildPagination(isSection: false)),
+          ],
+        ),
       ),
     );
   }
@@ -394,23 +444,23 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
 
     List<Widget> pageButtons = [];
     pageButtons.add(_pageBox("Prev", false, () { if (_currentPage > 1) setState(() => _currentPage--); }));
-    pageButtons.add(const SizedBox(width: 5));
+    pageButtons.add(const SizedBox(width: 8));
 
     for (int i = 1; i <= totalPages; i++) {
       pageButtons.add(_pageBox("$i", _currentPage == i, () { setState(() => _currentPage = i); }));
-      if (i < totalPages) pageButtons.add(const SizedBox(width: 5));
+      if (i < totalPages) pageButtons.add(const SizedBox(width: 8));
     }
 
-    pageButtons.add(const SizedBox(width: 5));
+    pageButtons.add(const SizedBox(width: 8));
     pageButtons.add(_pageBox("Next", false, () { if (_currentPage < totalPages) setState(() => _currentPage++); }));
 
-    return Container(
-      padding: const EdgeInsets.all(15.0), decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade300))),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0), 
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("Showing ${isSection ? paginatedSections.length : paginatedSubSections.length} of $totalItems entries", style: const TextStyle(fontSize: 13, color: Colors.grey)),
-          Wrap(alignment: WrapAlignment.center, spacing: 2, runSpacing: 8, children: pageButtons),
+          Text("Showing ${isSection ? paginatedSections.length : paginatedSubSections.length} of $totalItems entries", style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
+          Row(children: pageButtons),
         ],
       ),
     );
@@ -418,10 +468,15 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
 
   Widget _pageBox(String t, bool active, VoidCallback onTap) => InkWell(
     onTap: onTap,
+    borderRadius: BorderRadius.circular(8),
     child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), 
-      decoration: BoxDecoration(color: active ? Colors.blue : Colors.white, border: Border.all(color: active ? Colors.blue : Colors.grey.shade300), borderRadius: BorderRadius.circular(4)), 
-      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.blue, fontSize: 12, fontWeight: FontWeight.bold))
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8), 
+      decoration: BoxDecoration(
+        color: active ? const Color(0xFF2962FF) : Colors.transparent, 
+        border: Border.all(color: active ? const Color(0xFF2962FF) : Colors.grey.shade300), 
+        borderRadius: BorderRadius.circular(8)
+      ), 
+      child: Text(t, style: TextStyle(color: active ? Colors.white : Colors.black87, fontSize: 13, fontWeight: active ? FontWeight.bold : FontWeight.w500))
     ),
   );
 
@@ -431,8 +486,19 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87)), const SizedBox(height: 8),
-          SizedBox(height: 40, child: TextField(controller: controller, decoration: InputDecoration(hintText: hint, hintStyle: const TextStyle(fontSize: 13, color: Colors.grey), contentPadding: const EdgeInsets.symmetric(horizontal: 12), border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.blue))))),
+          Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87)), const SizedBox(height: 8),
+          TextFormField(
+            controller: controller, 
+            decoration: InputDecoration(
+              hintText: hint, 
+              hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade400), 
+              filled: true,
+              fillColor: Colors.grey.shade50,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), 
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none), 
+              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF2962FF), width: 1.5))
+            )
+          ),
         ],
       ),
     );
@@ -444,17 +510,38 @@ class _SectionMasterPageState extends State<SectionMasterPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87)), const SizedBox(height: 8),
-          SizedBox(height: 40, child: DropdownButtonFormField<String>(value: currentValue, icon: const Icon(Icons.keyboard_arrow_down, size: 20, color: Colors.grey), decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(horizontal: 12), border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)), enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300))), items: items.map((String value) => DropdownMenuItem<String>(value: value, child: Text(value, style: const TextStyle(fontSize: 13)))).toList(), onChanged: onChanged)),
+          Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87)), const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            value: currentValue, 
+            icon: Icon(Icons.keyboard_arrow_down, size: 20, color: Colors.grey.shade600), 
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.grey.shade50,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), 
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none), 
+              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF2962FF), width: 1.5))
+            ), 
+            items: items.map((String value) => DropdownMenuItem<String>(value: value, child: Text(value, style: const TextStyle(fontSize: 14)))).toList(), 
+            onChanged: onChanged
+          ),
         ],
       ),
     );
   }
 
   Widget _actionBtn(IconData icon, Color color, VoidCallback onTap) {
-    return Container(
-      width: 32, height: 32, decoration: BoxDecoration(border: Border.all(color: color.withOpacity(0.5)), borderRadius: BorderRadius.circular(4)),
-      child: IconButton(padding: EdgeInsets.zero, icon: Icon(icon, size: 16, color: color), onPressed: onTap),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 36, height: 36, 
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8)
+        ),
+        child: Icon(icon, size: 18, color: color),
+      ),
     );
   }
 }

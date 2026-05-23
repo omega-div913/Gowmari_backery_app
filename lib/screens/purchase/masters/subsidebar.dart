@@ -19,21 +19,26 @@ class SecondaryMastersSidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 15),
+      // Added margins and border to create the floating card effect from Image 1
+      margin: const EdgeInsets.only(left: 20, top: 20, bottom: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Padding(
-            padding: EdgeInsets.only(left: 10),
-            child: Text("All Masters", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF1A237E))),
+            padding: EdgeInsets.only(left: 10, bottom: 10),
+            child: Text("ALL MASTERS", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF1A237E), letterSpacing: 0.5)),
           ),
-          const SizedBox(height: 20),
           const Divider(),
           const SizedBox(height: 10),
-          const Padding(
-            padding: EdgeInsets.only(left: 10, bottom: 10),
-            child: Text("RAW MATERIAL", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue)),
+          Padding(
+            padding: const EdgeInsets.only(left: 10, bottom: 5, top: 5),
+            child: Text("RAW MATERIAL", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.blueGrey.shade700, letterSpacing: 0.5)),
           ),
           _secMenuItem(context, Icons.inventory_2_outlined, "RM Master", isActive: activePage == 'RM Master', destination: const RMMasterPage()),
           _secMenuItem(context, Icons.sell_outlined, "Material Type Master", destination: const MaterialTypeMasterPage(), isActive: activePage == 'Material Type Master'),
@@ -41,10 +46,10 @@ class SecondaryMastersSidebar extends StatelessWidget {
           _secMenuItem(context, Icons.domain_outlined, "Section Master", destination: const SectionMasterPage(), isActive: activePage == 'Section Master'),
           _secMenuItem(context, Icons.straighten, "UOM", destination: const UOMPage(), isActive: activePage == 'UOM'), 
           
-          const SizedBox(height: 20),
-          const Padding(
-            padding: EdgeInsets.only(left: 10, bottom: 10),
-            child: Text("PACKAGING MATERIAL", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue)),
+          const SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.only(left: 10, bottom: 5),
+            child: Text("PACKAGING MATERIAL", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.blueGrey.shade700, letterSpacing: 0.5)),
           ),
         
           _secMenuItem(context, Icons.inventory_2_outlined, "PM Master", destination: const PMMasterPage(), isActive: activePage == 'PM Master'),
@@ -57,12 +62,15 @@ class SecondaryMastersSidebar extends StatelessWidget {
 
   Widget _secMenuItem(BuildContext context, IconData icon, String label, {bool isActive = false, Widget? destination}) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 5),
-      decoration: BoxDecoration(color: isActive ? const Color(0xFF0D47A1) : Colors.transparent, borderRadius: BorderRadius.circular(8)),
+      margin: const EdgeInsets.only(bottom: 4),
+      decoration: BoxDecoration(
+        color: isActive ? const Color(0xFF2962FF) : Colors.transparent, // Vibrant blue like Image 1
+        borderRadius: BorderRadius.circular(8)
+      ),
       child: ListTile(
         visualDensity: const VisualDensity(vertical: -2),
-        leading: Icon(icon, size: 20, color: isActive ? Colors.white : Colors.blueGrey),
-        title: Text(label, style: TextStyle(color: isActive ? Colors.white : Colors.blueGrey.shade700, fontSize: 13, fontWeight: isActive ? FontWeight.bold : FontWeight.w600)),
+        leading: Icon(icon, size: 18, color: isActive ? Colors.white : Colors.blueGrey.shade600),
+        title: Text(label, style: TextStyle(color: isActive ? Colors.white : Colors.blueGrey.shade800, fontSize: 13, fontWeight: isActive ? FontWeight.w600 : FontWeight.w500)),
         onTap: () {
           if (destination != null && !isActive) {
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => destination));
@@ -111,9 +119,9 @@ class MobileSecondaryMenu extends StatelessWidget {
         margin: const EdgeInsets.only(right: 10),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
         decoration: BoxDecoration(
-          color: isActive ? const Color(0xFF0D47A1) : Colors.white,
+          color: isActive ? const Color(0xFF2962FF) : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isActive ? const Color(0xFF0D47A1) : Colors.grey.shade300)
+          border: Border.all(color: isActive ? const Color(0xFF2962FF) : Colors.grey.shade300)
         ),
         child: Text(label, style: TextStyle(color: isActive ? Colors.white : Colors.blueGrey, fontSize: 12, fontWeight: FontWeight.bold)),
       ),
@@ -140,8 +148,8 @@ class MasterTopbar extends StatelessWidget {
           Text(breadcrumb, style: const TextStyle(color: Colors.grey, fontSize: 13)),
           const Spacer(),
           Container(
-            width: 300, height: 40, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)),
-            child: const TextField(decoration: InputDecoration(hintText: "Search menus...", prefixIcon: Icon(Icons.search, size: 20), border: InputBorder.none)),
+            width: 300, height: 40, decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(8)),
+            child: const TextField(decoration: InputDecoration(hintText: "Search menus ( Press / )", hintStyle: TextStyle(fontSize: 13, color: Colors.grey), prefixIcon: Icon(Icons.search, size: 18, color: Colors.grey), border: InputBorder.none, contentPadding: EdgeInsets.symmetric(vertical: 12))),
           ),
           const SizedBox(width: 25),
           const CircleAvatar(radius: 18, backgroundColor: Colors.blue, child: Text("R", style: TextStyle(color: Colors.white))),
@@ -183,7 +191,7 @@ class MasterPrimarySidebar extends StatelessWidget {
                 _subItem(Icons.event_available_outlined, "Daily Usage Management"),
                 _subItem(Icons.inventory_2_outlined, "Packaging Material"),
                 Container(
-                  color: const Color(0xFF0D47A1),
+                  color: const Color(0xFF2962FF),
                   child: ListTile(
                     visualDensity: const VisualDensity(vertical: -4),
                     leading: const Icon(Icons.storage_outlined, size: 22, color: Colors.white),

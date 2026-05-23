@@ -1,64 +1,63 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
 import '../../components/app_sidebar.dart'; 
-import 'subsidebar.dart';
-import 'purchase_entry.dart';
-import 'purchase_order.dart';
+import 'subsidebar.dart'; 
+import 'purchase_entry.dart'; 
+import 'purchase_order.dart'; 
 import 'invoice_management.dart';
 
-class PackagingMaterialPage extends StatefulWidget {
+class PackagingMaterialPage extends StatefulWidget { 
   const PackagingMaterialPage({super.key});
 
-  @override
-  State<PackagingMaterialPage> createState() => _PackagingMaterialPageState();
+  @override 
+  State<PackagingMaterialPage> createState() => _PackagingMaterialPageState(); 
 }
 
-class _PackagingMaterialPageState extends State<PackagingMaterialPage> {
-  // Main Tab State
+class _PackagingMaterialPageState extends State<PackagingMaterialPage> { 
+  // Main Tab State 
   OperationTab _activeTab = OperationTab.purchaseEntry;
-  
-  // Track create/edit modes strictly to show correct Title in Appbar
-  bool _isCreatingNew = false;
+
+  // Track create/edit modes strictly to show correct Title in Appbar 
+  bool _isCreatingNew = false; 
   bool _isEditing = false;
 
-  void _onTabChanged(OperationTab tab) {
-    setState(() {
+  void _onTabChanged(OperationTab tab) { 
+    setState(() { 
       _activeTab = tab;
-      _isCreatingNew = false;
-      _isEditing = false;
-    });
+      _isCreatingNew = false; 
+      _isEditing = false; 
+    }); 
   }
 
-  void _onModeChanged(bool creating, bool editing) {
-    // We delay slightly to avoid rebuilding during a build
-    Future.microtask(() {
-      if(mounted) {
+  void _onModeChanged(bool creating, bool editing) { 
+    // We delay slightly to avoid rebuilding during a build 
+    Future.microtask(() { 
+      if(mounted) { 
         setState(() {
-          _isCreatingNew = creating;
-          _isEditing = editing;
-        });
-      }
-    });
+          _isCreatingNew = creating; 
+          _isEditing = editing; 
+        }); 
+      } 
+    }); 
   }
 
-  String _getTitle() {
-    if (_activeTab == OperationTab.purchaseEntry) {
-      if (_isEditing) return "Edit Purchase Entry";
-      return _isCreatingNew ? "New Purchase Entry" : "Packaging Material";
-    } else if (_activeTab == OperationTab.purchaseOrder) {
+  String _getTitle() { 
+    if (_activeTab == OperationTab.purchaseEntry) { 
+      if (_isEditing) return "Edit Purchase Entry"; 
+      return _isCreatingNew ? "New Purchase Entry" : "Packaging Material"; 
+    } else if (_activeTab == OperationTab.purchaseOrder) { 
       if (_isEditing) return "Edit Purchase Order";
-      return _isCreatingNew ? "New Purchase Order" : "Packaging Orders";
-    }
-    return "Packaging Invoice Management";
+      return _isCreatingNew ? "New Purchase Order" : "Packaging Orders"; 
+    } 
+    return "Packaging Invoice Management"; 
   }
 
-  @override
-  Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+  @override 
+  Widget build(BuildContext context) { 
+    double screenWidth = MediaQuery.of(context).size.width; 
     bool isMobile = screenWidth < 1100;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7FE),
-      // FIX 1: Removed 'const' because AppSidebar() is likely not a constant.
       drawer: isMobile ? Drawer(child: AppSidebar()) : null,
       appBar: isMobile ? AppBar(
         backgroundColor: Colors.white, elevation: 0.5,
@@ -67,7 +66,6 @@ class _PackagingMaterialPageState extends State<PackagingMaterialPage> {
           : null,
       body: Row(
         children: [
-          // FIX 2: Removed 'const' because AppSidebar() is likely not a constant.
           if (!isMobile) SizedBox(width: 260, child: AppSidebar()),
           Expanded(
             child: Column(
@@ -119,23 +117,22 @@ class _PackagingMaterialPageState extends State<PackagingMaterialPage> {
     );
   }
 
-  Widget _buildMainContent() {
+  Widget _buildMainContent() { 
     if (_activeTab == OperationTab.purchaseEntry) {
-      return PurchaseEntryView(onModeChange: _onModeChanged);
-    } else if (_activeTab == OperationTab.purchaseOrder) {
-      return PurchaseOrderView(onModeChange: _onModeChanged);
-    } else {
-      // This is okay to be const if InvoiceManagementView has a const constructor
-      return const InvoiceManagementView();
-    }
+      return PurchaseEntryView(onModeChange: _onModeChanged); 
+    } else if (_activeTab == OperationTab.purchaseOrder) { 
+      return PurchaseOrderView(onModeChange: _onModeChanged); 
+    } else { 
+      return const InvoiceManagementView(); 
+    } 
   }
 
-  Widget _buildTopBar() {
-    String breadcrumb = "Home / Purchase Section / Packaging Material";
-    if (_activeTab == OperationTab.purchaseOrder) {
-      breadcrumb = "Home / Packaging Material / Packaging Orders";
-    } else if (_activeTab == OperationTab.invoiceManagement) {
-      breadcrumb = "Home / Packaging Material / Packaging Invoices";
+  Widget _buildTopBar() { 
+    String breadcrumb = "Home / Purchase Section / Packaging Material"; 
+    if (_activeTab == OperationTab.purchaseOrder) { 
+      breadcrumb = "Home / Packaging Material / Packaging Orders"; 
+    } else if (_activeTab == OperationTab.invoiceManagement) { 
+      breadcrumb = "Home / Packaging Material / Packaging Invoices"; 
     }
 
     return Container(
@@ -147,10 +144,10 @@ class _PackagingMaterialPageState extends State<PackagingMaterialPage> {
           const SizedBox(width: 15),
           Text(breadcrumb, style: const TextStyle(color: Colors.grey, fontSize: 13)),
           const Spacer(),
-          Container( width: 300, height: 38,
+          Container( 
+            width: 300, height: 38,
             decoration: BoxDecoration( color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)),
-            // FIX 3: Removed 'const' because TextField is never a constant.
-            child: TextField(
+            child: const TextField(
                 decoration: InputDecoration( hintText: "Search menus...",
                     prefixIcon: Icon(Icons.search, size: 20),
                     border: InputBorder.none)),
@@ -161,5 +158,5 @@ class _PackagingMaterialPageState extends State<PackagingMaterialPage> {
         ],
       ),
     );
-  }
+  } 
 }
