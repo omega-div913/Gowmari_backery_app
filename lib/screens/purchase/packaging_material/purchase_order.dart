@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 // --- DATA MODEL ---
 class PurchaseOrderData {
@@ -249,14 +250,23 @@ class PurchaseOrderDataTable extends StatefulWidget {
 }
 
 class _PurchaseOrderDataTableState extends State<PurchaseOrderDataTable> {
-  late _PurchaseOrderDataSource _dataSource;
-  int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
+  // Pagination State Variables
+  int _currentPage = 1;
+  int _rowsPerPage = 10;
 
-  @override
-  void initState() {
-    super.initState();
-    _dataSource = _PurchaseOrderDataSource(onEdit: widget.onEdit, onDelete: () => _showDeleteDialog(context));
-  }
+  final List<PurchaseOrderData> _orders = [
+    PurchaseOrderData('3/16/2026', '3/16/2026', 'test', 'Tissue Paper (100 Pkts)', 'Pending'),
+    PurchaseOrderData('3/11/2026', '3/21/2026', 'Testvendors', 'Premium Athirasam (50 Pcs), Flexo (S) (120 Pcs)', 'Pending'),
+    PurchaseOrderData('2/17/2026', '3/14/2026', 'vendor1', 'pouch (1 box)', 'Purchased'),
+    PurchaseOrderData('2/16/2026', '3/13/2026', 'vendor1', 'pouch (1 box)', 'Pending'),
+    PurchaseOrderData('1/2/2026', '1/7/2026', 'test', 'Cardbox (2 box)', 'Purchased'),
+    PurchaseOrderData('1/1/2026', '1/6/2026', 'vendor1', 'pouch (2 box)', 'Purchased'),
+    PurchaseOrderData('1/1/2026', '1/5/2026', 'test', 'Cardbox (10 box)', 'Pending'),
+    PurchaseOrderData('1/23/2026', '1/25/2026', 'vendor1', 'Cardbox (2 box)', 'Pending'),
+    PurchaseOrderData('12/2/2025', '-', 'test', 'Cardbox (10 box)', 'Purchased'),
+    PurchaseOrderData('11/28/2025', '-', 'test', 'pouch (1 box)', 'Purchased'),
+    PurchaseOrderData('11/28/2025', '-', 'test', 'Cardbox (1 box)', 'Purchased'),
+  ];
 
   void _showDeleteDialog(BuildContext context) {
     showDialog(
@@ -324,6 +334,13 @@ class _PurchaseOrderDataTableState extends State<PurchaseOrderDataTable> {
 
   @override
   Widget build(BuildContext context) {
+    // Pagination Calculations
+    int totalItems = _orders.length;
+    int totalPages = (totalItems / _rowsPerPage).ceil();
+    int startIndex = (_currentPage - 1) * _rowsPerPage;
+    int endIndex = min(startIndex + _rowsPerPage, totalItems);
+    List<PurchaseOrderData> paginatedEntries = _orders.sublist(startIndex, endIndex);
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,101 +437,229 @@ class _PurchaseOrderDataTableState extends State<PurchaseOrderDataTable> {
             ],
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: Theme(
-              data: Theme.of(context).copyWith(
-                cardColor: Colors.white,
-                dividerColor: Colors.transparent,
-                cardTheme: const CardThemeData(elevation: 0, margin: EdgeInsets.zero, color: Colors.white),
-              ),
-              child: PaginatedDataTable(
-                columns: [
-                  DataColumn(label: Text('S.NO', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('ORDER DATE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('REQUEST DATE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('VENDOR', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('MATERIAL(S)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('STATUS', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('ACTIONS', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600)))
-                ],
-                source: _dataSource,
-                rowsPerPage: _rowsPerPage,
-                showCheckboxColumn: false,
-                columnSpacing: 20,
-                onRowsPerPageChanged: (int? value) => setState(() => _rowsPerPage = value!),
-              ),
+          
+          // Custom Modern Grid (Table)
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ]
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Table(
+                  columnWidths: const {
+                    0: FixedColumnWidth(60),
+                    1: FlexColumnWidth(1.2),
+                    2: FlexColumnWidth(1.2),
+                    3: FlexColumnWidth(1.5),
+                    4: FlexColumnWidth(3.0),
+                    5: FlexColumnWidth(1.2),
+                    6: FixedColumnWidth(110), // Correct width for 2 action icons without overflow
+                  },
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  children: [
+                    // Header Row
+                    TableRow(
+                      decoration: const BoxDecoration(
+                        border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
+                      ),
+                      children: [
+                        _buildCustomHeaderCell('S.NO'),
+                        _buildCustomHeaderCell('ORDER DATE'),
+                        _buildCustomHeaderCell('REQUEST DATE'),
+                        _buildCustomHeaderCell('VENDOR'),
+                        _buildCustomHeaderCell('MATERIAL(S)'),
+                        _buildCustomHeaderCell('STATUS'),
+                        _buildCustomHeaderCell('ACTIONS'),
+                      ]
+                    ),
+                    // Data Rows
+                    ...paginatedEntries.asMap().entries.map((mapEntry) {
+                      int index = mapEntry.key;
+                      PurchaseOrderData order = mapEntry.value;
+                      
+                      Color statusBg = order.status == 'Pending' ? const Color(0xFFF1F5F9) : const Color(0xFFF0FDF4);
+                      Color statusText = order.status == 'Pending' ? const Color(0xFF64748B) : const Color(0xFF16A34A);
+
+                      return TableRow(
+                        decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide(color: index == paginatedEntries.length - 1 ? Colors.transparent : const Color(0xFFF1F5F9))),
+                        ),
+                        children: [
+                          _buildCustomDataCell((startIndex + index + 1).toString()),
+                          _buildCustomDataCell(order.orderDate),
+                          _buildCustomDataCell(order.requestDate),
+                          _buildCustomDataCell(order.vendor),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            child: Text(
+                              order.materials, 
+                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Color(0xFF1E293B)),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(color: statusBg, borderRadius: BorderRadius.circular(20)),
+                                child: Text(order.status, style: TextStyle(color: statusText, fontSize: 11, fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Row(
+                              children: [
+                                _buildActionIcon(Icons.edit_outlined, const Color(0xFF2563EB), widget.onEdit),
+                                const SizedBox(width: 8),
+                                _buildActionIcon(Icons.delete_outline, const Color(0xFFDC2626), () => _showDeleteDialog(context)),
+                              ]
+                            ),
+                          )
+                        ]
+                      );
+                    }),
+                  ],
+                ),
+                // Custom Modern Pagination Footer
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12)),
+                    border: Border(top: BorderSide(color: Color(0xFFE2E8F0)))
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Showing ${totalItems == 0 ? 0 : startIndex + 1} to $endIndex of $totalItems entries",
+                        style: const TextStyle(fontSize: 13, color: Color(0xFF64748B), fontWeight: FontWeight.w500)
+                      ),
+                      Row(
+                        children: [
+                          const Text("Rows per page: ", style: TextStyle(fontSize: 13, color: Color(0xFF64748B))),
+                          const SizedBox(width: 8),
+                          Container(
+                            height: 32,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              borderRadius: BorderRadius.circular(6)
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<int>(
+                                value: _rowsPerPage,
+                                icon: const Icon(Icons.keyboard_arrow_down, size: 16, color: Color(0xFF64748B)),
+                                style: const TextStyle(fontSize: 13, color: Color(0xFF1E293B), fontWeight: FontWeight.w500),
+                                items: [5, 10, 20, 50].map((int value) {
+                                  return DropdownMenuItem<int>(
+                                    value: value,
+                                    child: Text(value.toString()),
+                                  );
+                                }).toList(),
+                                onChanged: (int? newValue) {
+                                  setState(() {
+                                    _rowsPerPage = newValue!;
+                                    _currentPage = 1; // Reset to first page
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          // Prev Page Button
+                          InkWell(
+                            onTap: _currentPage > 1 ? () => setState(() => _currentPage--) : null,
+                            borderRadius: BorderRadius.circular(6),
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: _currentPage > 1 ? Colors.white : const Color(0xFFF1F5F9),
+                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                borderRadius: BorderRadius.circular(6)
+                              ),
+                              child: Icon(Icons.chevron_left, size: 18, color: _currentPage > 1 ? const Color(0xFF1E293B) : const Color(0xFF94A3B8)),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text("Page $_currentPage of ${totalPages == 0 ? 1 : totalPages}", style: const TextStyle(fontSize: 13, color: Color(0xFF1E293B), fontWeight: FontWeight.w500)),
+                          const SizedBox(width: 12),
+                          // Next Page Button
+                          InkWell(
+                            onTap: _currentPage < totalPages ? () => setState(() => _currentPage++) : null,
+                            borderRadius: BorderRadius.circular(6),
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: _currentPage < totalPages ? Colors.white : const Color(0xFFF1F5F9),
+                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                borderRadius: BorderRadius.circular(6)
+                              ),
+                              child: Icon(Icons.chevron_right, size: 18, color: _currentPage < totalPages ? const Color(0xFF1E293B) : const Color(0xFF94A3B8)),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
         ],
       ),
     );
   }
-}
 
-class _PurchaseOrderDataSource extends DataTableSource {
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
-
-  _PurchaseOrderDataSource({required this.onEdit, required this.onDelete});
-
-  final List<PurchaseOrderData> _orders = [
-    PurchaseOrderData('3/16/2026', '3/16/2026', 'test', 'Tissue Paper (100 Pkts)', 'Pending'),
-    PurchaseOrderData('3/11/2026', '3/21/2026', 'Testvendors', 'Premium Athirasam (50 Pcs), Flexo (S) (120 Pcs)', 'Pending'),
-    PurchaseOrderData('2/17/2026', '3/14/2026', 'vendor1', 'pouch (1 box)', 'Purchased'),
-    PurchaseOrderData('2/16/2026', '3/13/2026', 'vendor1', 'pouch (1 box)', 'Pending'),
-    PurchaseOrderData('1/2/2026', '1/7/2026', 'test', 'Cardbox (2 box)', 'Purchased'),
-    PurchaseOrderData('1/1/2026', '1/6/2026', 'vendor1', 'pouch (2 box)', 'Purchased'),
-    PurchaseOrderData('1/1/2026', '1/5/2026', 'test', 'Cardbox (10 box)', 'Pending'),
-    PurchaseOrderData('1/23/2026', '1/25/2026', 'vendor1', 'Cardbox (2 box)', 'Pending'),
-    PurchaseOrderData('12/2/2025', '-', 'test', 'Cardbox (10 box)', 'Purchased'),
-    PurchaseOrderData('11/28/2025', '-', 'test', 'pouch (1 box)', 'Purchased'),
-    PurchaseOrderData('11/28/2025', '-', 'test', 'Cardbox (1 box)', 'Purchased'),
-  ];
-
-  @override
-  DataRow? getRow(int index) {
-    if (index >= _orders.length) return null;
-    final order = _orders[index];
-
-    Color bgColor = order.status == 'Pending' ? Colors.grey.shade100 : Colors.green.shade50;
-    Color textColor = order.status == 'Pending' ? Colors.grey.shade700 : Colors.green.shade700;
-
-    return DataRow.byIndex(index: index, cells: [
-      DataCell(Text('${index + 1}')),
-      DataCell(Text(order.orderDate)),
-      DataCell(Text(order.requestDate)),
-      DataCell(Text(order.vendor)),
-      DataCell(SizedBox(width: 250, child: Text(order.materials, overflow: TextOverflow.ellipsis, maxLines: 2))),
-      DataCell(Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(20)),
-        child: Text(order.status, style: TextStyle(color: textColor, fontSize: 12, fontWeight: FontWeight.w600)),
-      )),
-      DataCell(Row(children: [
-        InkWell(
-          onTap: onEdit,
-          child: Container(
-              margin: const EdgeInsets.only(right: 8),
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)),
-              child: Icon(Icons.edit_outlined, color: Colors.blue.shade600, size: 16)),
-        ),
-        InkWell(
-          onTap: onDelete,
-          child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)),
-              child: Icon(Icons.delete_outline, color: Colors.red.shade600, size: 16)),
-        )
-      ]))
-    ]);
+  Widget _buildCustomHeaderCell(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Color(0xFF64748B), letterSpacing: 0.5)),
+    );
   }
 
-  @override
-  bool get isRowCountApproximate => false;
-  @override
-  int get rowCount => _orders.length;
-  @override
-  int get selectedRowCount => 0;
+  Widget _buildCustomDataCell(String text, {bool isBold = false, Color? color}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Text(
+        text, 
+        style: TextStyle(
+          fontSize: 13, 
+          fontWeight: isBold ? FontWeight.bold : FontWeight.w500, 
+          color: color ?? const Color(0xFF1E293B)
+        )
+      ),
+    );
+  }
+
+  Widget _buildActionIcon(IconData icon, Color iconColor, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          borderRadius: BorderRadius.circular(6)
+        ),
+        child: Icon(icon, color: iconColor, size: 16)
+      ),
+    );
+  }
 }

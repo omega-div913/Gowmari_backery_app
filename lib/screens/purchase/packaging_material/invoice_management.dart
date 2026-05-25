@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 // --- DATA MODEL ---
 class InvoiceData {
@@ -27,14 +28,17 @@ class InvoiceManagementDataTable extends StatefulWidget {
 }
 
 class _InvoiceManagementDataTableState extends State<InvoiceManagementDataTable> {
-  late _InvoiceDataSource _dataSource;
-  int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
+  // Pagination State Variables
+  int _currentPage = 1;
+  int _rowsPerPage = 10;
 
-  @override
-  void initState() {
-    super.initState();
-    _dataSource = _InvoiceDataSource(onView: () => _showInvoiceDialog(context));
-  }
+  final List<InvoiceData> _invoices = [
+    InvoiceData('2', 'Testvendors', '15 May, 2026', '₹10.50'),
+    InvoiceData('3', 'Vendor A', '16 May, 2026', '₹20.00'),
+    InvoiceData('4', 'Vendor B', '17 May, 2026', '₹35.00'),
+    InvoiceData('5', 'Vendor C', '18 May, 2026', '₹40.50'),
+    InvoiceData('6', 'Vendor D', '19 May, 2026', '₹15.20'),
+  ];
 
   void _showInvoiceDialog(BuildContext context) {
     showDialog(
@@ -305,35 +309,37 @@ class _InvoiceManagementDataTableState extends State<InvoiceManagementDataTable>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87)),
+          Text(label, style: const TextStyle(color: Color(0xFF64748B), fontSize: 13, fontWeight: FontWeight.w600)),
           const SizedBox(height: 5),
           TextFormField(
             initialValue: hint,
             decoration: InputDecoration(
                 isDense: true,
-                contentPadding: const EdgeInsets.all(12),
-                suffixIcon: hasIcon ? const Icon(Icons.calendar_today_outlined, size: 16) : null,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: Colors.grey.shade300))),
+                contentPadding: const EdgeInsets.all(10),
+                suffixIcon: hasIcon ? const Icon(Icons.calendar_today_outlined, size: 16, color: Color(0xFF64748B)) : null,
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF0D6EFD)))),
           ),
         ],
       ),
     );
+    
   Widget _buildInvoiceFilterDropdown(String label, String value) => SizedBox(
       width: 250,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87)),
+          Text(label, style: const TextStyle(color: Color(0xFF64748B), fontSize: 13, fontWeight: FontWeight.w600)),
           const SizedBox(height: 5),
           DropdownButtonFormField(
             value: value,
             isDense: true,
+            icon: const Icon(Icons.keyboard_arrow_down, size: 18, color: Color(0xFF64748B)),
             decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: Colors.grey.shade300))),
-            items: [DropdownMenuItem(value: value, child: Text(value))],
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF0D6EFD)))),
+            items: [DropdownMenuItem(value: value, child: Text(value, style: const TextStyle(fontSize: 14)))],
             onChanged: (newValue) {},
           ),
         ],
@@ -342,6 +348,13 @@ class _InvoiceManagementDataTableState extends State<InvoiceManagementDataTable>
 
   @override
   Widget build(BuildContext context) {
+    // Pagination Calculations
+    int totalItems = _invoices.length;
+    int totalPages = (totalItems / _rowsPerPage).ceil();
+    int startIndex = (_currentPage - 1) * _rowsPerPage;
+    int endIndex = min(startIndex + _rowsPerPage, totalItems);
+    List<InvoiceData> paginatedEntries = _invoices.sublist(startIndex, endIndex);
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,19 +368,20 @@ class _InvoiceManagementDataTableState extends State<InvoiceManagementDataTable>
                 children: [
                   const Text("Packaging Invoice Management", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
                   const SizedBox(height: 4),
-                  Text("View and manage packaging invoices.", style: TextStyle(fontSize: 14, color: Colors.grey.shade500)),
+                  Text("View and manage packaging invoices.", style: TextStyle(fontSize: 14, color: Color(0xFF94A3B8))),
                 ]
               ),
               Container(
                 width: 300,
                 height: 40,
-                decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(20)),
-                child: TextField(
+                decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(20)),
+                child: const TextField(
                   decoration: InputDecoration(
                     hintText: "Search by vendor, invoice no...",
-                    prefixIcon: Icon(Icons.search, color: Colors.grey.shade500, size: 20),
+                    hintStyle: TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
+                    prefixIcon: Icon(Icons.search, color: Color(0xFF94A3B8), size: 18),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
                   ),
                 ),
               ),
@@ -376,7 +390,11 @@ class _InvoiceManagementDataTableState extends State<InvoiceManagementDataTable>
           const SizedBox(height: 25),
           Container(
             padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFFE2E8F0)), 
+              borderRadius: BorderRadius.circular(8)
+            ),
             child: Wrap(
               spacing: 20,
               runSpacing: 15,
@@ -391,84 +409,213 @@ class _InvoiceManagementDataTableState extends State<InvoiceManagementDataTable>
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6C757D),
+                        backgroundColor: const Color(0xFF64748B),
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-                    child: const Text("Reset", style: TextStyle(fontSize: 15)),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))),
+                    child: const Text("Reset", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                   ),
                 )
               ],
             ),
           ),
           const SizedBox(height: 25),
+          
+          // Custom Modern Grid (Table)
           Container(
-            width: double.infinity,
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
-            child: Theme(
-              data: Theme.of(context).copyWith(
-                cardColor: Colors.white,
-                dividerColor: Colors.transparent,
-                cardTheme: const CardThemeData(elevation: 0, margin: EdgeInsets.zero, color: Colors.white),
-              ),
-              child: PaginatedDataTable(
-                columns: [
-                  DataColumn(label: Text('S.NO', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('INVOICE NO', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('VENDOR', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('PURCHASE DATE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('INVOICE TOTAL', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('VIEW', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                ],
-                source: _dataSource,
-                rowsPerPage: _rowsPerPage,
-                showCheckboxColumn: false,
-                onRowsPerPageChanged: (int? value) => setState(() => _rowsPerPage = value!),
-              ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ]
             ),
-          )
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Table(
+                  columnWidths: const {
+                    0: FixedColumnWidth(60),
+                    1: FlexColumnWidth(1.2),
+                    2: FlexColumnWidth(2),
+                    3: FlexColumnWidth(1.5),
+                    4: FlexColumnWidth(1.5),
+                    5: FixedColumnWidth(100), // Fixed width for actions
+                  },
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  children: [
+                    // Header Row
+                    TableRow(
+                      decoration: const BoxDecoration(
+                        border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
+                      ),
+                      children: [
+                        _buildCustomHeaderCell('S.NO'),
+                        _buildCustomHeaderCell('INVOICE NO'),
+                        _buildCustomHeaderCell('VENDOR'),
+                        _buildCustomHeaderCell('PURCHASE DATE'),
+                        _buildCustomHeaderCell('INVOICE TOTAL'),
+                        _buildCustomHeaderCell('VIEW'),
+                      ]
+                    ),
+                    // Data Rows
+                    ...paginatedEntries.asMap().entries.map((mapEntry) {
+                      int index = mapEntry.key;
+                      InvoiceData inv = mapEntry.value;
+
+                      return TableRow(
+                        decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide(color: index == paginatedEntries.length - 1 ? Colors.transparent : const Color(0xFFF1F5F9))),
+                        ),
+                        children: [
+                          _buildCustomDataCell((startIndex + index + 1).toString()),
+                          _buildCustomDataCell(inv.invoiceNo),
+                          _buildCustomDataCell(inv.vendor),
+                          _buildCustomDataCell(inv.purchaseDate),
+                          _buildCustomDataCell(inv.invoiceTotal),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: _buildActionIcon(Icons.arrow_forward_ios, const Color(0xFF2563EB), () => _showInvoiceDialog(context)),
+                            ),
+                          )
+                        ]
+                      );
+                    }),
+                  ],
+                ),
+                // Custom Modern Pagination Footer
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12)),
+                    border: Border(top: BorderSide(color: Color(0xFFE2E8F0)))
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Showing ${totalItems == 0 ? 0 : startIndex + 1} to $endIndex of $totalItems entries",
+                        style: const TextStyle(fontSize: 13, color: Color(0xFF64748B), fontWeight: FontWeight.w500)
+                      ),
+                      Row(
+                        children: [
+                          const Text("Rows per page: ", style: TextStyle(fontSize: 13, color: Color(0xFF64748B))),
+                          const SizedBox(width: 8),
+                          Container(
+                            height: 32,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              borderRadius: BorderRadius.circular(6)
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<int>(
+                                value: _rowsPerPage,
+                                icon: const Icon(Icons.keyboard_arrow_down, size: 16, color: Color(0xFF64748B)),
+                                style: const TextStyle(fontSize: 13, color: Color(0xFF1E293B), fontWeight: FontWeight.w500),
+                                items: [5, 10, 20, 50].map((int value) {
+                                  return DropdownMenuItem<int>(
+                                    value: value,
+                                    child: Text(value.toString()),
+                                  );
+                                }).toList(),
+                                onChanged: (int? newValue) {
+                                  setState(() {
+                                    _rowsPerPage = newValue!;
+                                    _currentPage = 1; // Reset to first page
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          // Prev Page Button
+                          InkWell(
+                            onTap: _currentPage > 1 ? () => setState(() => _currentPage--) : null,
+                            borderRadius: BorderRadius.circular(6),
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: _currentPage > 1 ? Colors.white : const Color(0xFFF1F5F9),
+                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                borderRadius: BorderRadius.circular(6)
+                              ),
+                              child: Icon(Icons.chevron_left, size: 18, color: _currentPage > 1 ? const Color(0xFF1E293B) : const Color(0xFF94A3B8)),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text("Page $_currentPage of ${totalPages == 0 ? 1 : totalPages}", style: const TextStyle(fontSize: 13, color: Color(0xFF1E293B), fontWeight: FontWeight.w500)),
+                          const SizedBox(width: 12),
+                          // Next Page Button
+                          InkWell(
+                            onTap: _currentPage < totalPages ? () => setState(() => _currentPage++) : null,
+                            borderRadius: BorderRadius.circular(6),
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: _currentPage < totalPages ? Colors.white : const Color(0xFFF1F5F9),
+                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                borderRadius: BorderRadius.circular(6)
+                              ),
+                              child: Icon(Icons.chevron_right, size: 18, color: _currentPage < totalPages ? const Color(0xFF1E293B) : const Color(0xFF94A3B8)),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
-}
 
-class _InvoiceDataSource extends DataTableSource {
-  final VoidCallback onView;
-  _InvoiceDataSource({required this.onView});
-
-  final List<InvoiceData> _invoices = [
-    InvoiceData('2', 'Testvendors', '15 May, 2026', '₹10.50'),
-    InvoiceData('3', 'Vendor A', '16 May, 2026', '₹20.00'),
-    InvoiceData('4', 'Vendor B', '17 May, 2026', '₹35.00'),
-    InvoiceData('5', 'Vendor C', '18 May, 2026', '₹40.50'),
-    InvoiceData('6', 'Vendor D', '19 May, 2026', '₹15.20'),
-  ];
-
-  @override
-  DataRow? getRow(int index) {
-    if (index >= _invoices.length) return null;
-    final inv = _invoices[index];
-
-    return DataRow.byIndex(index: index, cells: [
-      DataCell(Text('${index + 1}')),
-      DataCell(Text(inv.invoiceNo)),
-      DataCell(Text(inv.vendor)),
-      DataCell(Text(inv.purchaseDate)),
-      DataCell(Text(inv.invoiceTotal)),
-      DataCell(InkWell(
-        onTap: onView,
-        child: Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)),
-            child: Icon(Icons.arrow_forward_ios, color: Colors.blue.shade600, size: 14)),
-      )),
-    ]);
+  Widget _buildCustomHeaderCell(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Color(0xFF64748B), letterSpacing: 0.5)),
+    );
   }
 
-  @override
-  bool get isRowCountApproximate => false;
-  @override
-  int get rowCount => _invoices.length;
-  @override
-  int get selectedRowCount => 0;
+  Widget _buildCustomDataCell(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Text(
+        text, 
+        style: const TextStyle(
+          fontSize: 13, 
+          fontWeight: FontWeight.w500, 
+          color: Color(0xFF1E293B)
+        )
+      ),
+    );
+  }
+
+  Widget _buildActionIcon(IconData icon, Color iconColor, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          borderRadius: BorderRadius.circular(6)
+        ),
+        child: Icon(icon, color: iconColor, size: 14)
+      ),
+    );
+  }
 }

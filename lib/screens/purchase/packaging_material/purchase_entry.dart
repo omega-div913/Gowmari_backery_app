@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 // --- DATA MODEL ---
 class PurchaseEntryData {
@@ -413,15 +414,16 @@ class PurchaseHistoryDataTable extends StatefulWidget {
 }
 
 class _PurchaseHistoryDataTableState extends State<PurchaseHistoryDataTable> {
-  late _PurchaseHistoryDataSource _dataSource;
-  int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
-
-  @override
-  void initState() {
-    super.initState();
-    _dataSource = _PurchaseHistoryDataSource(
-        onEdit: widget.onEdit, onReverse: () => _showReverseDialog(context), onView: () {});
-  }
+  // Pagination State Variables
+  int _currentPage = 1;
+  int _rowsPerPage = 10;
+  
+  final List<PurchaseEntryData> _entries = [
+    PurchaseEntryData('5/15/2026', '2', 'Testvendors', 'test (1.00 Kg)', '₹10.50', '—', '₹10.50', 'Unpaid'),
+    // Mocking additional data to demonstrate pagination
+    PurchaseEntryData('5/16/2026', '3', 'Testvendors', 'boxes (5.00 Kg)', '₹25.00', '—', '₹0.00', 'Paid'),
+    PurchaseEntryData('5/17/2026', '4', 'Alpha Corp', 'covers (10.00 Kg)', '₹105.00', '—', '₹50.00', 'Partial'),
+  ];
 
   void _showReverseDialog(BuildContext context) {
     showDialog(
@@ -437,7 +439,6 @@ class _PurchaseHistoryDataTableState extends State<PurchaseHistoryDataTable> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // (Existing Reverse Dialog Content logic unchanged)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade200))),
@@ -643,34 +644,36 @@ class _PurchaseHistoryDataTableState extends State<PurchaseHistoryDataTable> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.w600)),
+          Text(label, style: const TextStyle(color: Color(0xFF64748B), fontSize: 13, fontWeight: FontWeight.w600)),
           const SizedBox(height: 5),
           TextFormField(
             initialValue: hint,
             decoration: InputDecoration(
                 isDense: true,
                 contentPadding: const EdgeInsets.all(10),
-                suffixIcon: hasIcon ? const Icon(Icons.calendar_today_outlined, size: 16) : null,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: Colors.grey.shade300))),
+                suffixIcon: hasIcon ? const Icon(Icons.calendar_today_outlined, size: 16, color: Color(0xFF64748B)) : null,
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF0D6EFD)))),
           ),
         ],
       ),
     );
+
   Widget _buildHistoryFilterDropdown(String label, String value) => SizedBox(
       width: 200,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.w600)),
+          Text(label, style: const TextStyle(color: Color(0xFF64748B), fontSize: 13, fontWeight: FontWeight.w600)),
           const SizedBox(height: 5),
           DropdownButtonFormField(
             value: value,
             isDense: true,
+            icon: const Icon(Icons.keyboard_arrow_down, size: 18, color: Color(0xFF64748B)),
             decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: Colors.grey.shade300))),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFF0D6EFD)))),
             items: [DropdownMenuItem(value: value, child: Text(value, style: const TextStyle(fontSize: 14)))],
             onChanged: (newValue) {},
           ),
@@ -680,10 +683,18 @@ class _PurchaseHistoryDataTableState extends State<PurchaseHistoryDataTable> {
 
   @override
   Widget build(BuildContext context) {
+    // Pagination Calculations
+    int totalItems = _entries.length;
+    int totalPages = (totalItems / _rowsPerPage).ceil();
+    int startIndex = (_currentPage - 1) * _rowsPerPage;
+    int endIndex = min(startIndex + _rowsPerPage, totalItems);
+    List<PurchaseEntryData> paginatedEntries = _entries.sublist(startIndex, endIndex);
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -693,19 +704,20 @@ class _PurchaseHistoryDataTableState extends State<PurchaseHistoryDataTable> {
                 children: [
                   const Text("Purchase History", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
                   const SizedBox(height: 4),
-                  Text("Consolidated purchase entries.", style: TextStyle(fontSize: 14, color: Colors.grey.shade500)),
+                  Text("Consolidated purchase entries.", style: TextStyle(fontSize: 14, color: Color(0xFF94A3B8))),
                 ]
               ),
               Container(
                 width: 250,
                 height: 40,
-                decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(20)),
-                child: TextField(
+                decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(20)),
+                child: const TextField(
                   decoration: InputDecoration(
                     hintText: "Search by invoice...",
-                    prefixIcon: Icon(Icons.search, color: Colors.grey.shade500, size: 20),
+                    hintStyle: TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
+                    prefixIcon: Icon(Icons.search, color: Color(0xFF94A3B8), size: 18),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10),
                   ),
                 ),
               ),
@@ -715,29 +727,32 @@ class _PurchaseHistoryDataTableState extends State<PurchaseHistoryDataTable> {
                 children: [
                   OutlinedButton.icon(
                     icon: const Icon(Icons.file_download_outlined, size: 16),
-                    label: const Text("Export to Excel"),
+                    label: const Text("Export to Excel", style: TextStyle(fontWeight: FontWeight.w600)),
                     onPressed: () {},
                     style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.green.shade700,
-                        side: BorderSide(color: Colors.green.shade700),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
+                        foregroundColor: const Color(0xFF16A34A),
+                        side: const BorderSide(color: Color(0xFF16A34A)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14)),
                   ),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.add, size: 16),
-                    label: const Text("Create New Purchase"),
+                    label: const Text("Create New Purchase", style: TextStyle(fontWeight: FontWeight.w600)),
                     onPressed: widget.onCreateNew,
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2563EB),
+                        backgroundColor: const Color(0xFF0D6EFD),
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14)),
                   ),
                 ],
               ),
             ],
           ),
           const SizedBox(height: 25),
+          
+          // Filters Row
           Wrap(
             spacing: 20,
             runSpacing: 20,
@@ -749,107 +764,232 @@ class _PurchaseHistoryDataTableState extends State<PurchaseHistoryDataTable> {
             ],
           ),
           const SizedBox(height: 25),
+          
+          // Custom Modern Grid (Table)
           Container(
-            width: double.infinity,
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
-            child: Theme(
-              data: Theme.of(context).copyWith(
-                cardColor: Colors.white,
-                dividerColor: Colors.transparent,
-                cardTheme: const CardThemeData(elevation: 0, margin: EdgeInsets.zero, color: Colors.white),
-              ),
-              child: PaginatedDataTable(
-                columns: [
-                  DataColumn(label: Text('S.NO', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('DATE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('INVOICE NO.', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('VENDOR', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('MATERIAL(S)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('TOTAL AMOUNT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('IMAGES', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('BALANCE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('STATUS', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600))),
-                  DataColumn(label: Text('ACTIONS', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey.shade600)))
-                ],
-                source: _dataSource,
-                rowsPerPage: _rowsPerPage,
-                showCheckboxColumn: false,
-                columnSpacing: 20,
-                onRowsPerPageChanged: (int? value) => setState(() => _rowsPerPage = value!),
-              ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ]
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Table(
+                  columnWidths: const {
+                    0: FixedColumnWidth(60),
+                    1: FlexColumnWidth(1.2),
+                    2: FlexColumnWidth(1),
+                    3: FlexColumnWidth(1.5),
+                    4: FlexColumnWidth(2),
+                    5: FlexColumnWidth(1.2),
+                    6: FlexColumnWidth(0.8),
+                    7: FlexColumnWidth(1.2),
+                    8: FlexColumnWidth(1),
+                    9: FixedColumnWidth(140), // Increased from 130 to 140 to properly contain the action icons without overflowing
+                  },
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  children: [
+                    // Header Row
+                    TableRow(
+                      decoration: const BoxDecoration(
+                        border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
+                      ),
+                      children: [
+                        _buildCustomHeaderCell('S.NO'),
+                        _buildCustomHeaderCell('DATE'),
+                        _buildCustomHeaderCell('INVOICE NO.'),
+                        _buildCustomHeaderCell('VENDOR'),
+                        _buildCustomHeaderCell('MATERIAL(S)'),
+                        _buildCustomHeaderCell('TOTAL AMOUNT'),
+                        _buildCustomHeaderCell('IMAGES'),
+                        _buildCustomHeaderCell('BALANCE'),
+                        _buildCustomHeaderCell('STATUS'),
+                        _buildCustomHeaderCell('ACTIONS'),
+                      ]
+                    ),
+                    // Data Rows
+                    ...paginatedEntries.asMap().entries.map((mapEntry) {
+                      int index = mapEntry.key;
+                      PurchaseEntryData entry = mapEntry.value;
+                      
+                      Color statusBg = entry.status == 'Unpaid' ? const Color(0xFFFEF2F2) : (entry.status == 'Partial' ? const Color(0xFFFFFBEB) : const Color(0xFFF0FDF4));
+                      Color statusText = entry.status == 'Unpaid' ? const Color(0xFFDC2626) : (entry.status == 'Partial' ? const Color(0xFFD97706) : const Color(0xFF16A34A));
+
+                      return TableRow(
+                        decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide(color: index == paginatedEntries.length - 1 ? Colors.transparent : const Color(0xFFF1F5F9))),
+                        ),
+                        children: [
+                          _buildCustomDataCell((startIndex + index + 1).toString()),
+                          _buildCustomDataCell(entry.date),
+                          _buildCustomDataCell(entry.invoiceNo),
+                          _buildCustomDataCell(entry.vendor),
+                          _buildCustomDataCell(entry.materials),
+                          _buildCustomDataCell(entry.totalAmount, isBold: true),
+                          _buildCustomDataCell(entry.images, color: const Color(0xFF94A3B8)),
+                          _buildCustomDataCell(entry.balance, isBold: true, color: const Color(0xFFDC2626)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(color: statusBg, borderRadius: BorderRadius.circular(20)),
+                                child: Text(entry.status, style: TextStyle(color: statusText, fontSize: 11, fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            child: Row(
+                              children: [
+                                _buildActionIcon(Icons.edit_outlined, const Color(0xFF2563EB), widget.onEdit),
+                                const SizedBox(width: 8),
+                                _buildActionIcon(Icons.refresh_outlined, const Color(0xFFDC2626), () => _showReverseDialog(context)),
+                                const SizedBox(width: 8),
+                                _buildActionIcon(Icons.visibility_outlined, const Color(0xFF0891B2), () {}),
+                              ]
+                            ),
+                          )
+                        ]
+                      );
+                    }),
+                  ],
+                ),
+                // Custom Modern Pagination Footer
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12)),
+                    border: Border(top: BorderSide(color: Color(0xFFE2E8F0)))
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Showing ${totalItems == 0 ? 0 : startIndex + 1} to $endIndex of $totalItems entries",
+                        style: const TextStyle(fontSize: 13, color: Color(0xFF64748B), fontWeight: FontWeight.w500)
+                      ),
+                      Row(
+                        children: [
+                          const Text("Rows per page: ", style: TextStyle(fontSize: 13, color: Color(0xFF64748B))),
+                          const SizedBox(width: 8),
+                          Container(
+                            height: 32,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              borderRadius: BorderRadius.circular(6)
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<int>(
+                                value: _rowsPerPage,
+                                icon: const Icon(Icons.keyboard_arrow_down, size: 16, color: Color(0xFF64748B)),
+                                style: const TextStyle(fontSize: 13, color: Color(0xFF1E293B), fontWeight: FontWeight.w500),
+                                items: [5, 10, 20, 50].map((int value) {
+                                  return DropdownMenuItem<int>(
+                                    value: value,
+                                    child: Text(value.toString()),
+                                  );
+                                }).toList(),
+                                onChanged: (int? newValue) {
+                                  setState(() {
+                                    _rowsPerPage = newValue!;
+                                    _currentPage = 1; // Reset to first page
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          // Prev Page Button
+                          InkWell(
+                            onTap: _currentPage > 1 ? () => setState(() => _currentPage--) : null,
+                            borderRadius: BorderRadius.circular(6),
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: _currentPage > 1 ? Colors.white : const Color(0xFFF1F5F9),
+                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                borderRadius: BorderRadius.circular(6)
+                              ),
+                              child: Icon(Icons.chevron_left, size: 18, color: _currentPage > 1 ? const Color(0xFF1E293B) : const Color(0xFF94A3B8)),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text("Page $_currentPage of ${totalPages == 0 ? 1 : totalPages}", style: const TextStyle(fontSize: 13, color: Color(0xFF1E293B), fontWeight: FontWeight.w500)),
+                          const SizedBox(width: 12),
+                          // Next Page Button
+                          InkWell(
+                            onTap: _currentPage < totalPages ? () => setState(() => _currentPage++) : null,
+                            borderRadius: BorderRadius.circular(6),
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: _currentPage < totalPages ? Colors.white : const Color(0xFFF1F5F9),
+                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                borderRadius: BorderRadius.circular(6)
+                              ),
+                              child: Icon(Icons.chevron_right, size: 18, color: _currentPage < totalPages ? const Color(0xFF1E293B) : const Color(0xFF94A3B8)),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
         ],
       ),
     );
   }
-}
 
-class _PurchaseHistoryDataSource extends DataTableSource {
-  final VoidCallback onEdit;
-  final VoidCallback onReverse;
-  final VoidCallback onView;
-
-  _PurchaseHistoryDataSource({required this.onEdit, required this.onReverse, required this.onView});
-
-  final List<PurchaseEntryData> _entries = [
-    PurchaseEntryData('5/15/2026', '2', 'Testvendors', 'test (1.00 Kg)', '₹10.50', '—', '₹10.50', 'Unpaid'),
-  ];
-
-  @override
-  DataRow? getRow(int index) {
-    if (index >= _entries.length) return null;
-    final entry = _entries[index];
-    
-    Color bgColor = entry.status == 'Unpaid' ? Colors.red.shade50 : Colors.green.shade50;
-    Color textColor = entry.status == 'Unpaid' ? Colors.red.shade700 : Colors.green.shade700;
-
-    return DataRow.byIndex(index: index, cells: [
-      DataCell(Text('${index + 1}')),
-      DataCell(Text(entry.date)),
-      DataCell(Text(entry.invoiceNo)),
-      DataCell(Text(entry.vendor)),
-      DataCell(Text(entry.materials)),
-      DataCell(Text(entry.totalAmount, style: const TextStyle(fontWeight: FontWeight.bold))),
-      DataCell(Text(entry.images, style: const TextStyle(color: Colors.grey))),
-      DataCell(Text(entry.balance, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red))),
-      DataCell(Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(20)),
-        child: Text(entry.status, style: TextStyle(color: textColor, fontSize: 12, fontWeight: FontWeight.w600)),
-      )),
-      DataCell(Row(children: [
-        InkWell(
-          onTap: onEdit,
-          child: Container(
-              margin: const EdgeInsets.only(right: 6),
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)),
-              child: Icon(Icons.edit_outlined, color: Colors.blue.shade600, size: 16)),
-        ),
-        InkWell(
-          onTap: onReverse,
-          child: Container(
-              margin: const EdgeInsets.only(right: 6),
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)),
-              child: Icon(Icons.refresh_outlined, color: Colors.red.shade600, size: 16)),
-        ),
-        InkWell(
-          onTap: onView,
-          child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(6)),
-              child: Icon(Icons.visibility_outlined, color: Colors.cyan.shade600, size: 16)),
-        )
-      ]))
-    ]);
+  Widget _buildCustomHeaderCell(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Color(0xFF64748B), letterSpacing: 0.5)),
+    );
   }
 
-  @override
-  bool get isRowCountApproximate => false;
-  @override
-  int get rowCount => _entries.length;
-  @override
-  int get selectedRowCount => 0;
+  Widget _buildCustomDataCell(String text, {bool isBold = false, Color? color}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Text(
+        text, 
+        style: TextStyle(
+          fontSize: 13, 
+          fontWeight: isBold ? FontWeight.bold : FontWeight.w500, 
+          color: color ?? const Color(0xFF1E293B)
+        )
+      ),
+    );
+  }
+
+  Widget _buildActionIcon(IconData icon, Color iconColor, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          borderRadius: BorderRadius.circular(6)
+        ),
+        child: Icon(icon, color: iconColor, size: 16)
+      ),
+    );
+  }
 }
